@@ -1,0 +1,447 @@
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --section-height: {{ section.settings.section_height }}px;
+    --bg-color: {{ section.settings.bg_color }};
+    --text-color: {{ section.settings.text_color }};
+    --scroll-color: {{ section.settings.scroll_color }};
+    --title-size-desktop: {{ section.settings.title_size_desktop }}px;
+    --text-size-desktop: {{ section.settings.text_size_desktop }}px;
+    --title-size-tablet: {{ section.settings.title_size_tablet }}px;
+    --text-size-tablet: {{ section.settings.text_size_tablet }}px;
+    --title-size-mobile: {{ section.settings.title_size_mobile }}px;
+    --text-size-mobile: {{ section.settings.text_size_mobile }}px;
+  }
+
+  .scroll-text-section {
+    height: var(--section-height);
+    background-color: var(--bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scroll-content {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .scroll-title {
+    font-size: var(--title-size-desktop);
+    margin-bottom: 30px;
+    text-align: center;
+    color: var(--text-color);
+  }
+
+  .scroll-text {
+    font-size: var(--text-size-desktop);
+    line-height: 1.6;
+    color: var(--text-color);
+  }
+
+  .scroll-text p {
+    margin-bottom: 25px;
+  }
+
+  /* Responsive styles */
+  @media (max-width: 1024px) {
+    .scroll-title {
+      font-size: var(--title-size-tablet);
+    }
+    
+    .scroll-text {
+      font-size: var(--text-size-tablet);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .scroll-text-section {
+      padding: 30px 15px;
+    }
+    
+    .scroll-title {
+      font-size: var(--title-size-mobile);
+    }
+    
+    .scroll-text {
+      font-size: var(--text-size-mobile);
+    }
+  }
+{%- endstyle -%}
+
+<div class="scroll-text-section" id="scroll-text-{{ section.id }}">
+  <div class="scroll-content">
+    <h2 class="scroll-title">{{ section.settings.title }}</h2>
+    <div class="scroll-text">{{ section.settings.text }}</div>
+  </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const section = document.getElementById('scroll-text-{{ section.id }}');
+  const textElements = [section.querySelector('.scroll-title'), ...section.querySelectorAll('.scroll-text *')];
+
+  let currentPosition = 0;
+  let totalLetters = 0;
+  let letters = [];
+  let isTextScrollActive = false;
+  let sectionBounds = {};
+  let isScrollBlocked = false;
+  const stepSize = 3; // ⚡ Nombre de lettres par scroll (modifiable)
+
+  function updateSectionBounds() {
+    const rect = section.getBoundingClientRect();
+    sectionBounds = {
+      top: rect.top + window.scrollY,
+      bottom: rect.bottom + window.scrollY,
+      height: rect.height
+    };
+  }
+
+  // Vérifie si c’est une lettre/chiffre/ponctuation visible
+  function isVisibleCharacter(char) {
+    return /[a-zA-Z0-9À-ÿ\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF.,!?;:'"()\-]/.test(char);
+  }
+
+  // Initialisation : découpe le texte en spans
+  function initializeText() {
+    totalLetters = 0;
+    letters = [];
+
+    textElements.forEach(el => {
+      const text = el.textContent;
+      el.innerHTML = '';
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.style.color = '{{ section.settings.text_color }}';
+        el.appendChild(span);
+
+        // On garde tous les spans pour l’affichage
+        // mais on ne stocke que les caractères visibles
+        if (isVisibleCharacter(char)) {
+          letters.push(span);
+        }
+      }
+    });
+
+    totalLetters = letters.length;
+    currentPosition = 0;
+  }
+
+  function updateTextColors() {
+    for (let i = 0; i < letters.length; i++) {
+      letters[i].style.color = i < currentPosition
+        ? '{{ section.settings.scroll_color }}'
+        : '{{ section.settings.text_color }}';
+    }
+  }
+
+  function resetTextToStart() {
+    currentPosition = 0;
+    letters.forEach(letter => {
+      letter.style.color = '{{ section.settings.text_color }}';
+    });
+  }
+
+  function setTextToEnd() {
+    currentPosition = totalLetters;
+    letters.forEach(letter => {
+      letter.style.color = '{{ section.settings.scroll_color }}';
+    });
+  }
+
+  function blockScroll() {
+    if (!isScrollBlocked) {
+      isScrollBlocked = true;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    }
+  }
+
+  function unblockScroll() {
+    if (isScrollBlocked) {
+      isScrollBlocked = false;
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+  }
+
+  function isSectionFullyVisible() {
+    const viewportTop = window.scrollY;
+    const viewportBottom = window.scrollY + window.innerHeight;
+    return (sectionBounds.top >= viewportTop - 50) && 
+           (sectionBounds.bottom <= viewportBottom + 50);
+  }
+
+  function handleWheel(e) {
+    updateSectionBounds();
+    if (isSectionFullyVisible()) {
+      if (!isTextScrollActive) {
+        isTextScrollActive = true;
+        blockScroll();
+      }
+      e.preventDefault();
+      e.stopPropagation();
+
+      const delta = e.deltaY || e.detail || (-e.wheelDelta);
+      const scrollDirection = delta > 0 ? 1 : -1;
+
+      let newPosition = currentPosition + (scrollDirection * stepSize);
+
+      // Début du texte
+      if (newPosition <= 0 && scrollDirection < 0) {
+        resetTextToStart();
+        isTextScrollActive = false;
+        unblockScroll();
+        setTimeout(() => window.scrollBy(0, delta), 0);
+
+      // Fin du texte
+      } else if (newPosition >= totalLetters && scrollDirection > 0) {
+        setTextToEnd();
+        isTextScrollActive = false;
+        unblockScroll();
+        setTimeout(() => window.scrollBy(0, delta), 0);
+
+      // Pendant le défilement
+      } else {
+        currentPosition = Math.max(0, Math.min(newPosition, totalLetters));
+        updateTextColors();
+      }
+    } else {
+      if (isTextScrollActive) {
+        isTextScrollActive = false;
+        unblockScroll();
+      }
+    }
+  }
+
+  function handleGlobalScroll() {
+    if (isTextScrollActive && !isSectionFullyVisible()) {
+      isTextScrollActive = false;
+      unblockScroll();
+    }
+  }
+
+  function handleResize() {
+    updateSectionBounds();
+  }
+
+  // Support tactile mobile
+  let touchStartY = 0;
+
+  function handleTouchStart(e) {
+    if (isSectionFullyVisible()) {
+      touchStartY = e.changedTouches[0].screenY;
+    }
+  }
+
+  function handleTouchEnd(e) {
+    if (isSectionFullyVisible()) {
+      const touchEndY = e.changedTouches[0].screenY;
+      const touchDelta = touchStartY - touchEndY;
+
+      if (Math.abs(touchDelta) > 10) {
+        if (!isTextScrollActive) {
+          isTextScrollActive = true;
+          blockScroll();
+        }
+
+        const scrollDirection = touchDelta > 0 ? 1 : -1;
+        let newPosition = currentPosition + (scrollDirection * stepSize);
+
+        if (newPosition <= 0 && scrollDirection < 0) {
+          resetTextToStart();
+          isTextScrollActive = false;
+          unblockScroll();
+          window.scrollBy(0, -50); // scroll normal direct
+
+        } else if (newPosition >= totalLetters && scrollDirection > 0) {
+          setTextToEnd();
+          isTextScrollActive = false;
+          unblockScroll();
+          window.scrollBy(0, 50); // scroll normal direct
+
+        } else {
+          currentPosition = Math.max(0, Math.min(newPosition, totalLetters));
+          updateTextColors();
+        }
+      }
+    }
+  }
+
+  section.addEventListener('touchstart', handleTouchStart, { passive: true });
+  section.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+  // Initialisation
+  updateSectionBounds();
+  initializeText();
+
+  window.addEventListener('wheel', handleWheel, { passive: false });
+  window.addEventListener('scroll', handleGlobalScroll);
+  window.addEventListener('resize', handleResize);
+
+  // Observer taille
+  if (window.ResizeObserver) {
+    const resizeObserver = new ResizeObserver(() => {
+      updateSectionBounds();
+    });
+    resizeObserver.observe(section);
+  }
+
+  // Sécurité : débloque le scroll si bug
+  setInterval(() => {
+    if (isScrollBlocked && !isSectionFullyVisible()) {
+      unblockScroll();
+      isTextScrollActive = false;
+    }
+  }, 1000);
+});
+</script>
+
+
+
+
+{% schema %}
+{
+  "name": "Scroll Text Coloré",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenu"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "L'Art du Défilement Coloré"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Texte",
+      "default": "<p>Découvrez cet effet visuel unique où la couleur du texte évolue en harmonie avec votre mouvement de défilement. Plus vous descendez, plus le texte se transforme subtilement.</p><p>Chaque parcelle de texte réagit à votre navigation, créant une expérience interactive et engageante pour vos visiteurs.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Couleurs"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Couleur d'arrière-plan",
+      "default": "#f9f3e9"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte initiale",
+      "default": "#5D4037"
+    },
+    {
+      "type": "color",
+      "id": "scroll_color",
+      "label": "Couleur du texte après scroll",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Dimensions"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "Hauteur de la section",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "default": 600,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Tailles de texte - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Taille du titre (Desktop)",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "default": 42,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Taille du texte (Desktop)",
+      "min": 14,
+      "max": 30,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Tailles de texte - Tablette"
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "label": "Taille du titre (Tablette)",
+      "min": 22,
+      "max": 60,
+      "step": 2,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_tablet",
+      "label": "Taille du texte (Tablette)",
+      "min": 14,
+      "max": 26,
+      "step": 1,
+      "default": 18,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Tailles de texte - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Taille du titre (Mobile)",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Taille du texte (Mobile)",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scroll Text Coloré",
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}
