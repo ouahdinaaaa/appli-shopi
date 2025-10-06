@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 import { redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
+=======
+import { redirect, Form, useLoaderData } from "react-router";
+>>>>>>> 9e37be4 (push)
 import { login } from "../../shopify.server";
 import styles from "./styles.module.css";
 

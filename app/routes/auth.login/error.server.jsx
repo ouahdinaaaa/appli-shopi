@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { LoginErrorType } from "@shopify/shopify-app-remix/server";
+=======
+import { LoginErrorType } from "@shopify/shopify-app-react-router/server";
+>>>>>>> 9e37be4 (push)
 
 export function loginErrorMessage(loginErrors) {
   if (loginErrors?.shop === LoginErrorType.MissingShop) {

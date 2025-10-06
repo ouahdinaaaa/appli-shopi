@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { vitePlugin as remix } from "@remix-run/dev";
 import { installGlobals } from "@remix-run/node";
 import { defineConfig } from "vite";
@@ -8,6 +9,16 @@ installGlobals({ nativeFetch: true });
 // Related: https://github.com/remix-run/remix/issues/2835#issuecomment-1144102176
 // Replace the HOST env var with SHOPIFY_APP_URL so that it doesn't break the remix server. The CLI will eventually
 // stop passing in HOST, so we can remove this workaround after the next major release.
+=======
+import { reactRouter } from "@react-router/dev/vite";
+import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
+
+// Related: https://github.com/remix-run/remix/issues/2835#issuecomment-1144102176
+// Replace the HOST env var with SHOPIFY_APP_URL so that it doesn't break the Vite server.
+// The CLI will eventually stop passing in HOST,
+// so we can remove this workaround after the next major release.
+>>>>>>> 9e37be4 (push)
 if (
   process.env.HOST &&
   (!process.env.SHOPIFY_APP_URL ||
@@ -50,6 +61,7 @@ export default defineConfig({
       allow: ["app", "node_modules"],
     },
   },
+<<<<<<< HEAD
   plugins: [
     remix({
       ignoredRouteFiles: ["**/.*"],
@@ -64,10 +76,17 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+=======
+  plugins: [reactRouter(), tsconfigPaths()],
+>>>>>>> 9e37be4 (push)
   build: {
     assetsInlineLimit: 0,
   },
   optimizeDeps: {
+<<<<<<< HEAD
     include: ["@shopify/app-bridge-react", "@shopify/polaris"],
+=======
+    include: ["@shopify/app-bridge-react"],
+>>>>>>> 9e37be4 (push)
   },
 });

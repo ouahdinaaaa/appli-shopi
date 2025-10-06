@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from "react";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import {
@@ -20,6 +21,18 @@ export const loader = async ({ request }) => {
   const errors = loginErrorMessage(await login(request));
 
   return { errors, polarisTranslations };
+=======
+import { AppProvider } from "@shopify/shopify-app-react-router/react";
+import { useState } from "react";
+import { Form, useActionData, useLoaderData } from "react-router";
+import { login } from "../../shopify.server";
+import { loginErrorMessage } from "./error.server";
+
+export const loader = async ({ request }) => {
+  const errors = loginErrorMessage(await login(request));
+
+  return { errors };
+>>>>>>> 9e37be4 (push)
 };
 
 export const action = async ({ request }) => {
@@ -37,6 +50,7 @@ export default function Auth() {
   const { errors } = actionData || loaderData;
 
   return (
+<<<<<<< HEAD
     <PolarisAppProvider i18n={loaderData.polarisTranslations}>
       <Page>
         <Card>
@@ -61,5 +75,25 @@ export default function Auth() {
         </Card>
       </Page>
     </PolarisAppProvider>
+=======
+    <AppProvider embedded={false}>
+      <s-page>
+        <Form method="post">
+          <s-section heading="Log in">
+            <s-text-field
+              name="shop"
+              label="Shop domain"
+              details="example.myshopify.com"
+              value={shop}
+              onChange={(e) => setShop(e.currentTarget.value)}
+              autocomplete="on"
+              error={errors.shop}
+            ></s-text-field>
+            <s-button type="submit">Log in</s-button>
+          </s-section>
+        </Form>
+      </s-page>
+    </AppProvider>
+>>>>>>> 9e37be4 (push)
   );
 }

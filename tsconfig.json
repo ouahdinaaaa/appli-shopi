@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "include": ["env.d.ts", "**/*.ts", "**/*.tsx"],
+=======
+  "include": ["env.d.ts", "**/*.ts", "**/*.tsx", ".react-router/types/**/*"],
+>>>>>>> 9e37be4 (push)
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "strict": true,
@@ -16,6 +20,11 @@
     "moduleResolution": "Bundler",
     "target": "ES2022",
     "baseUrl": ".",
+<<<<<<< HEAD
     "types": ["node"]
+=======
+    "types": ["@react-router/node", "vite/client", "@shopify/app-bridge-ui-types"],
+    "rootDirs": [".", "./.react-router/types"]
+>>>>>>> 9e37be4 (push)
   }
 }
