@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+// Utilisation de Response.json() natif
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
@@ -78,7 +78,7 @@ export const loader = async ({ request }) => {
       restTest.error = error.message;
     }
     
-    return json({
+    return Response.json({
       success: true,
       tests: {
         session: sessionInfo,
@@ -97,7 +97,7 @@ export const loader = async ({ request }) => {
   } catch (error) {
     console.error('❌ Test permissions échoué:', error);
     
-    return json({
+    return Response.json({
       success: false,
       error: error.message,
       details: error.stack,

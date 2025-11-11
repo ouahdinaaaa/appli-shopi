@@ -1,0 +1,173 @@
+{% schema %}
+{
+  "name": "Newsletter personnalisée",
+  "tag": "section",
+  "class": "shopify-section",
+  "presets": [
+    {
+      "name": "Newsletter personnalisée"
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "Abonnez-vous à notre newsletter"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Sous-titre",
+      "default": "Rejoignez notre liste de diffusion pour recevoir des offres exclusives et les dernières actualités."
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "default": 24,
+      "unit": "px",
+      "label": "Taille du titre (desktop)"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_desktop",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "default": 16,
+      "unit": "px",
+      "label": "Taille du sous-titre (desktop)"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "default": 20,
+      "unit": "px",
+      "label": "Taille du titre (mobile)"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 14,
+      "unit": "px",
+      "label": "Taille du sous-titre (mobile)"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alignement du texte",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centré" },
+        { "value": "right", "label": "Droite" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Graisse du texte",
+      "default": "normal",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "bold", "label": "Gras" },
+        { "value": "800", "label": "Extra bold" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.newsletter-section {
+  background-color: #111;
+  padding: 40px 20px;
+  text-align: {{ section.settings.text_align }};
+  color: {{ section.settings.text_color }};
+}
+.newsletter-section h2 {
+  font-size: {{ section.settings.title_size_desktop }}px;
+  font-weight: {{ section.settings.font_weight }};
+  margin-bottom: 10px;
+  color : white;
+  padding: 0px 0px 0px 30px;
+}
+.newsletter-section p {
+  font-size: {{ section.settings.subtitle_size_desktop }}px;
+  margin-bottom: 20px;
+  padding: 0px 0px 0px 30px;
+  font-weight:500;
+}
+.newsletter-form input[type="email"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+.newsletter-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #fff;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+@media screen and (max-width: 768px) {
+  .newsletter-section h2 {
+    font-size: {{ section.settings.title_size_mobile }}px;
+    padding: 0px 0px 0px 30px;
+  }
+  .newsletter-section p {
+    font-size: {{ section.settings.subtitle_size_mobile }}px;
+  }
+}
+
+  @media screen and (min-width: 750px) {
+    .newsletter-form {
+        align-items: flex-start;
+        padding: 30px;
+        margin: 0 auto;
+        max-width: 100%;
+    }
+  }
+
+.newsletter-form {
+        align-items: flex-start;
+        padding: 30px;
+        margin: 0 auto;
+        max-width: 100%;
+    }
+  
+</style>
+
+
+
+<div class="newsletter-section">
+  <h2>{{ section.settings.title }}</h2>
+  <p>{{ section.settings.subtitle }}</p>
+  <form class="newsletter-form" style="max-width:100%;" method="post" action="/contact#contact_form">
+    <input type="hidden" name="form_type" value="customer">
+    <input type="hidden" name="utf8" value="✓">
+    <input type="email" name="contact[email]" placeholder="E-mail" required>
+    <button type="submit">S'inscrire</button>
+  </form>
+</div>

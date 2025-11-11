@@ -1,0 +1,210 @@
+{% schema %}
+{
+  "name": "Formulaire Addict Section",
+  "presets": [
+    {
+      "name": "Formulaire Addict Section"
+    }
+  ],
+  "tag": "section",
+  "class": "shopify-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titre de la section",
+      "default": "Une question ? Un besoin ? Contactez-nous."
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_desktop",
+      "label": "Taille du titre (Desktop)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Taille du titre (Mobile)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Sous-titre",
+      "default": "Notre équipe vous répond sous 24h !"
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size_desktop",
+      "label": "Taille du sous-titre (Desktop)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size_mobile",
+      "label": "Taille du sous-titre (Mobile)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "text",
+      "id": "textarea_placeholder",
+      "label": "Texte du placeholder pour message",
+      "default": "Votre message"
+    },
+    {
+      "type": "range",
+      "id": "textarea_font_size_desktop",
+      "label": "Taille du texte message (Desktop)",
+      "min": 10,
+      "max": 50,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "textarea_font_size_mobile",
+      "label": "Taille du texte message (Mobile)",
+      "min": 10,
+      "max": 50,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#0B1023"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Couleur des bordures / boutons",
+      "default": "#2956AF"
+    }
+  ]
+}
+{% endschema %}
+
+<div id="voltgo_contact" style="background-color: {{ section.settings.background_color }}; color: {{ section.settings.text_color }}">
+  <div class="container">
+    <h2 class="contact-title">{{ section.settings.heading }}</h2>
+    <p class="contact-subtitle">{{ section.settings.subheading }}</p>
+    <form method="post" action="/contact#voltgo_contact" accept-charset="UTF-8" class="contact-form">
+      <input type="hidden" name="form_type" value="contact" />
+      <input type="hidden" name="utf8" value="✓" />
+
+      <div class="form-row">
+        <input type="text" name="contact[name]" placeholder="Votre nom" required>
+        <input type="email" name="contact[email]" placeholder="Votre email" required>
+      </div>
+      <textarea name="contact[body]" placeholder="{{ section.settings.textarea_placeholder }}" rows="5" required></textarea>
+      <button type="submit">Envoyer le message</button>
+    </form>
+  </div>
+</div>
+
+<style>
+  #voltgo_contact {
+    padding: 60px 20px;
+    color: black;
+    font-weight: bold;
+  }
+  #voltgo_contact .container {
+    max-width: 700px;
+    margin: auto;
+    text-align: center;
+  }
+  #voltgo_contact .contact-title {
+    font-size: {{ section.settings.heading_font_size_desktop }}px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color : white;
+  }
+  #voltgo_contact .contact-subtitle {
+    font-size: {{ section.settings.subheading_font_size_desktop }}px;
+    margin-bottom: 30px;
+  }
+  #voltgo_contact form.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  #voltgo_contact .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  @media (min-width: 600px) {
+    #voltgo_contact .form-row {
+      flex-direction: row;
+    }
+    #voltgo_contact .contact-title {
+      font-size: {{ section.settings.heading_font_size_desktop }}px;
+      color : white;
+    }
+    #voltgo_contact .contact-subtitle {
+      font-size: {{ section.settings.subheading_font_size_desktop }}px;
+      color : white;
+    }
+    #voltgo_contact textarea {
+      font-size: {{ section.settings.textarea_font_size_desktop }}px;
+    }
+  }
+  @media (max-width: 599px) {
+    #voltgo_contact .contact-title {
+      font-size: {{ section.settings.heading_font_size_mobile }}px;
+    }
+    #voltgo_contact .contact-subtitle {
+      font-size: {{ section.settings.subheading_font_size_mobile }}px;
+    }
+    #voltgo_contact textarea {
+      font-size: {{ section.settings.textarea_font_size_mobile }}px;
+    }
+  }
+  #voltgo_contact input,
+  #voltgo_contact textarea {
+    padding: 12px;
+    border: 2px solid {{ section.settings.accent_color }};
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: transparent;
+    color:rgb(255, 255, 255);
+    font-weight:bold;
+    width: -webkit-fill-available;
+  }
+  #voltgo_contact input::placeholder,
+  #voltgo_contact textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  #voltgo_contact button[type="submit"] {
+    background-color: {{ section.settings.accent_color }};
+    color: #fff;
+    border: none;
+    padding: 14px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  #voltgo_contact button[type="submit"]:hover {
+    background-color: #BF0603;
+  }
+</style>

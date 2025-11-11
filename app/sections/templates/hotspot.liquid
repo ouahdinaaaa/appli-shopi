@@ -1,0 +1,734 @@
+{% schema %}
+{
+  "name": "Hotspot Lookbook",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "icon",
+      "label": "Icône au-dessus du titre (section)"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Titre de la section",
+      "default": "Notre Lookbook Interactif"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Couleur de fond de la section",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "old-price",
+      "label": "Couleur ancien prix",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "current-price",
+      "label": "Couleur current prix",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Taille titre (desktop)",
+      "min": 12,
+      "max": 60,
+      "step": 1,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "label": "Taille titre (tablette)",
+      "min": 12,
+      "max": 50,
+      "step": 1,
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Taille titre (mobile)",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "max_height_desktop",
+      "label": "Hauteur max (desktop, vh)",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "max_height_tablet",
+      "label": "Hauteur max (tablette, vh)",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "default": 55
+    },
+    {
+      "type": "range",
+      "id": "max_height_mobile",
+      "label": "Hauteur max (mobile, vh)",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "image_picker",
+      "id": "main_image",
+      "label": "Image principale"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Hotspot",
+      "settings": [
+        {
+          "type": "range",
+          "id": "pos_left",
+          "label": "Position horizontale (%)",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "pos_top",
+          "label": "Position verticale (%)",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 50
+        },
+        {
+          "type": "color",
+          "id": "dot_color",
+          "label": "Couleur du point",
+          "default": "#ff0000"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Produit lié"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Icône (si pas de produit)"
+        },
+        {
+          "type": "select",
+          "id": "icon_align",
+          "label": "Alignement icône",
+          "default": "center",
+          "options": [
+            { "value": "left", "label": "Gauche" },
+            { "value": "center", "label": "Centre" },
+            { "value": "right", "label": "Droite" }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "icon_size_desktop",
+          "label": "Taille icône (desktop)",
+          "min": 20,
+          "max": 120,
+          "step": 5,
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "icon_size_tablet",
+          "label": "Taille icône (tablette)",
+          "min": 20,
+          "max": 100,
+          "step": 5,
+          "default": 40
+        },
+        {
+          "type": "range",
+          "id": "icon_size_mobile",
+          "label": "Taille icône (mobile)",
+          "min": 20,
+          "max": 80,
+          "step": 5,
+          "default": 30
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Titre (si pas de produit)",
+          "default": "Titre personnalisé"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_desc",
+          "label": "Description (si pas de produit)",
+          "default": "Description personnalisée"
+        },
+        {
+          "type": "color",
+          "id": "custom_title_color",
+          "label": "Couleur du titre",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "custom_desc_color",
+          "label": "Couleur de la description",
+          "default": "#333333"
+        },
+        {
+          "type": "color",
+          "id": "custom_bg_color",
+          "label": "Couleur de fond du bloc",
+          "default": "#ffffff"
+        },
+        {
+          "type": "select",
+          "id": "custom_align",
+          "label": "Alignement du contenu",
+          "default": "center",
+          "options": [
+            { "value": "left", "label": "Gauche" },
+            { "value": "center", "label": "Centre" },
+            { "value": "right", "label": "Droite" }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "title_bold",
+          "label": "Titre en gras",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "desc_bold",
+          "label": "Description en gras",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "title_size_desktop",
+          "label": "Taille titre (desktop)",
+          "min": 12,
+          "max": 40,
+          "step": 1,
+          "default": 18
+        },
+        {
+          "type": "range",
+          "id": "title_size_tablet",
+          "label": "Taille titre (tablette)",
+          "min": 12,
+          "max": 36,
+          "step": 1,
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "title_size_mobile",
+          "label": "Taille titre (mobile)",
+          "min": 12,
+          "max": 30,
+          "step": 1,
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "desc_size_desktop",
+          "label": "Taille description (desktop)",
+          "min": 10,
+          "max": 30,
+          "step": 1,
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "desc_size_tablet",
+          "label": "Taille description (tablette)",
+          "min": 10,
+          "max": 26,
+          "step": 1,
+          "default": 13
+        },
+        {
+          "type": "range",
+          "id": "desc_size_mobile",
+          "label": "Taille description (mobile)",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "default": 12
+        }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "Hotspot Lookbook",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "hotspot",
+          "settings": {
+            "pos_left": 50,
+            "pos_top": 78,
+            "dot_color": "#ff0000",
+            "custom_title": "Produit 1",
+            "custom_desc": "Description du premier produit",
+            "custom_align": "left",
+            "title_bold": true
+          }
+        },
+        {
+          "type": "hotspot",
+          "settings": {
+            "pos_left": 50,
+            "pos_top": 40,
+            "dot_color": "#ff0000",
+            "custom_title": "Produit 2",
+            "custom_desc": "Description du deuxième produit",
+            "custom_align": "left",
+            "title_bold": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<section class="hotspot-section" style="background: {{ section.settings.section_bg }}">
+  <div class="hotspot-header" style="text-align: center;">
+    {% if section.settings.icon %}
+      <img src="{{ section.settings.icon | img_url: '100x' }}" alt="Icône" class="hotspot-icon">
+    {% endif %}
+    {% if section.settings.section_title != blank %}
+      <h2 class="hotspot-title">{{ section.settings.section_title }}</h2>
+    {% endif %}
+  </div>
+
+  <div class="wrapper">
+    {% if section.settings.main_image != blank %}
+      <img src="{{ section.settings.main_image | img_url: '1600x' }}" alt="Hotspot Lookbook" class="hotspot-image">
+    {% else %}
+      <img src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Hotspot Lookbook" class="hotspot-image">
+    {% endif %}
+
+    <div class="hotspots">
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          {%- comment -%} Fallback positions si valeurs manquantes {%- endcomment -%}
+          {%- assign auto_left = 50 -%}
+          {%- assign auto_top = 50 -%}
+          {%- case forloop.index -%}
+            {%- when 1 -%}{%- assign auto_left = 28 -%}{%- assign auto_top = 32 -%}
+            {%- when 2 -%}{%- assign auto_left = 72 -%}{%- assign auto_top = 62 -%}
+            {%- when 3 -%}{%- assign auto_left = 38 -%}{%- assign auto_top = 68 -%}
+            {%- when 4 -%}{%- assign auto_left = 62 -%}{%- assign auto_top = 36 -%}
+            {%- else -%}{%- assign auto_left = 50 -%}{%- assign auto_top = 50 -%}
+          {%- endcase -%}
+          {%- assign pos_left = block.settings.pos_left | default: auto_left -%}
+          {%- assign pos_top = block.settings.pos_top | default: auto_top -%}
+
+          {%- if pos_left == 50 and pos_top == 50 -%}
+            {%- assign pos_left = 35 | plus: forloop.index0 | times: 5 | modulo: 30 | plus: 35 -%}
+            {%- assign pos_top = 30 | plus: forloop.index0 | times: 12 | modulo: 40 | plus: 30 -%}
+          {%- endif -%}
+
+          <div class="hotspot-item" style="left: {{ pos_left }}%; top: {{ pos_top }}%;" data-hotspot-id="{{ forloop.index }}" {% if block.settings.product != blank %}data-product-url="{{ all_products[block.settings.product].url }}"{% endif %}>
+            <div class="hotspot" style="border-color: {{ block.settings.dot_color }}; background: {{ block.settings.dot_color | color_modify: 'alpha', 0.4 }};">
+              <span style="background: {{ block.settings.dot_color }}"></span>
+
+              <div class="tooltip tooltip-{{ forloop.index }}" style="background: {{ block.settings.custom_bg_color }};">
+                {% if block.settings.product != blank %}
+                  {% assign product = all_products[block.settings.product] %}
+                  {% if product %}
+                    <div style="text-align: {{ block.settings.custom_align }};">
+                      {% if product.featured_image %}
+                        <img class="product-image" src="{{ product.featured_image | img_url: '400x' }}" alt="{{ product.title | escape }}">
+                      {% else %}
+                        <img class="product-image" src="https://images.pexels.com/photos/3965545/pexels-photo-3965545.jpeg?auto=compress&cs=tinysrgb&w=400" alt="{{ product.title | escape }}">
+                      {% endif %}
+
+                      <h3 class="product-title" style="margin: 6px 0; color: {{ section.settings.title_color }};">
+                        {{ product.title }}
+                      </h3>
+
+                      {%- assign has_compare = product.compare_at_price | default: 0 -%}
+                      <div class="price-box" style="text-align: {{ block.settings.custom_align }};">
+                        <span class="current-price" style="color: {{ section.settings['current-price'] }};">
+                          {{ product.price | money }}
+                        </span>
+                        {% if has_compare and product.compare_at_price > product.price %}
+                          <span class="old-price" style="color: {{ section.settings['old-price'] }};">
+                            {{ product.compare_at_price | money }}
+                          </span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% else %}
+                    <div class="custom-content" style="text-align: {{ block.settings.custom_align }};">
+                      {% if block.settings.custom_icon %}
+                        <div class="icon-container" style="text-align: {{ block.settings.icon_align }};">
+                          <img class="tooltip-icon" src="{{ block.settings.custom_icon | img_url: '200x' }}" alt="" style="max-width: {{ block.settings.icon_size_desktop | default: 50 }}px;">
+                        </div>
+                      {% endif %}
+                      {% if block.settings.custom_title != blank %}
+                        <h3 class="custom-title" style="margin: 6px 0; color: {{ block.settings.custom_title_color }}; {% if block.settings.title_bold %}font-weight:700{% else %}font-weight:500{% endif %}; font-size: {{ block.settings.title_size_desktop | default: 18 }}px;">
+                          {{ block.settings.custom_title }}
+                        </h3>
+                      {% endif %}
+                      {% if block.settings.custom_desc != blank %}
+                        <p class="custom-desc" style="margin: 0; color: {{ block.settings.custom_desc_color }}; {% if block.settings.desc_bold %}font-weight:600{% else %}font-weight:400{% endif %}; font-size: {{ block.settings.desc_size_desktop | default: 14 }}px;">
+                          {{ block.settings.custom_desc }}
+                        </p>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                {% else %}
+                  <div class="custom-content" style="text-align: {{ block.settings.custom_align }};">
+                    {% if block.settings.custom_icon %}
+                      <div class="icon-container" style="text-align: {{ block.settings.icon_align }};">
+                        <img class="tooltip-icon" src="{{ block.settings.custom_icon | img_url: '200x' }}" alt="" style="max-width: {{ block.settings.icon_size_desktop | default: 50 }}px;">
+                      </div>
+                    {% endif %}
+                    {% if block.settings.custom_title != blank %}
+                      <h3 class="custom-title" style="margin: 6px 0; color: {{ block.settings.custom_title_color }}; {% if block.settings.title_bold %}font-weight:700{% else %}font-weight:500{% endif %}; font-size: {{ block.settings.title_size_desktop | default: 18 }}px;">
+                        {{ block.settings.custom_title }}
+                      </h3>
+                    {% endif %}
+                    {% if block.settings.custom_desc != blank %}
+                      <p class="custom-desc" style="margin: 0; color: {{ block.settings.custom_desc_color }}; {% if block.settings.desc_bold %}font-weight:600{% else %}font-weight:400{% endif %}; font-size: {{ block.settings.desc_size_desktop | default: 14 }}px;">
+                        {{ block.settings.custom_desc }}
+                      </p>
+                    {% endif %}
+                    {% if block.settings.custom_icon == blank and block.settings.custom_title == blank and block.settings.custom_desc == blank %}
+                      <p class="custom-desc" style="margin: 0; color: #333;">
+                        Titre personnalisé • Description personnalisée
+                      </p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        {%- comment -%} Fallback de démo si aucune block n’est disponible {%- endcomment -%}
+        <div class="hotspot-item" style="left: 72%; top: 62%;">
+          <div class="hotspot" style="border-color:#ff0000; background: rgba(255,0,0,.2);">
+            <span style="background:#ff0000"></span>
+            <div class="tooltip tooltip-1" style="background:#ffffff;">
+              <div class="custom-content" style="text-align:left;">
+                <h3 class="custom-title" style="margin:6px 0; color:#000; font-weight:700; font-size:18px;">Produit 1</h3>
+                <p class="custom-desc" style="margin:0; color:#333; font-size:14px;">Description du premier produit</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hotspot-item" style="left: 28%; top: 32%;">
+          <div class="hotspot" style="border-color:#ff0000; background: rgba(255,0,0,.2);">
+            <span style="background:#ff0000"></span>
+            <div class="tooltip tooltip-2" style="background:#ffffff;">
+              <div class="custom-content" style="text-align:left;">
+                <h3 class="custom-title" style="margin:6px 0; color:#000; font-weight:700; font-size:18px;">Produit 2</h3>
+                <p class="custom-desc" style="margin:0; color:#333; font-size:14px;">Description du deuxième produit</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+.hotspot-section {
+  width: 100%;
+  padding: 40px 20px;
+}
+.hotspot-header {
+  margin-bottom: 20px;
+}
+.hotspot-icon {
+  max-height: 60px;
+  margin-bottom: 10px;
+}
+.hotspot-title {
+  margin: 0;
+  color: {{ section.settings.title_color }};
+  font-size: {{ section.settings.title_size_desktop }}px;
+}
+@media (max-width: 1024px) {
+  .hotspot-title { font-size: {{ section.settings.title_size_tablet }}px; }
+}
+@media (max-width: 767px) {
+  .hotspot-title { font-size: {{ section.settings.title_size_mobile }}px; }
+}
+
+.wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.hotspot-image {
+  width: 100%;
+  max-height: {{ section.settings.max_height_desktop }}vh;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
+}
+@media (max-width: 1024px) {
+  .hotspot-image { max-height: {{ section.settings.max_height_tablet }}vh; }
+}
+@media (max-width: 767px) {
+  .hotspot-image { max-height: {{ section.settings.max_height_mobile }}vh; }
+}
+
+.hotspots {
+  position: absolute;
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%;
+  pointer-events: auto; /* était none: permet le hover/click */
+}
+
+.hotspot-item {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* Masquer les autres hotspots quand un tooltip est affiché */
+.hotspot-item.active {
+  z-index: 9999;
+}
+.hotspot-item.active ~ .hotspot-item:not(.active) {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.hotspot {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .2s ease-out;
+  position: relative;
+}
+.hotspot:hover { 
+  transform: scale(1.2); 
+}
+.hotspot span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Tooltip (affichage conditionnel) */
+.tooltip {
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+  min-width: 180px;
+  max-width: 240px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  z-index: 10000;
+  white-space: normal;
+}
+
+/* Afficher le tooltip au hover ET quand le hotspot est actif */
+.hotspot-item:hover .tooltip,
+.hotspot-item.active .tooltip {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tooltip .product-image,
+.tooltip .tooltip-icon {
+  margin-bottom: 8px;
+  display: block;
+}
+
+.tooltip .icon-container img {
+  display: block;
+  margin: 0 auto;
+}
+.tooltip .icon-container[style*="text-align: left"] img {
+  margin: 0 auto 0 0;
+}
+.tooltip .icon-container[style*="text-align: right"] img {
+  margin: 0 0 0 auto;
+}
+
+.tooltip h3 {
+  margin: 8px 0 5px;
+  line-height: 1.3;
+}
+
+.tooltip p {
+  margin: 5px 0 0;
+  line-height: 1.4;
+}
+
+.price-box {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+.price-box[style*="text-align: center"] {
+  justify-content: center;
+}
+.price-box[style*="text-align: right"] {
+  justify-content: flex-end;
+}
+.price-box[style*="text-align: left"] {
+  justify-content: flex-start;
+}
+
+.price-box .current-price {
+  font-weight: bold;
+  color: {{ section.settings['current-price'] }};
+  white-space: nowrap;
+  display: inline-block;
+  font-weight: bold;
+}
+.price-box .old-price {
+  color: {{ section.settings['old-price'] }};
+  text-decoration: line-through;
+  font-size: 0.9em;
+  white-space: nowrap;
+  display: inline-block;
+  font-weight: bold;
+}
+
+/* Responsive pour les éléments personnalisés */
+{% for block in section.blocks %}
+@media (max-width: 1024px) {
+  .tooltip-{{ forloop.index }} .custom-title { 
+    font-size: {{ block.settings.title_size_tablet | default: 16 }}px !important; 
+  }
+  .tooltip-{{ forloop.index }} .custom-desc { 
+    font-size: {{ block.settings.desc_size_tablet | default: 13 }}px !important; 
+  }
+  .tooltip-{{ forloop.index }} .tooltip-icon { 
+    max-width: {{ block.settings.icon_size_tablet | default: 40 }}px !important; 
+  }
+  .tooltip-{{ forloop.index }} .product-title { 
+    font-size: {{ block.settings.title_size_tablet | default: 16 }}px !important; 
+  }
+}
+@media (max-width: 767px) {
+  .tooltip-{{ forloop.index }} .custom-title { 
+    font-size: {{ block.settings.title_size_mobile | default: 14 }}px !important; 
+  }
+  .tooltip-{{ forloop.index }} .custom-desc { 
+    font-size: {{ block.settings.desc_size_mobile | default: 12 }}px !important; 
+  }
+  .tooltip-{{ forloop.index }} .tooltip-icon { 
+    max-width: {{ block.settings.icon_size_mobile | default: 30 }}px !important; 
+  }
+  .tooltip-{{ forloop.index }} .product-title { 
+    font-size: {{ block.settings.title_size_mobile | default: 14 }}px !important; 
+  }
+}
+{% endfor %}
+
+/* Styles génériques pour les produits en responsive */
+@media (max-width: 1024px) {
+  .tooltip .product-title { 
+    font-size: 16px; 
+  }
+}
+@media (max-width: 767px) {
+  .tooltip .product-title { 
+    font-size: 14px; 
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const hotspotItems = document.querySelectorAll('.hotspot-item');
+  
+  hotspotItems.forEach(item => {
+    const hotspot = item.querySelector('.hotspot');
+    
+    hotspot.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Si le hotspot est déjà actif et qu'il y a un produit lié
+      if (item.classList.contains('active')) {
+        const productUrl = item.dataset.productUrl;
+        if (productUrl) {
+          // Rediriger vers le produit
+          window.location.href = productUrl;
+          return;
+        }
+      }
+      
+      // Fermer tous les autres hotspots
+      hotspotItems.forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.classList.remove('active');
+        }
+      });
+      
+      // Toggle l'état actif de ce hotspot
+      item.classList.toggle('active');
+    });
+  });
+  
+  // Fermer les tooltips en cliquant ailleurs
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.hotspot-item')) {
+      hotspotItems.forEach(item => {
+        item.classList.remove('active');
+      });
+    }
+  });
+});
+</script>

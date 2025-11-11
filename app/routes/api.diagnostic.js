@@ -1,5 +1,5 @@
 // app/routes/api.diagnostic.js
-import { json } from "@remix-run/node";
+// Utilisation de Response.json() natif
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
@@ -96,7 +96,7 @@ export const loader = async ({ request }) => {
     
     if (themesData.errors) {
       console.error('❌ Themes GraphQL errors:', themesData.errors);
-      return json({
+      return Response.json({
         success: false,
         error: 'PERMISSIONS_ERROR',
         message: 'Erreur de permissions pour accéder aux thèmes',
@@ -119,7 +119,7 @@ export const loader = async ({ request }) => {
     const shop = shopData.data.shop;
     const themes = themesData.data.themes.edges;
     
-    return json({
+    return Response.json({
       success: true,
       timestamp: new Date().toISOString(),
       message: 'Tous les tests sont passés !',
@@ -149,7 +149,7 @@ export const loader = async ({ request }) => {
   } catch (error) {
     console.error('💥 Diagnostic complet échoué:', error);
     
-    return json({
+    return Response.json({
       success: false,
       timestamp: new Date().toISOString(),
       error: error.message,

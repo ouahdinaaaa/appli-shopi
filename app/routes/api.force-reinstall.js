@@ -13,7 +13,7 @@ export const forceReinstallLoader = async ({ request }) => {
       console.log('ℹ️ Aucune session à nettoyer');
     }
     
-    return json({
+    return Response.json({
       success: true,
       message: "Instructions de réinstallation",
       steps: [
@@ -30,7 +30,7 @@ export const forceReinstallLoader = async ({ request }) => {
     });
     
   } catch (error) {
-    return json({
+    return Response.json({
       success: false,
       error: error.message,
       message: "Nettoyage échoué mais continuez la réinstallation manuelle"

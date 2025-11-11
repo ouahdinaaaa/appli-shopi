@@ -1,7 +1,7 @@
-import { json } from "@remix-run/node";
+// Utilisation de Response.json() natif
 
 export const loader = async () => {
-  return json({ 
+  return Response.json({ 
     success: true, 
     message: "Route simple fonctionne!",
     port: process.env.PORT || "unknown"

@@ -1,51 +1,27 @@
-# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
-
-<<<<<<< HEAD
-client_id = "3d0f0a8d5f840d3c052926137df15123"
-name = "section-addict"
-application_url = "https://clause-accepts-immigrants-staffing.trycloudflare.com"
-embedded = true
-handle = "section-addict-1"
-
-[build]
-include_config_on_deploy = true
-automatically_update_urls_on_dev = true
-
-[webhooks]
-api_version = "2025-07"
-=======
 client_id = "fc65f31c5c9fdd475c8076b2518122da"
 name = "Section-addict"
-application_url = "https://indexed-levy-newton-dress.trycloudflare.com"
+application_url = "https://import-snapshot-chi-crawford.trycloudflare.com"
 embedded = true
 
 [webhooks]
 api_version = "2025-10"
 
-  [[webhooks.subscriptions]]
-  topics = [ "app/uninstalled" ]
-  uri = "/webhooks/app/uninstalled"
+[[webhooks.subscriptions]]
+topics = ["app/uninstalled"]
+uri = "/webhooks/app/uninstalled"
 
-  [[webhooks.subscriptions]]
-  topics = [ "app/scopes_update" ]
-  uri = "/webhooks/app/scopes_update"
->>>>>>> 9e37be4 (push)
+[[webhooks.subscriptions]]
+topics = ["app/scopes_update"]
+uri = "/webhooks/app/scopes_update"
 
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "read_themes,write_products,write_themes"
 
 [auth]
-<<<<<<< HEAD
-redirect_urls = ["https://clause-accepts-immigrants-staffing.trycloudflare.com/auth/callback", "https://clause-accepts-immigrants-staffing.trycloudflare.com/auth/shopify/callback", "https://clause-accepts-immigrants-staffing.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://import-snapshot-chi-crawford.trycloudflare.com/auth"]
 
 [pos]
-embedded = false
-=======
-redirect_urls = [
-  "https://indexed-levy-newton-dress.trycloudflare.com/api/auth"
-]
+embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
->>>>>>> 9e37be4 (push)

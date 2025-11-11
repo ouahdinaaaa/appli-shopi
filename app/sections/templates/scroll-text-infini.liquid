@@ -1,0 +1,289 @@
+<!-- sections/r36s-marquee.liquid -->
+{%- liquid
+  assign text_color = section.settings.text_color
+  assign bg_color = section.settings.bg_color
+  assign box_shadow_enabled = section.settings.box_shadow_enabled
+  assign box_shadow_color = section.settings.box_shadow_color
+  assign speed_desktop = section.settings.speed_desktop
+  assign speed_mobile = section.settings.speed_mobile
+  assign font_size_desktop = section.settings.font_size_desktop
+  assign font_size_mobile = section.settings.font_size_mobile
+  assign marquee_text = section.settings.marquee_text
+  assign separator = section.settings.separator
+-%}
+
+<div class="r36s-marquee-container" 
+     style="background-color: {{ bg_color }}; 
+            {% if box_shadow_enabled %}box-shadow: 0 4px 15px {{ box_shadow_color }}40;{% endif %}">
+  <div class="r36s-marquee-wrapper">
+    <div class="r36s-marquee-content" 
+         data-speed-desktop="{{ speed_desktop }}" 
+         data-speed-mobile="{{ speed_mobile }}"
+         style="color: {{ text_color }};">
+      {% for i in (1..15) %}
+        <span class="marquee-item">{{ marquee_text }}</span>
+        {% if separator != blank %}
+          <span class="marquee-separator">{{ separator }}</span>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="r36s-marquee-content r36s-marquee-duplicate" 
+         data-speed-desktop="{{ speed_desktop }}" 
+         data-speed-mobile="{{ speed_mobile }}"
+         style="color: {{ text_color }};">
+      {% for i in (1..15) %}
+        <span class="marquee-item">{{ marquee_text }}</span>
+        {% if separator != blank %}
+          <span class="marquee-separator">{{ separator }}</span>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+.r36s-marquee-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 15px 0;
+  white-space: nowrap;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.r36s-marquee-wrapper {
+  display: flex;
+  width: 200%;
+  animation: r36s-scroll-infinite linear infinite;
+}
+
+.r36s-marquee-content {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.r36s-marquee-duplicate {
+  margin-left: 0;
+}
+
+.marquee-item {
+  display: inline-block;
+  padding: 0 20px;
+  font-size: {{ font_size_desktop }}px;
+  white-space: nowrap;
+}
+
+.marquee-separator {
+  display: inline-block;
+  padding: 0 10px;
+  opacity: 0.7;
+}
+
+@keyframes r36s-scroll-infinite {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .marquee-item {
+    font-size: {{ font_size_mobile }}px;
+    padding: 0 15px;
+  }
+  
+  .r36s-marquee-container {
+    padding: 10px 0;
+    min-height: 45px;
+  }
+}
+
+/* Gaming style enhancements */
+.r36s-marquee-container {
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.marquee-item {
+  text-shadow: 0 0 10px currentColor;
+  transition: all 0.3s ease;
+}
+
+.r36s-marquee-container:hover .marquee-item {
+  text-shadow: 0 0 20px currentColor;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const marqueeWrapper = document.querySelector('.r36s-marquee-wrapper');
+  const marqueeContent = document.querySelector('.r36s-marquee-content');
+  
+  if (marqueeWrapper && marqueeContent) {
+    const speedDesktop = parseInt(marqueeContent.dataset.speedDesktop) || 50;
+    const speedMobile = parseInt(marqueeContent.dataset.speedMobile) || 30;
+    
+    function updateMarqueeSpeed() {
+      const isMobile = window.innerWidth <= 768;
+      const speed = isMobile ? speedMobile : speedDesktop;
+      
+      // Calculer la durée basée sur la vitesse (inverse pour que plus élevé = plus rapide)
+      const duration = Math.max(5, 50 - (speed / 2));
+      
+      marqueeWrapper.style.animationDuration = duration + 's';
+    }
+    
+    // Initialiser
+    updateMarqueeSpeed();
+    
+    // Mettre à jour lors du redimensionnement
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateMarqueeSpeed, 100);
+    });
+    
+    // Pause/play sur hover (optionnel)
+    const container = document.querySelector('.r36s-marquee-container');
+    container.addEventListener('mouseenter', function() {
+      marqueeWrapper.style.animationPlayState = 'paused';
+    });
+    
+    container.addEventListener('mouseleave', function() {
+      marqueeWrapper.style.animationPlayState = 'running';
+    });
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Scroll text infini",
+  "tag": "section",
+  "class": "section-r36s-marquee",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenu du Marquee"
+    },
+    {
+      "type": "text",
+      "id": "marquee_text",
+      "label": "Texte du marquee",
+      "default": "Text 1 - Text 2 - Text 3 - Text 4 - Text 5"
+    },
+    {
+      "type": "text",
+      "id": "separator",
+      "label": "Séparateur",
+      "default": "★",
+      "info": "Caractère entre chaque répétition du texte"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Couleurs et Style"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Couleur de fond",
+      "default": "#000000"
+    },
+    {
+      "type": "checkbox",
+      "id": "box_shadow_enabled",
+      "label": "Activer l'ombre",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "box_shadow_color",
+      "label": "Couleur de l'ombre",
+      "default": "#ff0080"
+    },
+    {
+      "type": "header",
+      "content": "📐 Tailles de Police"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "label": "Taille police (Desktop)",
+      "min": 12,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Taille police (Mobile)",
+      "min": 10,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "⚡ Vitesse du Scroll"
+    },
+    {
+      "type": "range",
+      "id": "speed_desktop",
+      "label": "Vitesse Desktop",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 50,
+      "info": "Plus élevé = plus rapide"
+    },
+    {
+      "type": "range",
+      "id": "speed_mobile",
+      "label": "Vitesse Mobile",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 30,
+      "info": "Plus élevé = plus rapide"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scroll Text Infini",
+      "settings": {
+        "marquee_text": "Scroll Text Infini",
+        "separator": "★",
+        "text_color": "#ffffff",
+        "bg_color": "#000000",
+        "box_shadow_enabled": true,
+        "box_shadow_color": "#ff0080",
+        "font_size_desktop": 24,
+        "font_size_mobile": 18,
+        "speed_desktop": 50,
+        "speed_mobile": 30
+      }
+    }
+  ]
+}
+{% endschema %}

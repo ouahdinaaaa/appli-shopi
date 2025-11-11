@@ -1,0 +1,370 @@
+{% schema %}
+{
+  "name": "Comparaison produit",
+  "tag": "section",
+  "class": "shopify-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Sous-titre",
+      "default": "us vs. them"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titre principal",
+      "default": "We don't just vacuum — we dominate dirt."
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description courte",
+      "default": "Smarter. Stronger. Cleaner."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_us",
+      "label": "Image produit Rainbow Dust"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_image",
+      "label": "Badge de satisfaction (optionnel)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_them",
+      "label": "Image produit concurrent"
+    },
+    {
+      "type": "text",
+      "id": "description_below",
+      "label": "Texte en dessous du tableau",
+      "default": "Built smarter. Built stronger. Built for you."
+    },
+    {
+      "type": "text",
+      "id": "button_link",
+      "label": "Lien du bouton",
+      "default": "/pages/science"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texte du bouton",
+      "default": "Switch smart — start clean."
+    },
+    {
+      "type": "text",
+      "id": "below_button_text",
+      "label": "Texte sous le bouton",
+      "default": "We offer a risk free money back guarantee with each order"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond de la section",
+      "default": "#e7f0fd"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Couleur du bouton",
+      "default": "#2e59ac"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Couleur du texte du bouton",
+      "default": "#FFFFFF"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "comparison",
+      "name": "Ligne de comparaison",
+      "settings": [
+        {
+          "type": "text",
+          "id": "us_text",
+          "label": "Texte 'Nous'",
+          "default": "energy boost without crash"
+        },
+        {
+          "type": "text",
+          "id": "them_text",
+          "label": "Texte 'Eux'",
+          "default": "energy spike then fatigue"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparaison produit",
+      "blocks": [
+        { "type": "comparison", "settings": { "us_text": "Whisper-quiet technology", "them_text": "Sounds like a jet engine" } },
+        { "type": "comparison", "settings": { "us_text": "Lightweight & easy to carry", "them_text": "Bulky and hard to move" } },
+        { "type": "comparison", "settings": { "us_text": "Cordless freedom", "them_text": "Tangled cord nightmare" } },
+        { "type": "comparison", "settings": { "us_text": "Built-in fresh scent system", "them_text": "Leaves that “vacuum smell”" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<div id="alternative_QxKn" style="background-color: {{ section.settings.background_color }};">
+  <div class="section_holder">
+    <div class="subheading">{{ section.settings.subheading }}</div>
+    <div class="heading">{{ section.settings.heading }}</div>
+    <div class="desc">{{ section.settings.description }}</div>
+
+    <div class="compare_box">
+      <div class="img_vs_holder">
+        <div class="vs_img">
+          {% if section.settings.image_us != blank %}
+            <img src="{{ section.settings.image_us | img_url: '480x' }}" alt="us">
+          {% else %}
+            <img src="https://images.pexels.com/photos/8055829/pexels-photo-8055829.jpeg" alt="us">
+          {% endif %}
+          {% if section.settings.badge_image != blank %}
+            <img class="satis_badge" src="{{ section.settings.badge_image | img_url: 'medium' }}" alt="satisfaction">
+          {% endif %}
+        </div>
+
+        <div class="img_vs">VS.</div>
+
+        <div class="vs_img">
+          {% if section.settings.image_them != blank %}
+            <img src="{{ section.settings.image_them | img_url: '480x' }}" alt="them">
+          {% else %}
+            <img src="https://images.pexels.com/photos/4107286/pexels-photo-4107286.jpeg" alt="them">
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="vs_desc_holder">
+        {% for block in section.blocks %}
+          <div class="s_vs_desc">
+            <div class="us_desc">
+              <div>{{ block.settings.us_text }}</div>
+            </div>
+            <div class="them_desc">
+              <div>{{ block.settings.them_text }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="descs_below_table">{{ section.settings.description_below }}</div>
+      <a class="try_btn" href="{{ section.settings.button_link }}" style="background-color: {{ section.settings.button_background }}; color: {{ section.settings.button_text_color }};">{{ section.settings.button_text }}</a>
+      <div class="desc_below_btn">{{ section.settings.below_button_text }}</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Même style que ton code d’origine */
+  #alternative_QxKn {
+      position: relative;
+      background-color: #e7f0fd;
+  }
+
+  #alternative_QxKn .section_holder {
+      position: relative;
+      margin: auto;
+      max-width: 680px;
+      padding: 80px 40px;
+  }
+
+  #alternative_QxKn .subheading {
+      width: fit-content;
+      height: 35px;
+      padding: 0 12.2px;
+      background: black;
+      font: normal normal 500 18px/22px Apercu Pro;
+      color: #FFFFFF;
+      text-transform: lowercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      margin: 0 auto 6px;
+      font-weight: bold;
+  }
+
+  #alternative_QxKn .heading {
+      font-family: 'TAN - MEMORIES';
+      font-weight: 400;
+      font-size: 42px;
+      line-height: 1.1;
+      text-align: center;
+      margin-bottom: 12px;
+  }
+
+  #alternative_QxKn .desc {
+      text-align: center;
+      font: normal normal normal 21px/21px Apercu Pro;
+      color: #000000;
+      margin-bottom: 60px;
+  }
+
+  #alternative_QxKn .img_vs_holder {
+      display: flex;
+      position: relative;
+      justify-content: space-between;
+      margin-bottom: 40px;
+  }
+
+  #alternative_QxKn .img_vs {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 65px;
+      height: 65px;
+      background: #000000;
+      color: white;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Apercu Pro;
+      font-size: 25px;
+      z-index: 1;
+  }
+
+  #alternative_QxKn .vs_img {
+      width: calc(50% - 8px);
+      display: flex;
+      position: relative;
+  }
+
+  #alternative_QxKn .vs_img:last-of-type {
+      border: 2px solid #F1F9FC;
+      border-radius: 12px;
+  }
+
+  #alternative_QxKn .s_vs_desc {
+      display: flex;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 65px;
+      margin-bottom: 13px;
+  }
+
+  #alternative_QxKn .s_vs_desc>div {
+      width: 50%;
+      display: flex;
+      align-items: center;
+  }
+
+  #alternative_QxKn .us_desc {
+      background: transparent linear-gradient(106deg, #277bed 0%, #000000 100%) 0% 0% no-repeat padding-box;
+      justify-content: flex-end;
+      padding-right: 56px;
+      padding-left: 10px;
+      font: normal normal normal 21px/21px Apercu Pro;
+      text-align: right;
+  }
+
+  #alternative_QxKn .them_desc {
+      background: #F5F5F5;
+      font: normal normal normal 19px/21px Apercu Pro;
+  }
+
+  #alternative_QxKn .us_desc>div {
+      position: relative;
+      color: white;
+      font-size: 15.5px;
+      font-weight: bold;
+  }
+
+  #alternative_QxKn .them_desc>div {
+      position: relative;
+      color: black;
+      padding-left: 58px;
+      padding-right: 24px;
+      font-weight: bold;
+  }
+
+  #alternative_QxKn .them_desc>div:after,
+  #alternative_QxKn .us_desc>div:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 100px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 24px;
+  }
+
+  #alternative_QxKn .us_desc>div:after {
+      right: -32px;
+      background-image: url(//spacegoods.com/cdn/shop/t/346/assets/white_check.svg?v=168019155159854585241722621936);
+  }
+
+  #alternative_QxKn .them_desc>div:after {
+      left: 24px;
+      background-image: url(//spacegoods.com/cdn/shop/t/346/assets/black_close.svg?v=21011354507018251241722621935);
+  }
+
+  #alternative_QxKn .try_btn {
+      width: 100%;
+      max-width: 487px;
+      height: 60px;
+      border-radius: 8px;
+      display: flex;
+      font: normal normal 500 21px/26px Apercu Pro;
+      color: #FFFFFF;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin: auto;
+      background-color: #2e59ac;
+      text-decoration: none;
+      font-weight: bold;
+  }
+
+  #alternative_QxKn .try_btn:hover {
+      background: #282828;
+  }
+
+  #alternative_QxKn .desc_below_btn {
+      font: normal normal normal 16px/19px Apercu Pro;
+      color: #000000;
+      margin-top: 13px;
+      text-align: center;
+  }
+
+  #alternative_QxKn .descs_below_table {
+      background: transparent linear-gradient(106deg, #277bed 0%, #000000 100%) 0% 0% no-repeat padding-box;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font: normal normal 500 21px/21px Apercu Pro;
+      text-align: center;
+      margin-bottom: 21px;
+  }
+
+  #alternative_QxKn img.satis_badge {
+      position: absolute;
+      width: 146px;
+      height: 139px;
+      transform: translate(-50%, -39px);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.querySelector('#alternative_QxKn .try_btn');
+    if (btn) {
+      btn.addEventListener('click', function (e) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  });
+</script>

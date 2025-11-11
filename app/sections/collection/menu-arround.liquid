@@ -1,0 +1,548 @@
+<style>
+
+.style-community-section {
+  background-color: var(--background-color);
+  padding: 60px 20px;
+}
+
+.style-community-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: var(--title-size-desktop);
+  color: var(--title-color-desktop);
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin: 0 0 20px 0;
+  line-height: 1.2;
+}
+
+.section-subtitle {
+  font-size: var(--subtitle-size-desktop);
+  color: var(--subtitle-color-desktop);
+  margin: 0 0 50px 0;
+  line-height: 1.5;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 50px;
+}
+
+.categories-grid {
+  display: flex;
+  gap: var(--gap-desktop);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 10px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.categories-grid::-webkit-scrollbar {
+  height: 4px;
+}
+
+.categories-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.categories-grid::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.categories-grid::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+.category-item {
+  flex: 0 0 200px;
+  width: 200px;
+}
+
+.category-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease;
+}
+
+.category-link:hover {
+  transform: translateY(-5px);
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 15px;
+  background: #f5f5f5;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.category-link:hover .image-container img {
+  transform: scale(1.05);
+}
+
+.placeholder-image {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-icon {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.category-link:hover .arrow-icon {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.category-text {
+  font-size: var(--text-size-desktop);
+  color: var(--text-color);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* Responsive Design */
+
+/* Tablette */
+@media screen and (max-width: 1024px) {
+  .style-community-section {
+    padding: 50px 20px;
+  }
+  
+  .section-title {
+    font-size: var(--title-size-tablet);
+  }
+  
+  .section-subtitle {
+    font-size: var(--subtitle-size-tablet);
+    margin-bottom: 40px;
+  }
+  
+  .category-text {
+    font-size: var(--text-size-tablet);
+  }
+  
+  .categories-grid {
+    gap: var(--gap-tablet);
+  }
+  
+  .category-item {
+    flex: 0 0 180px;
+    width: 180px;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 768px) {
+  .style-community-section {
+    padding: 40px 15px;
+  }
+  
+  .section-title {
+    font-size: var(--title-size-mobile);
+  }
+  
+  .section-subtitle {
+    font-size: var(--subtitle-size-mobile);
+    margin-bottom: 35px;
+  }
+  
+  .category-text {
+    font-size: var(--text-size-mobile);
+  }
+  
+  .categories-grid {
+    gap: var(--gap-mobile);
+  }
+  
+  .category-item {
+    flex: 0 0 160px;
+    width: 160px;
+  }
+  
+  .arrow-icon {
+    width: 28px;
+    height: 28px;
+    bottom: 12px;
+    right: 12px;
+  }
+  
+  .arrow-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Très petit mobile */
+@media screen and (max-width: 480px) {
+  .categories-grid {
+    gap: var(--gap-mobile);
+  }
+  
+  .category-item {
+    flex: 0 0 140px;
+    width: 140px;
+  }
+  
+  .image-container {
+    margin-bottom: 12px;
+  }
+}
+
+</style>
+
+<div class="style-community-section" style="
+  --title-color-desktop: {{ section.settings.title_color }};
+  --subtitle-color-desktop: {{ section.settings.subtitle_color }};
+  --title-size-desktop: {{ section.settings.title_size_desktop }}px;
+  --subtitle-size-desktop: {{ section.settings.subtitle_size_desktop }}px;
+  --title-size-tablet: {{ section.settings.title_size_tablet }}px;
+  --subtitle-size-tablet: {{ section.settings.subtitle_size_tablet }}px;
+  --title-size-mobile: {{ section.settings.title_size_mobile }}px;
+  --subtitle-size-mobile: {{ section.settings.subtitle_size_mobile }}px;
+  --background-color: {{ section.settings.background_color }};
+  --text-color: {{ section.settings.text_color }};
+  --text-size-desktop: {{ section.settings.text_size_desktop }}px;
+  --text-size-tablet: {{ section.settings.text_size_tablet }}px;
+  --text-size-mobile: {{ section.settings.text_size_mobile }}px;
+  --gap-desktop: {{ section.settings.gap_desktop }}px;
+  --gap-tablet: {{ section.settings.gap_tablet }}px;
+  --gap-mobile: {{ section.settings.gap_mobile }}px;
+">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <h2 class="section-title" style="text-align: {{ section.settings.title_alignment }};">
+        {{ section.settings.title }}
+      </h2>
+    {% endif %}
+    
+    {% if section.settings.subtitle != blank %}
+      <p class="section-subtitle" style="text-align: {{ section.settings.subtitle_alignment }};">
+        {{ section.settings.subtitle }}
+      </p>
+    {% endif %}
+    
+    <div class="categories-grid">
+      {% for block in section.blocks %}
+        <div class="category-item" {{ block.shopify_attributes }}>
+          <a href="{{ block.settings.link | default: '#' }}" class="category-link">
+            <div class="image-container">
+              {% if block.settings.image != blank %}
+                <img src="{{ block.settings.image | image_url: width: 400 }}" 
+                     alt="{{ block.settings.text | escape }}"
+                     loading="lazy">
+              {% else %}
+                <div class="placeholder-image"></div>
+              {% endif %}
+              <div class="arrow-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+            {% if block.settings.text != blank %}
+              <p class="category-text" style="text-align: {{ block.settings.text_alignment }};">
+                {{ block.settings.text }}
+              </p>
+            {% endif %}
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Style Community",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Titre principal"
+    },
+    {
+      "type": "header",
+      "content": "Espacement"
+    },
+    {
+      "type": "range",
+      "id": "gap_desktop",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Espacement entre les images (Desktop)",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "gap_tablet",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Espacement entre les images (Tablette)",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Espacement entre les images (Mobile)",
+      "default": 10
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "BE PART OF OUR STYLE COMMUNITY"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Alignement du titre",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centre" },
+        { "value": "right", "label": "Droite" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Taille du titre (Desktop)",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Taille du titre (Tablette)",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Taille du titre (Mobile)",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Sous-titre"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Sous-titre",
+      "default": "Up to 30% off on selected styles choose from a range of chic totes, elegant clutches, and trendy crossbody bags, all designed to elevate your festive outfits."
+    },
+    {
+      "type": "select",
+      "id": "subtitle_alignment",
+      "label": "Alignement du sous-titre",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centre" },
+        { "value": "right", "label": "Droite" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Couleur du sous-titre",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_desktop",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du sous-titre (Desktop)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_tablet",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du sous-titre (Tablette)",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du sous-titre (Mobile)",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Apparence générale"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte des catégories",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du texte des catégories (Desktop)",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "text_size_tablet",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du texte des catégories (Tablette)",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du texte des catégories (Mobile)",
+      "default": 12
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Catégorie",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texte sous l'image",
+          "default": "CATEGORY NAME"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "Alignement du texte",
+          "options": [
+            { "value": "left", "label": "Gauche" },
+            { "value": "center", "label": "Centre" },
+            { "value": "right", "label": "Droite" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Lien de redirection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Style Community",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "text": "BROWN BASE"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "text": "FOREVER"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "text": "LAPTOP BAGS"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

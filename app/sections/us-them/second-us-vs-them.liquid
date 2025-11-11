@@ -1,0 +1,301 @@
+<style>
+.compare-section {
+  padding: 4rem 2rem;
+  background: {{ section.settings.section_bg }};
+  color: {{ section.settings.text_color }};
+  font-family: 'Orbitron', sans-serif;
+  text-align: center;
+  position: relative;
+}
+
+/* TITRE PRINCIPAL */
+.compare-title {
+  font-size: {{ section.settings.title_size_desktop }}px;
+  background: linear-gradient(90deg, {{ section.settings.title_color_start }}, {{ section.settings.title_color_end }});
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+/* SOUS-TITRE */
+.compare-subtitle {
+  font-size: {{ section.settings.subtitle_size_desktop }}px;
+  color: {{ section.settings.subtitle_color }};
+  margin-bottom: 3rem;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+  font-weight: {% if section.settings.subtitle_bold == 'bold' %}bold{% else %}normal{% endif %};
+}
+
+/* TABLEAU */
+.compare-table {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto 2rem auto;
+  border-collapse: collapse;
+  background: linear-gradient(
+    135deg,
+    {{ section.settings.table_color_left }} 50%,
+    {{ section.settings.table_color_right }} 50%
+  );
+  border-radius: 24px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  border: 2px solid {{ section.settings.table_border_color }};
+  transition: all 0.3s ease;
+}
+
+/* EN-TÊTES */
+.compare-table th {
+  background-color: transparent;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: {{ section.settings.table_head_color }};
+  letter-spacing: 1px;
+  padding: 1.2rem;
+}
+
+/* LIGNES */
+.compare-table td {
+  font-size: {{ section.settings.argument_size_desktop }}px;
+  font-weight: {{ section.settings.argument_bold_desktop }};
+  color: {{ section.settings.argument_color }};
+  padding: 1.2rem 1.5rem;
+  vertical-align: middle;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: {{ section.settings.argument_alignment }};
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* ALIGNEMENT ICON + TEXTE */
+.cell-content {
+  display: flex;
+  align-items: center;
+  justify-content: {{ section.settings.argument_alignment }};
+  gap: 0.6rem;
+  flex-wrap: nowrap;
+}
+
+/* ICONES */
+.compare-table img.left-icon,
+.compare-table img.right-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.3));
+  transition: transform 0.3s ease;
+}
+
+/* EFFET DE SURVOL SUR LIGNES */
+.compare-table tr:hover td {
+  background: {{ section.settings.row_hover_bg }};
+  transform: scale(1.01);
+}
+
+/* EFFET DE SURVOL SUR ICONES */
+.compare-table tr:hover img {
+  transform: scale(1.2);
+}
+
+/* BADGES DE CONFIANCE */
+.trust-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.trust-icons img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(255, 0, 255, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.trust-icons img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.4);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .compare-title {
+    font-size: {{ section.settings.title_size_mobile }}px;
+  }
+
+  .compare-subtitle {
+    font-size: {{ section.settings.subtitle_size_mobile }}px;
+  }
+
+  .compare-table th {
+    font-size: 1.1rem;
+  }
+
+  .compare-table td {
+    font-size: {{ section.settings.argument_size_mobile }}px;
+    font-weight: {{ section.settings.argument_bold_mobile }};
+  }
+
+  .cell-content {
+    gap: 0.4rem;
+  }
+
+  .compare-table img.left-icon,
+  .compare-table img.right-icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+</style>
+
+<section class="compare-section">
+  <div class="compare-title">{{ section.settings.main_title }}</div>
+  <div class="compare-subtitle">{{ section.settings.subtitle }}</div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>{{ section.settings.left_title }}</th>
+        <th>{{ section.settings.right_title }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for block in section.blocks %}
+        {% if block.type == 'row' %}
+        <tr>
+          <td>
+            <div class="cell-content">
+              {% if block.settings.left_icon != blank %}
+                <img class="left-icon" src="{{ block.settings.left_icon | img_url: '50x' }}" alt="Icône gauche" />
+              {% endif %}
+              <span>{{ block.settings.left_text }}</span>
+            </div>
+          </td>
+          <td>
+            <div class="cell-content">
+              {% if block.settings.right_icon != blank %}
+                <img class="right-icon" src="{{ block.settings.right_icon | img_url: '50x' }}" alt="Icône droite" />
+              {% endif %}
+              <span>{{ block.settings.right_text }}</span>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+{% schema %}
+{
+  "name": "Us vs Them",
+  "tag": "section",
+  "settings": [
+    { "type": "color", "id": "section_bg", "label": "Arrière-plan de la section", "default": "#f5f5f7" },
+    { "type": "color", "id": "text_color", "label": "Couleur du texte global", "default": "#ffffff" },
+
+    { "type": "text", "id": "main_title", "label": "Titre principal", "default": "US VS THEM" },
+    { "type": "color", "id": "title_color_start", "label": "Dégradé titre - couleur 1", "default": "#26383D" },
+    { "type": "color", "id": "title_color_end", "label": "Dégradé titre - couleur 2", "default": "#09167A" },
+
+    { "type": "text", "id": "subtitle", "label": "Sous-titre", "default": "Pourquoi nous choisir ?" },
+    { "type": "color", "id": "subtitle_color", "label": "Couleur du sous-titre", "default": "#111111" },
+    {
+      "type": "select",
+      "id": "subtitle_bold",
+      "label": "Sous-titre en gras",
+      "default": "bold",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "bold", "label": "Gras" }
+      ]
+    },
+
+    { "type": "text", "id": "left_title", "label": "Titre colonne gauche", "default": "MA MARQUE" },
+    { "type": "text", "id": "right_title", "label": "Titre colonne droite", "default": "AUTRES" },
+    { "type": "color", "id": "table_head_color", "label": "Couleur du texte des titres de colonnes", "default": "#ffffff" },
+
+    { "type": "color", "id": "table_color_left", "label": "Couleur gauche du tableau", "default": "#1b1b33" },
+    { "type": "color", "id": "table_color_right", "label": "Couleur droite du tableau", "default": "#282845" },
+    { "type": "color", "id": "argument_color", "label": "Couleur du texte des arguments", "default": "#f5f5f5" },
+    { "type": "color", "id": "row_hover_bg", "label": "Couleur survol des lignes", "default": "#2f2f5a" },
+    { "type": "color", "id": "table_border_color", "label": "Couleur de la bordure du tableau", "default": "#3b3b66" },
+
+    {
+      "type": "select",
+      "id": "argument_alignment",
+      "label": "Alignement du texte des arguments",
+      "default": "center",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centre" },
+        { "value": "right", "label": "Droite" }
+      ]
+    },
+
+    { "type": "range", "id": "title_size_desktop", "label": "Taille titre desktop", "default": 42, "min": 20, "max": 80 },
+    { "type": "range", "id": "title_size_mobile", "label": "Taille titre mobile", "default": 30, "min": 14, "max": 60 },
+    { "type": "range", "id": "subtitle_size_desktop", "label": "Taille sous-titre desktop", "default": 20, "min": 12, "max": 50 },
+    { "type": "range", "id": "subtitle_size_mobile", "label": "Taille sous-titre mobile", "default": 16, "min": 10, "max": 40 },
+    { "type": "range", "id": "argument_size_desktop", "label": "Taille texte argument desktop", "default": 16, "min": 10, "max": 30 },
+    { "type": "range", "id": "argument_size_mobile", "label": "Taille texte argument mobile", "default": 14, "min": 10, "max": 24 },
+    {
+      "type": "select",
+      "id": "argument_bold_desktop",
+      "label": "Texte argument desktop - Gras",
+      "default": "normal",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "bold", "label": "Gras" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "argument_bold_mobile",
+      "label": "Texte argument mobile - Gras",
+      "default": "normal",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "bold", "label": "Gras" }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Ligne de comparaison",
+      "settings": [
+        { "type": "image_picker", "id": "left_icon", "label": "Icône Us" },
+        { "type": "text", "id": "left_text", "label": "Texte Us" },
+        { "type": "image_picker", "id": "right_icon", "label": "Icône Them" },
+        { "type": "text", "id": "right_text", "label": "Texte Them" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Us vs Them - Moderne",
+      "blocks": [
+        {
+          "type": "row",
+          "settings": {
+            "left_text": "Support client 7j/7",
+            "right_text": "Support limité"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "left_text": "Qualité garantie",
+            "right_text": "Aucune garantie"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+// Utilisation de Response.json() natif
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
@@ -14,7 +14,7 @@ export const loader = async ({ request }) => {
       console.log('✅ Authenticate.admin réussi');
     } catch (authError) {
       console.error('❌ Authenticate.admin échoué:', authError.message);
-      return json({
+      return Response.json({
         success: false,
         step: 'authentication',
         error: authError.message,
@@ -141,7 +141,7 @@ export const loader = async ({ request }) => {
       }
     }
     
-    return json({
+    return Response.json({
       success: issues.length === 0,
       timestamp: new Date().toISOString(),
       session: sessionDetails,
@@ -160,7 +160,7 @@ export const loader = async ({ request }) => {
   } catch (error) {
     console.error('💥 Erreur diagnostic:', error);
     
-    return json({
+    return Response.json({
       success: false,
       error: error.message,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,

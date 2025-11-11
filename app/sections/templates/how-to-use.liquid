@@ -1,0 +1,257 @@
+
+<section class="comment-fonctionne" style="background-color: {{ section.settings.background_color }}; padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px 0;">
+  <style>
+    .fonctionne-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .fonctionne-title {
+      text-align: center;
+      font-size: {{ section.settings.title_size }}px;
+      color: {{ section.settings.title_color }};
+      font-weight: {{ section.settings.title_weight }};
+      margin-bottom: {{ section.settings.title_margin_bottom }}px;
+    }
+
+    .fonctionne-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .fonctionne-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .fonctionne-number {
+      min-width: 32px;
+      height: 32px;
+      background-color: {{ section.settings.circle_bg }};
+      color: #fff;
+      font-weight: bold;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      margin-top: 4px;
+    }
+
+    .fonctionne-text {
+      font-size: {{ section.settings.text_size }}px;
+      color: {{ section.settings.text_color }};
+      line-height: {{ section.settings.line_height }}px;
+    }
+    
+    @media (max-width: 767px) {
+      .fonctionne-text {
+        font-size: {{ block.settings.text_size_mobile }}px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
+    }
+
+
+    @media (max-width: 767px) {
+      .fonctionne-title {
+        font-size: 20px;
+        text-align: center;
+      }
+
+      .fonctionne-step {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+  </style>
+
+  <div class="fonctionne-container">
+    <h2 class="fonctionne-title">{{ section.settings.title }}</h2>
+
+    <div class="fonctionne-steps">
+      {% for block in section.blocks %}
+        <div class="fonctionne-step">
+          <div class="fonctionne-number">{{ forloop.index }}</div>
+<div class="fonctionne-text" style="margin-left: {{ block.settings.desktop_text_margin_left }}px; margin-right: {{ block.settings.desktop_text_margin_right }}px;">
+  <strong> {{ block.settings.text }} </strong>
+</div>
+
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Comment ça fonctionne",
+  "tag": "section",
+  "class": "section-comment-fonctionne",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#e6faf4"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "Comment ça fonctionne ?"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Épaisseur du titre",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "bold", "label": "Gras" }
+      ],
+      "default": "bold"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Taille du titre (px)",
+      "min": 14,
+      "max": 48,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom",
+      "label": "Espace sous le titre (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "circle_bg",
+      "label": "Couleur des cercles numérotés",
+      "default": "#5ac7ae"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Taille du texte (px)",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Interligne (px)",
+      "min": 14,
+      "max": 40,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding haut (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bas (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Étape",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texte de l'étape",
+          "default": "Écrivez ici la description de l'étape."
+        },
+        {
+          "type": "range",
+          "id": "desktop_text_margin_left",
+          "label": "Marge gauche (desktop)",
+          "min": 0,
+          "max": 100,
+          "step": 2,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "desktop_text_margin_right",
+          "label": "Marge droite (desktop)",
+          "min": 0,
+          "max": 100,
+          "step": 2,
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "text_size_mobile",
+          "label": "Taille du texte (mobile)",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "default": 14
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comment ça fonctionne",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "text": "Imprimez le pack que vous avez reçu par e-mail, au format PDF, après votre achat."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "text": "Votre enfant réalise seul, en toute autonomie, 2 activités par semaine, guidé par les consignes simples des activités."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "text": "Admirez les progrès visibles de votre enfant, grâce à nos packs conçus pour garantir un développement complet et progressif."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

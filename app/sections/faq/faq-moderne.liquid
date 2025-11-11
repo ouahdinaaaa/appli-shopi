@@ -1,0 +1,283 @@
+<div class="faq-section" style="background-color: {{ section.settings.bg_color }};">
+  <div class="faq-container">
+    <h2 class="faq-title" style="text-align: {{ section.settings.title_align }}; font-size: {{ section.settings.title_size }}px;">
+      {{ section.settings.faq_title }}
+    </h2>
+    <p class="faq-subtext" style="text-align: {{ section.settings.text_align }}; font-size: {{ section.settings.text_size }}px; font-weight: {% if section.settings.text_bold %}bold{% else %}normal{% endif %};-webkit-text-stroke:0.3px">
+      {{ section.settings.faq_subtext }}
+    </p>
+
+    <div class="faq-items">
+      {% for block in section.blocks %}
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)" style="font-size: {{ section.settings.question_size }}px; font-weight: {% if section.settings.question_bold %}bold{% else %}normal{% endif %};">
+            {{ block.settings.question }}
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" style="font-size: {{ section.settings.answer_size }}px; font-weight: {% if section.settings.answer_bold %}bold{% else %}normal{% endif %};">
+            {{ block.settings.answer }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+
+  </div>
+</div>
+
+<script>
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const icon = btn.querySelector('.faq-icon');
+  answer.classList.toggle('active');
+  icon.textContent = answer.classList.contains('active') ? '−' : '+';
+}
+</script>
+
+
+<style>
+
+.faq-section {
+  padding: 60px 20px;
+}
+
+.faq-container {
+  max-width: 700px;
+  margin: auto;
+}
+
+.faq-title {
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: {{section.settings.title}}
+}
+
+.faq-subtext {
+  margin-bottom: 30px;
+  color: {{section.settings.color_subject}};
+}
+
+.faq-items {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.faq-item {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 18px 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+
+.faq-question:hover {
+  background-color: #f0f0f0;
+}
+
+.faq-icon {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.faq-answer {
+  display: none;
+  padding: 16px 20px;
+  background-color: #fafafa;
+  border-top: 1px solid #eee;
+  transition: max-height 0.3s ease;
+}
+
+.faq-answer.active,
+.faq-answer.active-block {
+  display: block;
+}
+
+.faq-more-wrapper {
+  margin-top: 30px;
+  text-align: ce
+
+  
+</style>
+
+
+{% schema %}
+{
+  "name": "FAQ Moderne",
+  "tag": "section",
+  "class": "faq-custom",
+  "settings": [
+    {
+      "type": "text",
+      "id": "faq_title",
+      "label": "Titre de la section",
+      "default": "FAQs"
+    },
+    {
+      "type": "text",
+      "id": "faq_subtext",
+      "label": "Texte sous le titre",
+      "default": "Got questions? We've got answers...or read more at the FAQs link in our footer"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Couleur de fond",
+      "default": "#f3ecfd"
+    },
+    {
+      "type": "color",
+      "id": "color_subject",
+      "label": "Couleur subject",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "title",
+      "label": "Couleur title",
+      "default": "#111111"
+    },
+    {
+      "type": "select",
+      "id": "title_align",
+      "label": "Alignement du titre",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centré" },
+        { "value": "right", "label": "Droite" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alignement du texte",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centré" },
+        { "value": "right", "label": "Droite" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du titre",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du texte descriptif",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille des questions",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "answer_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille des réponses",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "question_bold",
+      "label": "Questions en gras",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "answer_bold",
+      "label": "Réponses en gras",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "text_bold",
+      "label": "Texte sous-titre en gras",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_more_button",
+      "label": "Afficher le bouton Voir plus",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "more_button_text",
+      "label": "Texte du bouton Voir plus",
+      "default": "View More ↓"
+    },
+    {
+      "type": "url",
+      "id": "more_button_link",
+      "label": "Lien du bouton Voir plus"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "Question / Réponse",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How does this stuff even work?"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Réponse",
+          "default": "This product works through a blend of natural ingredients designed to support your mood and energy."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "FAQ moderne",
+      "category": "Contenu",
+      "blocks": [
+        { "type": "faq_item" },
+        { "type": "faq_item" },
+        { "type": "faq_item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

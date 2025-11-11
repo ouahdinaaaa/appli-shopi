@@ -1,0 +1,278 @@
+{% comment %}
+  Product List Section - Liquid Template Responsive avec Grid CSS + padding + prix custom + icônes image
+{% endcomment %}
+
+<style>
+.product-list-section {
+  width: 100%;
+  background: {{ section.settings.background_color }};
+  font-family: {{ section.settings.font_family }};
+  padding: {{ section.settings.section_padding_desktop }}px {{ section.settings.section_padding_side }}px;
+}
+
+ul.product_list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat({{ section.settings.products_per_row_desktop }}, 1fr);
+}
+@media (max-width: 1023px) {
+  ul.product_list {
+    grid-template-columns: repeat({{ section.settings.products_per_row_tablet }}, 1fr);
+    gap: 18px;
+  }
+}
+@media (max-width: 567px) {
+  ul.product_list {
+    grid-template-columns: repeat({{ section.settings.products_per_row_mobile }}, 1fr);
+    gap: 15px;
+  }
+}
+
+.product_item {
+  background: {{ section.settings.product_background_color }};
+  border: 1px solid {{ section.settings.product_border_color }};
+  border-radius: 8px;
+  padding: {{ section.settings.product_padding_desktop }}px;
+  overflow: hidden;
+  position: relative;
+  transition: transform .3s ease, box-shadow .3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.product_item:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,.1); }
+
+/* Badge promo */
+.product_sale {
+  position: absolute;
+  z-index: 99;
+  top: {{ section.settings.sale_position_top }}px;
+  {% if section.settings.sale_position == 'left' %}
+    left: {{ section.settings.sale_position_side }}px;
+  {% else %}
+    right: {{ section.settings.sale_position_side }}px;
+  {% endif %}
+  transform: rotate(45deg);
+  {% unless section.settings.show_sale_badge %}display:none;{% endunless %}
+}
+.product_sale p {
+  margin: 0;
+  color: {{ section.settings.sale_text_color }};
+  background: {{ section.settings.sale_background_color }};
+  padding: 3px 25px;
+  font-weight: {{ section.settings.sale_font_weight }};
+  font-size: {{ section.settings.sale_font_size_desktop }}px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.4);
+}
+@media(max-width:1023px){.product_sale p{font-size:{{ section.settings.sale_font_size_tablet }}px;}}
+@media(max-width:767px){.product_sale p{font-size:{{ section.settings.sale_font_size_mobile }}px;}}
+
+/* Image */
+.product_image {
+  width: 100%;
+  height: {{ section.settings.image_height_desktop }}px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.product_image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: all .3s ease-in-out;
+}
+{% if section.settings.enable_image_hover %}
+.product_image img:hover { transform: scale(1.05); }
+{% endif %}
+@media(max-width:1023px){.product_image{height:{{ section.settings.image_height_tablet }}px;}}
+@media(max-width:767px){.product_image{height:{{ section.settings.image_height_mobile }}px;}}
+
+/* Texts */
+.product_title { margin-bottom:8px; text-align:{{ section.settings.title_alignment_desktop }}; }
+.product_title h5 {
+  margin:0; font-size:{{ section.settings.title_font_size_desktop }}px;
+  font-weight:{{ section.settings.title_font_weight }};
+  color:{{ section.settings.title_color }};
+}
+.product_title a { text-decoration:none; color:inherit; }
+.product_title a:hover{color:{{ section.settings.title_hover_color }};}
+
+.product_price { margin:{{ section.settings.price_margin_desktop }}px 0; text-align:{{ section.settings.price_alignment_desktop }}; }
+.price_old {
+  margin-right:8px;
+  text-decoration: line-through;
+  font-size:{{ section.settings.old_price_font_size_desktop }}px;
+  font-weight:{{ section.settings.old_price_font_weight }};
+  color:{{ section.settings.old_price_color }};
+}
+.price_new {
+  font-size:{{ section.settings.price_font_size_desktop }}px;
+  font-weight:{{ section.settings.price_font_weight }};
+  color:{{ section.settings.price_color }};
+}
+
+.product_desc { margin-bottom:15px; line-height:1.4; max-height:{{ section.settings.description_max_height_desktop }}px; }
+.product_desc p { margin:0; padding:{{ section.settings.description_padding_desktop }}px 0; color:{{ section.settings.description_color }}; }
+
+/* Buttons */
+.product_buttons { margin-top:{{ section.settings.buttons_margin_desktop }}px; {% unless section.settings.show_buttons %}display:none;{% endunless %} }
+.product_buttons button {
+  margin-right:8px;
+  cursor:pointer;
+  border-radius:6px;
+  display:inline-flex; align-items:center; justify-content:center;
+  width:{{ section.settings.button_size_desktop }}px;
+  height:{{ section.settings.button_size_desktop }}px;
+  border:1px solid {{ section.settings.button_border_color }};
+  background:{{ section.settings.button_background }};
+  color:{{ section.settings.button_color }};
+  transition:all .3s ease;
+  font-size:{{ section.settings.button_icon_size_desktop }}px;
+}
+.product_buttons .product_heart:hover { color:{{ section.settings.heart_hover_color }}; background:{{ section.settings.heart_hover_background }}; transform:scale(1.1); }
+.product_buttons .add_to_cart:hover { color:{{ section.settings.cart_hover_color }}; background:{{ section.settings.cart_hover_background }}; transform:scale(1.1); }
+
+.product_buttons img {
+  max-width:70%; max-height:70%;
+}
+
+.product_values {
+  width: 100%;
+  margin-left: {{ section.settings.product_values_margin }}px;
+}
+
+
+</style>
+
+<div class="product-list-section">
+  <div class="product_grid">
+    <ul class="product_list">
+      {% for block in section.blocks %}
+        {% assign product = all_products[block.settings.product] %}
+        {% if product %}
+        <li class="product_item">
+          {% if product.compare_at_price > product.price and section.settings.show_sale_badge %}
+            <div class="product_sale"><p>{{ section.settings.sale_text }}</p></div>
+          {% endif %}
+
+          <div class="product_image">
+            <a href="{{ product.url }}">
+              {% if product.featured_image %}
+                <img src="{{ product.featured_image | img_url: '500x500' }}" alt="{{ product.featured_image.alt }}">
+              {% else %}
+                <img src="{{ 'product-placeholder.svg' | asset_url }}" alt="{{ product.title }}">
+              {% endif %}
+            </a>
+          </div>
+
+          <div class="product_values">
+            <div class="product_title"><h5><a href="{{ product.url }}">{{ product.title }}</a></h5></div>
+            <div class="product_price">
+              {% if product.compare_at_price > product.price %}
+                <span class="price_old">{{ product.compare_at_price | money }}</span>
+              {% endif %}
+              <span class="price_new">{{ product.price | money }}</span>
+            </div>
+            {% if section.settings.show_description %}
+              <div class="product_desc"><p>{{ product.description | strip_html | truncate: section.settings.description_length }}</p></div>
+            {% endif %}
+            {% if section.settings.show_buttons %}
+            <div class="product_buttons">
+              {% if section.settings.show_heart_button %}
+                <button class="product_heart" onclick="addToWishlist({{ product.id }})">
+                  {% if section.settings.heart_icon_image != blank %}
+                    <img src="{{ section.settings.heart_icon_image | img_url: '50x50' }}" alt="wishlist">
+                  {% else %}
+                    {{ section.settings.heart_icon }}
+                  {% endif %}
+                </button>
+              {% endif %}
+              {% if section.settings.show_cart_button %}
+                <button class="add_to_cart" onclick="addToCart({{ product.variants.first.id }})">
+                  {% if section.settings.cart_icon_image != blank %}
+                    <img src="{{ section.settings.cart_icon_image | img_url: '50x50' }}" alt="panier">
+                  {% else %}
+                    {{ section.settings.cart_icon }}
+                  {% endif %}
+                </button>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<script>
+function addToWishlist(id){ alert("Produit "+id+" ajouté à la wishlist"); }
+function addToCart(vid){
+  fetch('/cart/add.js',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:vid,quantity:1})})
+  .then(r=>r.json()).then(()=>alert("Produit ajouté au panier")).catch(()=>alert("Erreur"));
+}
+</script>
+
+{% schema %}
+{
+  "name": "Liste de Produits",
+  "settings": [
+    { "type":"color","id":"background_color","label":"Fond","default":"#F5F5F5" },
+    { "type":"text","id":"font_family","label":"Police","default":"'Poppins', sans-serif" },
+    { "type":"range","id":"section_padding_desktop","min":0,"max":100,"step":5,"label":"Padding vertical","default":40 },
+    { "type":"range","id":"section_padding_side","min":0,"max":50,"step":5,"label":"Padding horizontal","default":15 },
+
+    { "type":"range","id":"products_per_row_desktop","min":2,"max":6,"step":1,"label":"Colonnes desktop","default":4 },
+    { "type":"range","id":"products_per_row_tablet","min":1,"max":4,"step":1,"label":"Colonnes tablette","default":2 },
+    { "type":"range","id":"products_per_row_mobile","min":1,"max":3,"step":1,"label":"Colonnes mobile","default":1 },
+
+    { "type":"range","id":"image_height_desktop","min":200,"max":500,"step":10,"label":"Hauteur image desktop","default":280 },
+    { "type":"range","id":"image_height_tablet","min":180,"max":400,"step":10,"label":"Hauteur image tablette","default":240 },
+    { "type":"range","id":"image_height_mobile","min":160,"max":300,"step":10,"label":"Hauteur image mobile","default":220 },
+
+    { "type":"header","content":"Prix" },
+    { "type":"color","id":"price_color","label":"Couleur prix actuel","default":"#000000" },
+    { "type":"color","id":"old_price_color","label":"Couleur prix barré","default":"#ea2e49" },
+
+    { "type":"header","content":"Badge promo" },
+    { "type":"checkbox","id":"show_sale_badge","label":"Afficher badge","default":true },
+    { "type":"text","id":"sale_text","label":"Texte badge","default":"PROMO" },
+    { "type":"color","id":"sale_background_color","label":"Fond badge","default":"#ff0000" },
+    { "type":"color","id":"sale_text_color","label":"Texte badge","default":"#ffffff" },
+    { "type":"select","id":"sale_font_weight","label":"Poids badge","options":[{"value":"normal","label":"Normal"},{"value":"bold","label":"Gras"}],"default":"bold" },
+    { "type":"range","id":"sale_font_size_desktop","min":10,"max":22,"step":1,"label":"Taille badge desktop","default":14 },
+    { "type":"range","id":"sale_font_size_tablet","min":10,"max":20,"step":1,"label":"Taille badge tablette","default":12 },
+    { "type":"range","id":"sale_font_size_mobile","min":8,"max":18,"step":1,"label":"Taille badge mobile","default":10 },
+    { "type":"select","id":"sale_position","label":"Position badge","options":[{"value":"left","label":"Gauche"},{"value":"right","label":"Droite"}],"default":"right" },
+    { "type":"range","id":"sale_position_side","min":-30,"max":100,"step":5,"label":"Décalage latéral","default":20 },
+    { "type":"range","id":"sale_position_top","min":-30,"max":100,"step":5,"label":"Décalage haut","default":15 },
+
+    { "type":"header","content":"Boutons" },
+    { "type":"checkbox","id":"show_buttons","label":"Afficher boutons","default":true },
+    { "type":"checkbox","id":"show_heart_button","label":"Bouton wishlist","default":true },
+    { "type":"text","id":"heart_icon","label":"Icône wishlist (texte/emoji)","default":"♥" },
+    { "type":"image_picker","id":"heart_icon_image","label":"Icône wishlist (image)" },
+    { "type":"checkbox","id":"show_cart_button","label":"Bouton panier","default":true },
+    { "type":"text","id":"cart_icon","label":"Icône panier (texte/emoji)","default":"🛒" },
+    { "type":"image_picker","id":"cart_icon_image","label":"Icône panier (image)" },
+    { "type": "range", "id": "product_values_margin", "min": 0, "max": 80, "step": 5, "label": "Marge bas du bloc produit", "default": 10 },
+    { "type":"range","id":"button_size_desktop","min":30,"max":80,"step":2,"label":"Taille bouton","default":40 },
+    { "type":"range","id":"button_icon_size_desktop","min":12,"max":40,"step":1,"label":"Taille icône texte","default":18 },
+    { "type":"color","id":"button_background","label":"Fond bouton","default":"#fff" },
+    { "type":"color","id":"button_border_color","label":"Bordure bouton","default":"#ddd" },
+    { "type":"color","id":"button_color","label":"Texte bouton","default":"#252525" },
+    { "type":"color","id":"heart_hover_color","label":"Couleur hover wishlist","default":"#DF0404" },
+    { "type":"color","id":"heart_hover_background","label":"Fond hover wishlist","default":"#ffeaea" },
+    { "type":"color","id":"cart_hover_color","label":"Couleur hover panier","default":"#fff" },
+    { "type":"color","id":"cart_hover_background","label":"Fond hover panier","default":"#007bff" }
+  ],
+  "blocks":[
+    { "type":"product","name":"Produit","settings":[{"type":"product","id":"product","label":"Produit"}] }
+  ],
+  "presets":[{"name":"Liste de Produits","blocks":[{"type":"product"},{"type":"product"}]}]
+}
+{% endschema %}

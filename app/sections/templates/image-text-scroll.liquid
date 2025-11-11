@@ -1,0 +1,443 @@
+{% schema %}
+{
+  "name": "Scroll text Image",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Dimensions de la section"
+    },
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "label": "Hauteur desktop (px)",
+      "min": 200,
+      "max": 1200,
+      "step": 20,
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "section_height_tablet",
+      "label": "Hauteur tablette (px)",
+      "min": 200,
+      "max": 800,
+      "step": 20,
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "label": "Hauteur mobile (px)",
+      "min": 100,
+      "max": 600,
+      "step": 20,
+      "default": 300
+    },
+    {
+      "type": "header",
+      "content": "Contenu"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "Immerse Yourself"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Texte",
+      "default": "Nous innovons et développons constamment de nouvelles expériences VR."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texte du bouton",
+      "default": "Shop Now"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Produit"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image côté droit"
+    },
+    {
+      "type": "header",
+      "content": "Tailles de texte - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Taille titre desktop (rem)",
+      "min": 1,
+      "max": 4,
+      "step": 0.1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Taille texte desktop (rem)",
+      "min": 0.4,
+      "max": 3,
+      "step": 0.1,
+      "default": 0.9
+    },
+    {
+      "type": "range",
+      "id": "button_size_desktop",
+      "label": "Taille bouton desktop (rem)",
+      "min": 0.3,
+      "max": 3,
+      "step": 0.1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Tailles de texte - Tablette"
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "label": "Taille titre tablette (rem)",
+      "min": 1,
+      "max": 3.5,
+      "step": 0.1,
+      "default": 1.8
+    },
+    {
+      "type": "range",
+      "id": "text_size_tablet",
+      "label": "Taille texte tablette (rem)",
+      "min": 0.4,
+      "max": 2.5,
+      "step": 0.1,
+      "default": 0.90
+    },
+    {
+      "type": "range",
+      "id": "button_size_tablet",
+      "label": "Taille bouton tablette (rem)",
+      "min": 0.3,
+      "max": 2.4,
+      "step": 0.1,
+      "default": 0.90
+    },
+    {
+      "type": "header",
+      "content": "Tailles de texte - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Taille titre mobile (rem)",
+      "min": 1,
+      "max": 3,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Taille texte mobile (rem)",
+      "min": 0.3,
+      "max": 2.5,
+      "step": 0.1,
+      "default": 0.80
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "label": "Taille bouton mobile (rem)",
+      "min": 0.3,
+      "max": 3,
+      "step": 0.1,
+      "default": 0.9
+    },
+    {
+      "type": "header",
+      "content": "Couleurs et alignement"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "background_left",
+      "label": "Couleur de fond bloc texte",
+      "default": "#111111"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alignement du texte",
+      "options": [
+        {"value": "left", "label": "Gauche"},
+        {"value": "center", "label": "Centre"},
+        {"value": "right", "label": "Droite"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Séparateur vertical"
+    },
+    {
+      "type": "text",
+      "id": "separator_text",
+      "label": "Texte séparateur vertical",
+      "default": "free shipping"
+    },
+    {
+      "type": "range",
+      "id": "marge_separator",
+      "label": "Largeur séparateur (px)",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "background_section",
+      "label": "Fond séparateur",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "scroll_text_size_desktop",
+      "label": "Taille texte scroll desktop (rem)",
+      "min": 0.8,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "scroll_text_size_tablet",
+      "label": "Taille texte scroll tablette (rem)",
+      "min": 0.8,
+      "max": 1.8,
+      "step": 0.1,
+      "default": 1.1
+    },
+    {
+      "type": "range",
+      "id": "scroll_text_size_mobile",
+      "label": "Taille texte scroll mobile (rem)",
+      "min": 0.6,
+      "max": 1.5,
+      "step": 0.1,
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "scroll_text_color",
+      "label": "Couleur texte scroll",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scroll text Image",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+
+<section class="vr-immersive-section" id="vr-section-{{ section.id }}">
+  <div class="vr-immersive-wrapper">
+    
+    <!-- Bloc gauche -->
+    <div class="vr-immersive-left">
+      <div class="vr-immersive-content">
+        <h2>{{ section.settings.title }}</h2>
+        <p>{{ section.settings.text }}</p>
+        {% if section.settings.product != blank %}
+          {% assign product = all_products[section.settings.product] %}
+          <a href="{{ product.url }}" class="vr-btn-shop">{{ section.settings.button_label }}</a>
+        {% else %}
+          <a href="/collections/all" class="vr-btn-shop">{{ section.settings.button_label }}</a>
+        {% endif %}
+      </div>
+    </div>
+    
+    <!-- Séparateur vertical -->
+    <div class="vr-immersive-separator">
+      <div class="vr-scroll-text">
+        <span>{{ section.settings.separator_text }}</span>
+        <span>{{ section.settings.separator_text }}</span>
+        <span>{{ section.settings.separator_text }}</span>
+      </div>
+    </div>
+    
+    <!-- Bloc droit -->
+    <div class="vr-immersive-right" style="background-image: url({{ section.settings.image | img_url: '1200x' }});">
+    </div>
+  </div>
+</section>
+
+<style>
+#vr-section-{{ section.id }} {
+  width: 100%;
+  overflow: hidden;
+  height: {{ section.settings.section_height_desktop }}px;
+}
+
+#vr-section-{{ section.id }} .vr-immersive-wrapper {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  height: 100%;
+}
+
+#vr-section-{{ section.id }} .vr-immersive-left, 
+#vr-section-{{ section.id }} .vr-immersive-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#vr-section-{{ section.id }} .vr-immersive-left {
+  background: {{ section.settings.background_left }};
+  padding: 2rem;
+  text-align: {{ section.settings.text_alignment }};
+}
+
+#vr-section-{{ section.id }} .vr-immersive-content {
+  max-width: 400px;
+}
+
+#vr-section-{{ section.id }} .vr-immersive-content h2 {
+  font-size: {{ section.settings.title_size_desktop }}rem;
+  margin-bottom: 1rem;
+  color: {{ section.settings.title_color }};
+}
+
+#vr-section-{{ section.id }} .vr-immersive-content p {
+  margin-bottom: 1.5rem;
+  font-size: {{ section.settings.text_size_desktop }}rem;
+  color: {{ section.settings.text_color }};
+}
+
+#vr-section-{{ section.id }} .vr-btn-shop {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid {{ section.settings.text_color }};
+  color: {{ section.settings.text_color }};
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: {{ section.settings.button_size_desktop }}rem;
+}
+
+#vr-section-{{ section.id }} .vr-btn-shop:hover {
+  background: {{ section.settings.text_color }};
+  color: {{ section.settings.background_left }};
+}
+
+#vr-section-{{ section.id }} .vr-immersive-right {
+  background-size: cover;
+  background-position: center;
+}
+
+/* Séparateur vertical avec scroll infini */
+#vr-section-{{ section.id }} .vr-immersive-separator {
+  width: {{ section.settings.marge_separator }}px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: {{ section.settings.background_section }};
+}
+
+#vr-section-{{ section.id }} .vr-scroll-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: vr-scroll-up 8s linear infinite;
+}
+
+#vr-section-{{ section.id }} .vr-scroll-text span {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: {{ section.settings.scroll_text_size_desktop }}rem;
+  font-weight: bold;
+  margin: 1rem 0;
+  color: {{ section.settings.scroll_text_color }};
+}
+
+@keyframes vr-scroll-up {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(-50%); }
+}
+
+/* Responsive - Tablette */
+@media screen and (max-width: 1024px) and (min-width: 769px) {
+  #vr-section-{{ section.id }} {
+    height: {{ section.settings.section_height_tablet }}px;
+  }
+
+  #vr-section-{{ section.id }} .vr-immersive-content h2 {
+    font-size: {{ section.settings.title_size_tablet }}rem;
+  }
+
+  #vr-section-{{ section.id }} .vr-immersive-content p {
+    font-size: {{ section.settings.text_size_tablet }}rem;
+  }
+
+  #vr-section-{{ section.id }} .vr-btn-shop {
+    font-size: {{ section.settings.button_size_tablet }}rem;
+  }
+
+  #vr-section-{{ section.id }} .vr-scroll-text span {
+    font-size: {{ section.settings.scroll_text_size_tablet }}rem;
+  }
+}
+
+/* Responsive - Mobile */
+@media screen and (max-width: 768px) {
+  #vr-section-{{ section.id }} {
+    height: {{ section.settings.section_height_mobile }}px;
+  }
+
+  #vr-section-{{ section.id }} .vr-immersive-left {
+    padding: 1rem;
+  }
+
+  #vr-section-{{ section.id }} .vr-immersive-content {
+    max-width: 100%;
+  }
+
+  #vr-section-{{ section.id }} .vr-immersive-content h2 {
+    font-size: {{ section.settings.title_size_mobile }}rem;
+  }
+
+  #vr-section-{{ section.id }} .vr-immersive-content p {
+    font-size: {{ section.settings.text_size_mobile }}rem;
+  }
+
+  #vr-section-{{ section.id }} .vr-btn-shop {
+    font-size: {{ section.settings.button_size_mobile }}rem;
+    padding: 0.5rem 1rem;
+  }
+
+  #vr-section-{{ section.id }} .vr-scroll-text span {
+    font-size: {{ section.settings.scroll_text_size_mobile }}rem;
+  }
+}
+</style>

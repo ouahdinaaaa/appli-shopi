@@ -1,0 +1,293 @@
+{% comment %}
+  Section : Social Buttons avancés
+  Chaque bloc = un réseau social
+  Customisation via interface Shopify
+{% endcomment %}
+
+<div class="social-btns-section" style="background-color: {{ section.settings.section_bg }}; height: {{ section.settings.section_height }}px;">
+  <div class="social-btns">
+    {% for block in section.blocks %}
+      {% if block.settings.social_url != blank %}
+        <a 
+          href="{{ block.settings.social_url }}" 
+          class="btn {{ block.settings.social_name | downcase }}" 
+          target="_blank" 
+          rel="noopener"
+          style="
+            background-color: {{ section.settings.block_bg }};
+            border-radius: {{ section.settings.block_radius }}%;
+            margin: 0 {{ section.settings.block_spacing }}px;
+            width: {{ section.settings.block_size_desktop }}px;
+            height: {{ section.settings.block_size_desktop }}px;
+            line-height: {{ section.settings.block_size_desktop }}px;
+          "
+        >
+          <i 
+            class="fa-brands fa-{{ block.settings.social_name | downcase }}" 
+            style="font-size: {{ section.settings.icon_size_desktop }}px;">
+          </i>
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Import Font Awesome 6 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+/* Container */
+.social-btns-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Base button styles */
+.social-btns .btn {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.1);
+  opacity: .99;
+  transition: all .35s cubic-bezier(0.310, -0.105, 0.430, 1.590);
+}
+.social-btns .btn:before {
+  content: '';
+  width: 120%;
+  height: 120%;
+  position: absolute;
+  transform: rotate(45deg);
+  top: 90%;
+  left: -110%;
+  transition: all .35s cubic-bezier(0.310, -0.105, 0.430, 1.590);
+}
+.social-btns .btn i {
+  vertical-align: middle;
+  transform: scale(.9);
+  transition: all .35s cubic-bezier(0.310, -0.105, 0.430, 1.590);
+}
+
+/* Hover effect */
+.social-btns .btn:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px -5px rgba(0, 0, 0, 0.25);
+}
+.social-btns .btn:hover:before {
+  top: -10%;
+  left: -10%;
+}
+.social-btns .btn:hover i {
+  color: #fff !important;
+  transform: scale(1.2);
+}
+
+/* Responsive settings */
+@media (max-width: 1024px) {
+  .social-btns .btn {
+    width: {{ section.settings.block_size_tablet }}px !important;
+    height: {{ section.settings.block_size_tablet }}px !important;
+    line-height: {{ section.settings.block_size_tablet }}px !important;
+  }
+  .social-btns .btn i {
+    font-size: {{ section.settings.icon_size_tablet }}px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .social-btns .btn {
+    width: {{ section.settings.block_size_mobile }}px !important;
+    height: {{ section.settings.block_size_mobile }}px !important;
+    line-height: {{ section.settings.block_size_mobile }}px !important;
+  }
+  .social-btns .btn i {
+    font-size: {{ section.settings.icon_size_mobile }}px !important;
+  }
+}
+
+/* Couleurs spécifiques réseaux */
+.social-btns .btn.facebook:before { background-color: #3B5998; }
+.social-btns .btn.facebook i { color: #3B5998; }
+
+.social-btns .btn.twitter:before { background-color: #1DA1F2; }
+.social-btns .btn.twitter i { color: #1DA1F2; }
+
+.social-btns .btn.google:before { background-color: #DC4A38; }
+.social-btns .btn.google i { color: #DC4A38; }
+
+.social-btns .btn.dribbble:before { background-color: #F26798; }
+.social-btns .btn.dribbble i { color: #F26798; }
+
+.social-btns .btn.skype:before { background-color: #00AFF0; }
+.social-btns .btn.skype i { color: #00AFF0; }
+
+.social-btns .btn.instagram:before { background: radial-gradient(circle at 30% 30%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+.social-btns .btn.instagram i { color: #E1306C; }
+
+.social-btns .btn.linkedin:before { background-color: #0077B5; }
+.social-btns .btn.linkedin i { color: #0077B5; }
+
+.social-btns .btn.youtube:before { background-color: #FF0000; }
+.social-btns .btn.youtube i { color: #FF0000; }
+
+.social-btns .btn.tiktok:before { background: linear-gradient(45deg, #25F4EE, #FE2C55); }
+.social-btns .btn.tiktok i { color: #010101; }
+
+.social-btns .btn.pinterest:before { background-color: #BD081C; }
+.social-btns .btn.pinterest i { color: #BD081C; }
+
+.social-btns .btn.snapchat:before { background-color: #FFFC00; }
+.social-btns .btn.snapchat i { color: #FFFC00; }
+
+.social-btns .btn.whatsapp:before { background-color: #25D366; }
+.social-btns .btn.whatsapp i { color: #25D366; }
+</style>
+
+{% schema %}
+{
+  "name": "Social Buttons avancés",
+  "settings": [
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Couleur de fond de la section",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "Hauteur de la section (px)",
+      "min": 50,
+      "max": 600,
+      "step": 10,
+      "default": 150
+    },
+    {
+      "type": "color",
+      "id": "block_bg",
+      "label": "Couleur de fond des blocs",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "block_radius",
+      "label": "Arrondi des blocs (%)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "block_spacing",
+      "label": "Espacement entre les blocs (px)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 10
+    },
+
+    /* Desktop */
+    {
+      "type": "range",
+      "id": "block_size_desktop",
+      "label": "Taille des blocs (desktop, px)",
+      "min": 40,
+      "max": 200,
+      "step": 5,
+      "default": 90
+    },
+    {
+      "type": "range",
+      "id": "icon_size_desktop",
+      "label": "Taille des icônes (desktop, px)",
+      "min": 10,
+      "max": 100,
+      "step": 2,
+      "default": 38
+    },
+
+    /* Tablet */
+    {
+      "type": "range",
+      "id": "block_size_tablet",
+      "label": "Taille des blocs (tablette, px)",
+      "min": 30,
+      "max": 180,
+      "step": 5,
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "icon_size_tablet",
+      "label": "Taille des icônes (tablette, px)",
+      "min": 8,
+      "max": 80,
+      "step": 2,
+      "default": 28
+    },
+
+    /* Mobile */
+    {
+      "type": "range",
+      "id": "block_size_mobile",
+      "label": "Taille des blocs (mobile, px)",
+      "min": 20,
+      "max": 150,
+      "step": 5,
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "icon_size_mobile",
+      "label": "Taille des icônes (mobile, px)",
+      "min": 6,
+      "max": 60,
+      "step": 2,
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "type": "social",
+      "name": "Réseau social",
+      "settings": [
+        {
+          "type": "select",
+          "id": "social_name",
+          "label": "Réseau social",
+          "options": [
+            { "value": "facebook", "label": "Facebook" },
+            { "value": "twitter", "label": "Twitter" },
+            { "value": "google", "label": "Google" },
+            { "value": "dribbble", "label": "Dribbble" },
+            { "value": "skype", "label": "Skype" },
+            { "value": "instagram", "label": "Instagram" },
+            { "value": "linkedin", "label": "LinkedIn" },
+            { "value": "youtube", "label": "YouTube" },
+            { "value": "tiktok", "label": "TikTok" },
+            { "value": "pinterest", "label": "Pinterest" },
+            { "value": "snapchat", "label": "Snapchat" },
+            { "value": "whatsapp", "label": "WhatsApp" }
+          ],
+          "default": "facebook"
+        },
+        {
+          "type": "url",
+          "id": "social_url",
+          "label": "Lien vers le profil",
+          "default": "/"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Social Buttons avancés",
+      "category": "Social"
+    }
+  ]
+}
+{% endschema %}

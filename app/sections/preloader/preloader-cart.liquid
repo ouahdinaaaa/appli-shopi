@@ -1,0 +1,332 @@
+<!-- HTML à mettre dans votre section -->
+<div id="preloader-cart" class="preloader" style="display: none;">
+  <svg class="cart" role="img" aria-label="Shopping cart line animation" viewBox="0 0 128 128" width="128px" height="128px" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="8">
+      <g class="cart__track">
+        <polyline points="4,4 21,4 26,22 124,22 112,64 35,64 39,80 106,80" />
+        <circle cx="43" cy="111" r="13" />
+        <circle cx="102" cy="111" r="13" />
+      </g>
+      <g class="cart__lines">
+        <polyline class="cart__top" points="4,4 21,4 26,22 124,22 112,64 35,64 39,80 106,80" stroke-dasharray="338 338" stroke-dashoffset="-338" />
+        <g class="cart__wheel1" transform="rotate(-90,43,111)">
+          <circle class="cart__wheel-stroke" cx="43" cy="111" r="13" stroke-dasharray="81.68 81.68" stroke-dashoffset="81.68" />
+        </g>
+        <g class="cart__wheel2" transform="rotate(90,102,111)">
+          <circle class="cart__wheel-stroke" cx="102" cy="111" r="13" stroke-dasharray="81.68 81.68" stroke-dashoffset="81.68" />
+        </g>
+      </g>
+    </g>
+  </svg>
+  <div class="preloader__text" style="color: {{ section.settings.text_color }}">
+    <p class="preloader__msg">{{ section.settings.message_default }}</p>
+    <p class="preloader__msg preloader__msg--last">{{ section.settings.message_last }}</p>
+  </div>
+</div>
+
+<style>
+  :root {
+    --bg: {{ section.settings.background_color }};
+    --fg: {{ section.settings.text_color }};
+    --primary: {{ section.settings.cart_color }};
+    --trans-dur: 0.3s;
+  }
+
+  #preloader-cart {
+    /* POSITIONNEMENT EN OVERLAY PLEIN ÉCRAN */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg);
+    color: var(--fg);
+    
+    /* CENTRAGE DU CONTENU */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    /* Z-INDEX ÉLEVÉ POUR ÊTRE AU-DESSUS DE TOUT */
+    z-index: 9999;
+    
+    /* MASQUÉ PAR DÉFAUT */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  /* CLASSE POUR AFFICHER LE PRELOADER */
+  #preloader-cart.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .preloader__text {
+    position: relative;
+    height: 1.5em;
+    margin-top: 1.5rem;
+  }
+
+  .preloader__msg {
+    animation: msg 0.3s 13.7s linear forwards;
+    position: relative;
+    width: 100%;
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .preloader__msg--last {
+    animation-direction: reverse;
+    animation-delay: 14s;
+    visibility: hidden;
+  }
+
+  .cart {
+    display: block;
+    width: 8em;
+    height: 8em;
+  }
+
+  .cart__lines,
+  .cart__top,
+  .cart__wheel1,
+  .cart__wheel2,
+  .cart__wheel-stroke {
+    animation: cartLines 2s ease-in-out infinite;
+    stroke: var(--primary);
+  }
+
+  .cart__top {
+    animation-name: cartTop;
+  }
+
+  .cart__wheel1 {
+    animation-name: cartWheel1;
+    transform: rotate(-0.25turn);
+    transform-origin: 43px 111px;
+  }
+
+  .cart__wheel2 {
+    animation-name: cartWheel2;
+    transform: rotate(0.25turn);
+    transform-origin: 102px 111px;
+  }
+
+  .cart__wheel-stroke {
+    animation-name: cartWheelStroke;
+  }
+
+  .cart__track {
+    stroke: hsla(0,0%,0%,0.1);
+    transition: stroke var(--trans-dur);
+  }
+
+  @keyframes msg {
+    from {
+      opacity: 1;
+      visibility: visible;
+    }
+    99.9% {
+      opacity: 0;
+      visibility: visible;
+    }
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+  @keyframes cartLines {
+    from,
+    to {
+      opacity: 0;
+    }
+    8%,
+    92% {
+      opacity: 1;
+    }
+  }
+  @keyframes cartTop {
+    from {
+      stroke-dashoffset: -338;
+    }
+    50% {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: 338;
+    }
+  }
+  @keyframes cartWheel1 {
+    from {
+      transform: rotate(-0.25turn);
+    }
+    to {
+      transform: rotate(2.75turn);
+    }
+  }
+  @keyframes cartWheel2 {
+    from {
+      transform: rotate(0.25turn);
+    }
+    to {
+      transform: rotate(3.25turn);
+    }
+  }
+  @keyframes cartWheelStroke {
+    from,
+    to {
+      stroke-dashoffset: 81.68;
+    }
+    50% {
+      stroke-dashoffset: 40.84;
+    }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .cart {
+      width: 6em;
+      height: 6em;
+    }
+    
+    .preloader__msg {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const preloader = document.getElementById('preloader-cart');
+  
+  // Fonction pour afficher le preloader
+  function showCartPreloader() {
+    if (preloader) {
+      preloader.style.display = 'flex';
+      setTimeout(() => {
+        preloader.classList.add('show');
+      }, 10);
+    }
+  }
+  
+  // Fonction pour masquer le preloader
+  function hideCartPreloader() {
+    if (preloader) {
+      preloader.classList.remove('show');
+      setTimeout(() => {
+        preloader.style.display = 'none';
+      }, 300);
+    }
+  }
+  
+  // Écouter les clics sur les boutons "Ajouter au panier"
+  document.addEventListener('click', function(e) {
+    // Sélecteurs communs pour les boutons d'ajout au panier
+    const cartButtons = [
+      '[name="add"]',
+      '.btn-cart',
+      '.add-to-cart',
+      '.product-form__cart-submit',
+      '[data-add-to-cart]',
+      '.js-ajax-submit'
+    ];
+    
+    const isCartButton = cartButtons.some(selector => {
+      return e.target.matches(selector) || e.target.closest(selector);
+    });
+    
+    if (isCartButton) {
+      showCartPreloader();
+      
+      // Masquer automatiquement après 3 secondes (ajustable)
+      setTimeout(() => {
+        hideCartPreloader();
+      }, 3000);
+    }
+  });
+  
+  // Écouter les clics sur l'icône panier (pour ouvrir le drawer/panier)
+  document.addEventListener('click', function(e) {
+    const cartIconSelectors = [
+      '.cart-link',
+      '.header__icon--cart',
+      '[data-cart-drawer]',
+      '.js-drawer-open-cart',
+      '.cart-icon'
+    ];
+    
+    const isCartIcon = cartIconSelectors.some(selector => {
+      return e.target.matches(selector) || e.target.closest(selector);
+    });
+    
+    if (isCartIcon) {
+      showCartPreloader();
+      
+      // Masquer plus rapidement pour l'ouverture du panier
+      setTimeout(() => {
+        hideCartPreloader();
+      }, 1500);
+    }
+  });
+  
+  // Pour l'API Cart d'Ajax (si votre thème l'utilise)
+  if (typeof fetch !== 'undefined') {
+    const originalFetch = window.fetch;
+    window.fetch = function(...args) {
+      const url = args[0];
+      if (typeof url === 'string' && url.includes('/cart/add')) {
+        showCartPreloader();
+        setTimeout(() => {
+          hideCartPreloader();
+        }, 2000);
+      }
+      return originalFetch.apply(this, args);
+    };
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Préloader Panier",
+  "settings": [
+    {
+      "type": "text",
+      "id": "message_default",
+      "label": "Message principal",
+      "default": "Ajout au panier en cours..."
+    },
+    {
+      "type": "text",
+      "id": "message_last",
+      "label": "Message alternatif",
+      "default": "Veuillez patienter un moment..."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "cart_color",
+      "label": "Couleur du panier (SVG)",
+      "default": "#2196f3"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "rgba(255, 255, 255, 0.95)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Préloader Panier"
+    }
+  ]
+}
+{% endschema %}

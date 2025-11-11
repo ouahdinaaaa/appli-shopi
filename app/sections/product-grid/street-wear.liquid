@@ -1,0 +1,829 @@
+{%- assign default_images = "https://images.pexels.com/photos/29611889/pexels-photo-29611889.jpeg,https://images.pexels.com/photos/10034638/pexels-photo-10034638.jpeg,https://images.pexels.com/photos/16124718/pexels-photo-16124718.jpeg,https://images.pexels.com/photos/13897456/pexels-photo-13897456.jpeg,https://images.pexels.com/photos/10034638/pexels-photo-10034638.jpeg" | split: "," -%}
+
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=DM+Mono:wght@500&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --brand-blue: #4876ff;
+  --brand-lime: #d9f154;
+  --brand-navy: #2e3192;
+  --brand-orange: #ff7347;
+  --brand-pink: #f7d0e9;
+  --brand-purple: #692e54;
+  --brand-gray: #fffdf9;
+
+  /*  Fluid Typography  */
+  --step--2: clamp(0.7813rem, 0.7747rem + 0.0326vw, 0.8rem);
+  --step--1: clamp(0.9375rem, 0.9158rem + 0.1087vw, 1rem);
+  --step-0: clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem);
+  --step-1: clamp(1.35rem, 1.2761rem + 0.3696vw, 1.5625rem);
+  --step-2: clamp(1.62rem, 1.5041rem + 0.5793vw, 1.9531rem);
+  --step-3: clamp(1.944rem, 1.771rem + 0.8651vw, 2.4414rem);
+  --step-4: clamp(2.3328rem, 2.0827rem + 1.2504vw, 3.0518rem);
+  --step-5: clamp(2.7994rem, 2.4462rem + 1.7658vw, 3.8147rem);
+  --step-6: clamp(3.3592rem, 2.8691rem + 2.4507vw, 4.7684rem);
+}
+
+.street-wear-section {
+  font-family: "DM Mono";
+  margin: 0;
+  box-sizing: border-box;
+  color: rgb(39, 39, 42);
+  padding: 12px;
+  background: url("https://assets.codepen.io/1385231/bg-texture.webp") no-repeat center center;
+  background-size: cover;
+  background-color: var(--brand-gray);
+  min-height: 100vh;
+}
+
+.street-wear-section h1,
+.street-wear-section h2,
+.street-wear-section h3 {
+  font-family: "Bowlby One SC";
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.title-section h2 {
+  opacity:0;
+  font-size: {{ section.settings.title_size }}px;
+  text-transform: uppercase;
+  line-height: 1;
+  text-align: {{ section.settings.title_alignment }};
+  margin-bottom: 16px;
+  color: {{ section.settings.title_color }};
+  animation: slideInFromLeft 600ms linear(0, 0.464 8.3%, 0.819 17%, 0.956 21.5%, 1.069 26.2%, 1.156 31%, 1.219 36%, 1.252 40.2%, 1.271 44.5%, 1.275 49.1%, 1.265 54.1%, 1.215 63.4%, 1.041 86.9%, 1.01 93.7%, 1) forwards;
+  animation-delay: 200ms;
+}
+
+.subtitle-section p {
+  opacity:0;
+  text-align: {{ section.settings.subtitle_alignment }};
+  margin-bottom: 40px;
+  font-size: {{ section.settings.subtitle_size }}px;
+  color: {{ section.settings.subtitle_color }};
+  animation: slideInFromLeft 600ms linear(0, 0.464 8.3%, 0.819 17%, 0.956 21.5%, 1.069 26.2%, 1.156 31%, 1.219 36%, 1.252 40.2%, 1.271 44.5%, 1.275 49.1%, 1.265 54.1%, 1.215 63.4%, 1.041 86.9%, 1.01 93.7%, 1) forwards;
+  animation-delay: 500ms;
+}
+
+.product-grid {
+  --min: 225px;
+  --gap: 1.25rem;
+  display: grid;
+  grid-gap: var(--gap);
+}
+
+/* Grid responsive columns */
+@media (max-width: 767px) {
+  .product-grid {
+    grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .product-grid {
+    grid-template-columns: repeat({{ section.settings.columns_tablet }}, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+  }
+  .product-card:nth-child(even) {
+    margin-top: 4rem;
+  }
+}
+
+.product-card {
+  padding: 1rem 2rem 0 2rem;
+  max-height: 600px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  inline-margin: auto;
+  width: 100%;
+  max-width: 18rem;
+  opacity: 0; 
+  transform: translateY(50px);
+  animation: slideInFromBottom 0.8s linear(0, 0.464 8.3%, 0.819 17%, 0.956 21.5%, 1.069 26.2%, 1.156 31%, 1.219 36%, 1.252 40.2%, 1.271 44.5%, 1.275 49.1%, 1.265 54.1%, 1.215 63.4%, 1.041 86.9%, 1.01 93.7%, 1) forwards;
+}
+
+.product-card:nth-child(1) { animation-delay: 0.8s; }
+.product-card:nth-child(2) { animation-delay: 1s; }
+.product-card:nth-child(3) { animation-delay: 1.2s; }
+.product-card:nth-child(4) { animation-delay: 1.4s; }
+.product-card:nth-child(5) { animation-delay: 1.6s; }
+.product-card:nth-child(6) { animation-delay: 1.8s; }
+.product-card:nth-child(7) { animation-delay: 2s; }
+.product-card:nth-child(8) { animation-delay: 2.2s; }
+
+.horizontal-line,
+.vertical-line {
+  stroke-width: 2;
+  transition: opacity 0.3s ease;
+  color: {{ section.settings.border_color | default: '#a8a29e' }};
+  opacity:.5;
+}
+
+.horizontal-line {
+  margin-left: -8rem;
+  margin-right: -8rem;
+  height: auto;
+  width: calc(100% + 5rem);
+}
+
+.vertical-line {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+
+.vertical-line.left {
+  left: 1rem;
+}
+
+.vertical-line.right {
+  right: 1rem;
+}
+
+.product-card:hover :is(.horizontal-line, .vertical-line) {
+  opacity:1;
+}
+
+.product-card img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto 16px;
+  width: 58%;
+  transform-origin: top center;
+  transition: transform 500ms linear(0, -0.008 3.8%, -0.035 7.8%, -0.177 20.3%, -0.215 24.7%, -0.228 29%, -0.207 32.9%, -0.12 37.9%, 0.037 42.5%, 0.261 46.7%, 0.877 55.7%, 1.055 59.9%, 1.17 64.4%, 1.222 69%, 1.228 71.5%, 1.221 74.2%, 1.182 79.2%, 1.033 92.4%, 1.008 96.3%, 1);
+}
+
+.product-card:hover img {
+  transform: scale(1.5);
+}
+
+.title-wrapper {
+  position: relative;
+  height: 50px;
+}
+
+.product-title {
+  font-size: {{ section.settings.product_title_size }}px;
+  font-weight: bold;
+  margin: 8px 0;
+  position: absolute;
+  inset: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.product-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: {{ section.settings.product_details_size }}px;
+  margin-bottom: 16px;
+}
+
+.product-button-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+.product-card:hover .product-button-wrapper, .product-card:focus-within .product-button-wrapper {
+  opacity:1;
+}
+
+.product-image-wrapper {
+  overflow: hidden;
+  margin-bottom: -0.25rem;
+  padding-inline: 1rem;
+}
+
+.scribble-svg {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  animation: squiggle 0.5s infinite;
+}
+
+.scribble-path {
+  transform-origin: center;
+  opacity: 0.6;
+  transition: stroke-dashoffset 500ms ease-in;
+  stroke-dasharray: 1700;
+  stroke-dashoffset: 1700;
+}
+
+.product-card:hover .scribble-path {
+  stroke-dashoffset: 0;
+}
+
+/* Animations */
+@keyframes squiggle {
+  0% { filter: url("#squiggle-0"); }
+  25% { filter: url("#squiggle-1"); }
+  50% { filter: url("#squiggle-2"); }
+  75% { filter: url("#squiggle-3"); }
+  100% { filter: url("#squiggle-4"); }
+}
+
+@keyframes slideInFromLeft {
+  0% { opacity: 0; transform: translateX(-50px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInFromBottom {
+  0% { opacity: 0; transform: translateY(50px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInFromTop {
+  0% { opacity: 0; transform: translateY(-50px); }
+  100% { opacity: 1; transform: translateY(-20px); }
+}
+
+/* Button styles */
+.button-outer {
+  filter: drop-shadow(0 1px 0 #000) drop-shadow(-1px 0 0 #000)
+    drop-shadow(1px 0 0 #000) drop-shadow(0 -1px 0 #000)
+    drop-shadow(5px 5px 0 #000);
+  transition: filter 0.3s ease-in-out;
+}
+
+.button-outer:hover {
+  filter: drop-shadow(0 1px 0 #000) drop-shadow(-1px 0 0 #000)
+    drop-shadow(1px 0 0 #000) drop-shadow(0 -1px 0 #000)
+    drop-shadow(0px 0px 0 #000);
+}
+
+.button-outer:hover .button-middle {
+  transform: translate(5px, 5px);
+}
+
+.button-outer:hover .button-middle .button-inner {
+  color: #000;
+  background-position: 50% 100%;
+}
+
+.button-middle {
+  text-decoration: none;
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer;
+  position: relative;
+  border: none;
+  font-family: monospace;
+  font-size: var(--step-0);
+  font-weight: 600;
+  padding: 0;
+}
+
+.button-inner {
+  background: linear-gradient(to bottom, {{ section.settings.button_color_1 | default: 'var(--brand-orange)' }} 33%, {{ section.settings.button_color_2 | default: 'var(--brand-lime)' }} 66%) 50% 0% / 100% 400% no-repeat;
+  color: #000;
+  padding: 1rem;
+  position: relative;
+  transition: color 0.3s ease-in-out, background-position 0.3s ease-in-out;
+}
+
+.button-inner:before,
+.button-inner:after {
+  content: "";
+  position: absolute;
+  width: 1rem;
+  height: 100%;
+  top: 0;
+  left: calc(100% - 1px);
+  background: inherit;
+  clip-path: polygon(100% 0, 74% 28%, 100% 29%, 100% 70%, 84% 78%, 100% 100%, 0 100%, 0 0);
+}
+
+.button-inner:after {
+  left: calc(-1rem + 1px);
+  clip-path: polygon(23% 19%, 0 0, 100% 0, 100% 100%, 0 100%, 29% 79%, 9% 80%, 0 33%);
+}
+</style>
+
+<section class="street-wear-section">
+  <div class="container">
+    <div class="title-section">
+      <h2 class="section-title">{{ section.settings.title | default: "Latest Drop" }}</h2>
+    </div>
+    <div class="subtitle-section">
+      <p class="section-subtitle">{{ section.settings.subtitle | default: "Grab our freshest designs before they sell out!" }}</p>
+    </div>
+    
+    <div class="product-grid">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- assign image_index = forloop.index0 | modulo: default_images.size -%}
+          {%- assign default_image = default_images[image_index] -%}
+          
+          <div class="product-card" {{ block.shopify_attributes }}>
+            <!-- SVG Lines -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 555" preserveAspectRatio="none" class="product-svg vertical-line left">
+              <path fill="none" stroke="currentColor" d="M4.42.73c-2.26 26.23.02-6.6 1.2 43.35.23 9.32-2.18 7.94-4.04 16.35a14.65 14.65 0 0 0 0 4.97c.97 7.34 3.34 14.33 3.57 21.8.25 8.41-2.29 16.65-2.16 25.08.34 22.7 4.9 14.96 2.83 34.25-.46 4.36-2.72 8.16-2.83 12.58-.25 10.5 1.83 20.9 1.79 31.4-.03 6.97-2.06 19.04-1.99 20.68.91 19.67 3.03 4.4 2.43 33.04-.84 39.25-3.08 33.75-2.85 51.02.13 9.92 2.04 19.65 2.3 29.56.18 7.18-1.19 14.32-.97 21.5.14 4.5 2.23 8.7 2.04 13.2-1.4 33.36-4.96 13.26-3.6 36.05 2.3 38.96 3.25 77.61.48 116.44-.24 3.35.3 7.14 1.08 11.1 2.16 10.89 2.16 23.87.92 31.24"></path>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 555" preserveAspectRatio="none" class="product-svg vertical-line right">
+              <path fill="none" stroke="currentColor" d="M4.42.73c-2.26 26.23.02-6.6 1.2 43.35.23 9.32-2.18 7.94-4.04 16.35a14.65 14.65 0 0 0 0 4.97c.97 7.34 3.34 14.33 3.57 21.8.25 8.41-2.29 16.65-2.16 25.08.34 22.7 4.9 14.96 2.83 34.25-.46 4.36-2.72 8.16-2.83 12.58-.25 10.5 1.83 20.9 1.79 31.4-.03 6.97-2.06 19.04-1.99 20.68.91 19.67 3.03 4.4 2.43 33.04-.84 39.25-3.08 33.75-2.85 51.02.13 9.92 2.04 19.65 2.3 29.56.18 7.18-1.19 14.32-.97 21.5.14 4.5 2.23 8.7 2.04 13.2-1.4 33.36-4.96 13.26-3.6 36.05 2.3 38.96 3.25 77.61.48 116.44-.24 3.35.3 7.14 1.08 11.1 2.16 10.89 2.16 23.87.92 31.24"></path>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 266 8" class="product-svg top horizontal-line">
+              <path fill="none" stroke="currentColor" d="M.74 5.43c16.62-3.7 7.17-2.5 43.93-.8 17.36.79 15.14-2.9 24.1-2.63 1.21.04 5.55 1.98 7.47 2.14 5.24.42 8.17-.7 13.42-.44 3 .14 5.77 2.11 8.77 2.1 8.33-.04 16.56-2.19 24.89-2.25 10.32-.07 23.74 1.66 34.49 1.07 8.49-.46 17.47-1.77 25.92-2.65 11.98-1.24 18.38 2.3 30.24 3.88 12.82 1.7 5.26-2.3 21.35-2.14 10.15.1 19.92 1.14 29.88 1.7"></path>
+            </svg>
+            
+            <div class="product-details">
+              <span class="product-price" style="color: {{ block.settings.price_color }};">
+                {%- if block.settings.product != blank -%}
+                  {{ block.settings.product.price | money }}
+                {%- else -%}
+                  {{ block.settings.price | default: "$59.99" }}
+                {%- endif -%}
+              </span>
+              <span class="product-rating" style="color: {{ block.settings.rating_color }};">⭐ {{ block.settings.rating | default: "4.5" }}</span>
+            </div>
+            
+            <div class="product-image-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 166 306" preserveAspectRatio="none" class="scribble-svg">
+                <path class="scribble-path" filter="url(#scribble)" stroke="{{ section.settings.scribble_color | default: '#b75648' }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="12" d="M126 8c-10 10-26 17-41 22-24 9-50 14-74 23a152 152 0 0 0 24 3l50 1c5 0 17 0 20 4 3 3-13 6-15 6a689 689 0 0 0-45 12c1 2 7 2 9 2 11 2 22 1 33 1l48-2 17 1c2 0-2 2-3 2l-8 2-60 11-32 7c-5 1-12 2-16 5-2 1 8 3 9 4 13 2 27 2 39 2 14 0 29-2 43 0 3 1 7 1 3 3-7 3-15 4-23 6l-41 7c-10 2-22 5-31 9-2 2-1 2 1 3l23 2c22 1 43 0 64 3 4 0 4 1 1 2l-20 7c-11 3-22 5-32 9l-14 6c-3 4 32 7 35 7 20 1 43 0 62 6 1 1 5 2 4 3-3 3-9 4-12 5-28 7-57 9-85 15l-30 7-9 3h1l13 1 53-1c15-1 31-1 47 1 10 1-2 4-6 5-14 4-29 5-44 8l-39 7c-2 1-22 5-22 7 0 3 58 4 65 5 6 0 17 0 23 3 1 1-4 3-4 3-16 6-36 7-52 10l-13 3a227 227 0 0 0 49 4c20 0 41 7 62 7"></path>
+                <filter id="scribble">
+                  <feTurbulence baseFrequency="0.05" id="turbulence" numOctaves="2" result="noise" seed="0"></feTurbulence>
+                  <feDisplacementMap id="displacement" in2="noise" in="SourceGraphic" scale="5"></feDisplacementMap>
+                </filter>
+              </svg>
+              
+              {%- if block.settings.product != blank and block.settings.product.featured_image -%}
+                {{ block.settings.product.featured_image | image_url: width: 300 | image_tag: loading: 'lazy', alt: block.settings.product.title, class: 'product-image', width: '150' }}
+              {%- elsif block.settings.custom_image != blank -%}
+                {{ block.settings.custom_image | image_url: width: 300 | image_tag: loading: 'lazy', alt: block.settings.title, class: 'product-image', width: '150' }}
+              {%- else -%}
+                <img src="{{ default_image }}" width="150" alt="{{ block.settings.title }}" class="product-image" />
+              {%- endif -%}
+            </div>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 266 8" width="266" height="8" preserveAspectRatio="none" shape-rendering="crispEdges" class="product-svg bottom horizontal-line">
+              <path fill="none" stroke="currentColor" d="M.74 5.43c16.62-3.7 7.17-2.5 43.93-.8 17.36.79 15.14-2.9 24.1-2.63 1.21.04 5.55 1.98 7.47 2.14 5.24.42 8.17-.7 13.42-.44 3 .14 5.77 2.11 8.77 2.1 8.33-.04 16.56-2.19 24.89-2.25 10.32-.07 23.74 1.66 34.49 1.07 8.49-.46 17.47-1.77 25.92-2.65 11.98-1.24 18.38 2.3 30.24 3.88 12.82 1.7 5.26-2.3 21.35-2.14 10.15.1 19.92 1.14 29.88 1.7"></path>
+            </svg>
+            
+            <div class="title-wrapper" style="text-align: {{ block.settings.title_alignment }};">
+              <h3 class="product-title" style="color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_size }}px;">
+                {%- if block.settings.product != blank -%}
+                  {{ block.settings.product.title }}
+                {%- else -%}
+                  {{ block.settings.title | default: "Urban Hoodie" }}
+                {%- endif -%}
+              </h3>
+            </div>
+            
+            <div class="product-button-wrapper">
+              <div class="button-outer">
+                {%- if block.settings.product != blank -%}
+                  <a href="{{ block.settings.product.url }}" class="button-middle">
+                    <span class="button-inner">Shop</span>
+                  </a>
+                {%- elsif block.settings.custom_url != blank -%}
+                  <a href="{{ block.settings.custom_url }}" class="button-middle">
+                    <span class="button-inner">Shop</span>
+                  </a>
+                {%- else -%}
+                  <a href="#" class="button-middle">
+                    <span class="button-inner">Shop</span>
+                  </a>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- assign default_product_titles = "Urban Hoodie,Street Sneakers,Vintage Cap,Graphic Tee,Denim Jacket" | split: "," -%}
+        {%- assign default_product_prices = "$59.99,$129.99,$29.99,$39.99,$89.99" | split: "," -%}
+        {%- for i in (1..5) -%}
+          {%- assign image_index = forloop.index0 | modulo: default_images.size -%}
+          {%- assign default_image = default_images[image_index] -%}
+          {%- assign title_index = forloop.index0 | modulo: default_product_titles.size -%}
+          {%- assign price_index = forloop.index0 | modulo: default_product_prices.size -%}
+          
+          <div class="product-card">
+            <!-- SVG Lines -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 555" preserveAspectRatio="none" class="product-svg vertical-line left">
+              <path fill="none" stroke="currentColor" d="M4.42.73c-2.26 26.23.02-6.6 1.2 43.35.23 9.32-2.18 7.94-4.04 16.35a14.65 14.65 0 0 0 0 4.97c.97 7.34 3.34 14.33 3.57 21.8.25 8.41-2.29 16.65-2.16 25.08.34 22.7 4.9 14.96 2.83 34.25-.46 4.36-2.72 8.16-2.83 12.58-.25 10.5 1.83 20.9 1.79 31.4-.03 6.97-2.06 19.04-1.99 20.68.91 19.67 3.03 4.4 2.43 33.04-.84 39.25-3.08 33.75-2.85 51.02.13 9.92 2.04 19.65 2.3 29.56.18 7.18-1.19 14.32-.97 21.5.14 4.5 2.23 8.7 2.04 13.2-1.4 33.36-4.96 13.26-3.6 36.05 2.3 38.96 3.25 77.61.48 116.44-.24 3.35.3 7.14 1.08 11.1 2.16 10.89 2.16 23.87.92 31.24"></path>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 555" preserveAspectRatio="none" class="product-svg vertical-line right">
+              <path fill="none" stroke="currentColor" d="M4.42.73c-2.26 26.23.02-6.6 1.2 43.35.23 9.32-2.18 7.94-4.04 16.35a14.65 14.65 0 0 0 0 4.97c.97 7.34 3.34 14.33 3.57 21.8.25 8.41-2.29 16.65-2.16 25.08.34 22.7 4.9 14.96 2.83 34.25-.46 4.36-2.72 8.16-2.83 12.58-.25 10.5 1.83 20.9 1.79 31.4-.03 6.97-2.06 19.04-1.99 20.68.91 19.67 3.03 4.4 2.43 33.04-.84 39.25-3.08 33.75-2.85 51.02.13 9.92 2.04 19.65 2.3 29.56.18 7.18-1.19 14.32-.97 21.5.14 4.5 2.23 8.7 2.04 13.2-1.4 33.36-4.96 13.26-3.6 36.05 2.3 38.96 3.25 77.61.48 116.44-.24 3.35.3 7.14 1.08 11.1 2.16 10.89 2.16 23.87.92 31.24"></path>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 266 8" class="product-svg top horizontal-line">
+              <path fill="none" stroke="currentColor" d="M.74 5.43c16.62-3.7 7.17-2.5 43.93-.8 17.36.79 15.14-2.9 24.1-2.63 1.21.04 5.55 1.98 7.47 2.14 5.24.42 8.17-.7 13.42-.44 3 .14 5.77 2.11 8.77 2.1 8.33-.04 16.56-2.19 24.89-2.25 10.32-.07 23.74 1.66 34.49 1.07 8.49-.46 17.47-1.77 25.92-2.65 11.98-1.24 18.38 2.3 30.24 3.88 12.82 1.7 5.26-2.3 21.35-2.14 10.15.1 19.92 1.14 29.88 1.7"></path>
+            </svg>
+            
+            <div class="product-details">
+              <span class="product-price">{{ default_product_prices[price_index] }}</span>
+              <span class="product-rating">⭐ 4.5</span>
+            </div>
+            
+            <div class="product-image-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 166 306" preserveAspectRatio="none" class="scribble-svg">
+                <path class="scribble-path" filter="url(#scribble)" stroke="{{ section.settings.scribble_color | default: '#b75648' }}" stroke-linecap="round" stroke-linejoin="round" stroke-width="12" d="M126 8c-10 10-26 17-41 22-24 9-50 14-74 23a152 152 0 0 0 24 3l50 1c5 0 17 0 20 4 3 3-13 6-15 6a689 689 0 0 0-45 12c1 2 7 2 9 2 11 2 22 1 33 1l48-2 17 1c2 0-2 2-3 2l-8 2-60 11-32 7c-5 1-12 2-16 5-2 1 8 3 9 4 13 2 27 2 39 2 14 0 29-2 43 0 3 1 7 1 3 3-7 3-15 4-23 6l-41 7c-10 2-22 5-31 9-2 2-1 2 1 3l23 2c22 1 43 0 64 3 4 0 4 1 1 2l-20 7c-11 3-22 5-32 9l-14 6c-3 4 32 7 35 7 20 1 43 0 62 6 1 1 5 2 4 3-3 3-9 4-12 5-28 7-57 9-85 15l-30 7-9 3h1l13 1 53-1c15-1 31-1 47 1 10 1-2 4-6 5-14 4-29 5-44 8l-39 7c-2 1-22 5-22 7 0 3 58 4 65 5 6 0 17 0 23 3 1 1-4 3-4 3-16 6-36 7-52 10l-13 3a227 227 0 0 0 49 4c20 0 41 7 62 7"></path>
+                <filter id="scribble">
+                  <feTurbulence baseFrequency="0.05" id="turbulence" numOctaves="2" result="noise" seed="0"></feTurbulence>
+                  <feDisplacementMap id="displacement" in2="noise" in="SourceGraphic" scale="5"></feDisplacementMap>
+                </filter>
+              </svg>
+              
+              <img src="{{ default_image }}" width="150" alt="{{ default_product_titles[title_index] }}" class="product-image" />
+            </div>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 266 8" width="266" height="8" preserveAspectRatio="none" shape-rendering="crispEdges" class="product-svg bottom horizontal-line">
+              <path fill="none" stroke="currentColor" d="M.74 5.43c16.62-3.7 7.17-2.5 43.93-.8 17.36.79 15.14-2.9 24.1-2.63 1.21.04 5.55 1.98 7.47 2.14 5.24.42 8.17-.7 13.42-.44 3 .14 5.77 2.11 8.77 2.1 8.33-.04 16.56-2.19 24.89-2.25 10.32-.07 23.74 1.66 34.49 1.07 8.49-.46 17.47-1.77 25.92-2.65 11.98-1.24 18.38 2.3 30.24 3.88 12.82 1.7 5.26-2.3 21.35-2.14 10.15.1 19.92 1.14 29.88 1.7"></path>
+            </svg>
+            
+            <div class="title-wrapper">
+              <h3 class="product-title">{{ default_product_titles[title_index] }}</h3>
+            </div>
+            
+            <div class="product-button-wrapper">
+              <div class="button-outer">
+                <a href="#" class="button-middle">
+                  <span class="button-inner">Shop</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<!-- SVG Filters -->
+<svg class="h-0 w-0" style="height: 0; width: 0; position: absolute;">
+  <defs>
+    <filter id="squiggle-0">
+      <feTurbulence baseFrequency="0.05" numOctaves="2" result="noise" seed="0"></feTurbulence>
+      <feDisplacementMap in2="noise" in="SourceGraphic" scale="4"></feDisplacementMap>
+    </filter>
+    <filter id="squiggle-1">
+      <feTurbulence baseFrequency="0.05" numOctaves="2" result="noise" seed="1"></feTurbulence>
+      <feDisplacementMap in2="noise" in="SourceGraphic" scale="4"></feDisplacementMap>
+    </filter>
+    <filter id="squiggle-2">
+      <feTurbulence baseFrequency="0.05" numOctaves="2" result="noise" seed="2"></feTurbulence>
+      <feDisplacementMap in2="noise" in="SourceGraphic" scale="4"></feDisplacementMap>
+    </filter>
+    <filter id="squiggle-3">
+      <feTurbulence baseFrequency="0.05" numOctaves="2" result="noise" seed="3"></feTurbulence>
+      <feDisplacementMap in2="noise" in="SourceGraphic" scale="4"></feDisplacementMap>
+    </filter>
+    <filter id="squiggle-4">
+      <feTurbulence baseFrequency="0.05" numOctaves="2" result="noise" seed="4"></feTurbulence>
+      <feDisplacementMap in2="noise" in="SourceGraphic" scale="4"></feDisplacementMap>
+    </filter>
+  </defs>
+</svg>
+
+{% schema %}
+{
+  "name": "Street Wear Product Grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Latest Drop"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Title Font Size",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#27272a"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Section Subtitle",
+      "default": "Grab our freshest designs before they sell out!"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle Font Size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle Color",
+      "default": "#27272a"
+    },
+    {
+      "type": "select",
+      "id": "subtitle_alignment",
+      "label": "Subtitle Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Grid Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Products per Row (Desktop)",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Products per Row (Tablet)",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Products per Row (Mobile)",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 colonne"
+        },
+        {
+          "value": "2",
+          "label": "2 colonnes"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Product Title Size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "product_details_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Product Details Size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Visual Effects & Colors"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#a8a29e",
+      "info": "Color for the decorative borders around products"
+    },
+    {
+      "type": "color",
+      "id": "scribble_color",
+      "label": "Scribble Effect Color",
+      "default": "#b75648",
+      "info": "Color for the animated scribble effect on hover"
+    },
+    {
+      "type": "color",
+      "id": "button_color_1",
+      "label": "Button Gradient Color 1",
+      "default": "#ff7347",
+      "info": "First color of the button gradient"
+    },
+    {
+      "type": "color",
+      "id": "button_color_2",
+      "label": "Button Gradient Color 2",
+      "default": "#d9f154",
+      "info": "Second color of the button gradient"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product Block",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Product",
+          "info": "Select a product from your store"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Custom Title",
+          "default": "Urban Hoodie",
+          "info": "Leave empty to use product title"
+        },
+        {
+          "type": "range",
+          "id": "title_size",
+          "min": 12,
+          "max": 32,
+          "step": 1,
+          "unit": "px",
+          "label": "Title Size",
+          "default": 16
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Title Color",
+          "default": "#27272a"
+        },
+        {
+          "type": "select",
+          "id": "title_alignment",
+          "label": "Title Alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Custom Price",
+          "default": "$59.99",
+          "info": "Leave empty to use product price"
+        },
+        {
+          "type": "color",
+          "id": "price_color",
+          "label": "Price Color",
+          "default": "#27272a"
+        },
+        {
+          "type": "text",
+          "id": "rating",
+          "label": "Rating",
+          "default": "4.5"
+        },
+        {
+          "type": "color",
+          "id": "rating_color",
+          "label": "Rating Color",
+          "default": "#27272a"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom Image",
+          "info": "Leave empty to use product image or default image"
+        },
+        {
+          "type": "url",
+          "id": "custom_url",
+          "label": "Custom URL",
+          "info": "Leave empty to use product URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Street Wear Product Grid",
+      "category": "Product",
+      "blocks": [
+        {
+          "type": "product",
+          "settings": {
+            "title": "Urban Hoodie",
+            "price": "$59.99",
+            "rating": "4.5"
+          }
+        },
+        {
+          "type": "product",
+          "settings": {
+            "title": "Street Sneakers",
+            "price": "$129.99",
+            "rating": "4.8"
+          }
+        },
+        {
+          "type": "product",
+          "settings": {
+            "title": "Vintage Cap",
+            "price": "$29.99",
+            "rating": "4.3"
+          }
+        },
+        {
+          "type": "product",
+          "settings": {
+            "title": "Graphic Tee",
+            "price": "$39.99",
+            "rating": "4.6"
+          }
+        },
+        {
+          "type": "product",
+          "settings": {
+            "title": "Denim Jacket",
+            "price": "$89.99",
+            "rating": "4.7"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

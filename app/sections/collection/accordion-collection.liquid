@@ -1,0 +1,318 @@
+{% schema %}
+{
+  "name": "Accordion Collections",
+  "settings": [
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Couleur de fond de la section",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Couleur de l’overlay sur l’image",
+      "default": "rgba(0,0,0,0.35)"
+    },
+    {
+      "type": "color" ,
+      "id": "text_color",
+      "label": "Couleur du titre",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id" : "text_description_color",
+      "label": "Couleur description",
+      "default" : "#531A1A",
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alignement du texte descriptif",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centre" },
+        { "value": "right", "label": "Droite" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Taille titre (desktop, px)",
+      "min": 12,
+      "max": 60,
+      "step": 1,
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "desc_size_desktop",
+      "label": "Taille description (desktop, px)",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "label": "Taille titre (tablette, px)",
+      "min": 12,
+      "max": 60,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "desc_size_tablet",
+      "label": "Taille description (tablette, px)",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Taille titre (mobile, px)",
+      "min": 12,
+      "max": 60,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "desc_size_mobile",
+      "label": "Taille description (mobile, px)",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "title_border_width",
+      "label": "Épaisseur bordure texte vertical (px)",
+      "min": 0,
+      "max": 10,
+      "step": 0.1,
+      "default": 0.6
+    },
+    {
+      "type": "range",
+      "id": "vertical_text_size",
+      "label": "Taille texte vertical (px)",
+      "min": 12,
+      "max": 60,
+      "step": 1,
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "vertical_text_stroke_color",
+      "label": "Couleur bordure texte vertical",
+      "default": "#531A1A"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection liée" },
+        { "type": "product", "id": "product", "label": "Produit (optionnel, prioritaire si choisi)" },
+        { "type": "image_picker", "id": "bg_image", "label": "Image de fond" },
+        { "type": "text", "id": "vertical_text", "label": "Texte vertical", "default": "Exemple" },
+        { "type": "text", "id": "title", "label": "Titre", "default": "Titre par défaut" },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "Description par défaut" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Accordion Collections",
+      "category": "Custom",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "vertical_text": "Bagues",
+            "title": "Bagues Élégantes",
+            "description": "Des bagues fines et intemporelles pour sublimer vos mains."
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "vertical_text": "Bracelets",
+            "title": "Bracelets Raffinés",
+            "description": "Des pièces délicates qui captent la lumière."
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "vertical_text": "Colliers",
+            "title": "Colliers Délicats",
+            "description": "Des chaînes et pendentifs élégants au design minimaliste."
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "vertical_text": "Boucles D'oreille",
+            "title": "Boucles d’Oreilles",
+            "description": "Des boucles subtiles, scintillantes ou audacieuses."
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "vertical_text": "Or Rose",
+            "title": "Collection Or Rose",
+            "description": "Des bijoux doux aux reflets rosés pour un éclat unique."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<section class="accordion-section" style="background: {{ section.settings.section_bg }};">
+  <div class="gallery-wrap">
+    {% assign default_images = "https://images.pexels.com/photos/17833829/pexels-photo-17833829.jpeg, https://images.pexels.com/photos/15871523/pexels-photo-15871523.jpeg, https://images.pexels.com/photos/11790171/pexels-photo-11790171.jpeg, https://images.pexels.com/photos/28716777/pexels-photo-28716777.jpeg, https://images.pexels.com/photos/10419336/pexels-photo-10419336.jpeg" | split: ", " %}
+    {% for block in section.blocks %}
+      {% assign link_url = block.settings.product.url | default: block.settings.collection.url %}
+      <div class="item" onclick="if ('{{ link_url }}' != '') window.location.href='{{ link_url }}'">
+        {% if block.settings.bg_image != blank %}
+          <img src="{{ block.settings.bg_image | image_url: width: 1600 }}" alt="{{ block.settings.title }}" />
+        {% else %}
+          <img src="{{ default_images[forloop.index0] }}" alt="{{ block.settings.title }}" />
+        {% endif %}
+
+        <div class="item-vertical-title">{{ block.settings.vertical_text }}</div>
+
+        <div class="item-content" style="text-align: {{ section.settings.text_align }};">
+          <h2 class="item-title">{{ block.settings.title }}</h2>
+          <p class="item-description">{{ block.settings.description }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+.accordion-section .gallery-wrap {
+  display: flex;
+  width: 100%;
+  height: 70vh;
+  overflow: hidden;
+  gap: 8px;
+}
+.accordion-section .item {
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 12px;
+  transition: flex 0.6s ease-in-out;
+}
+.accordion-section .item:hover {
+  flex: 3;
+}
+.accordion-section .item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease-in-out;
+  display: block;
+}
+.accordion-section .item:hover img {
+  transform: scale(1.05);
+}
+
+.accordion-section .item-vertical-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+  font-size: {{ section.settings.vertical_text_size }}px;
+  font-weight: bold;
+  color: {{ section.settings.text_color }};
+  opacity: 0.85;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+  color: {{ section.settings.text_color }};
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+  -webkit-text-stroke: {{section.settings.title_border_width }}px {{ section.settings.vertical_text_stroke_color }};
+  font-family: sans-serif; /* pour mettre en place le stroke */
+}
+.accordion-section .item:hover .item-vertical-title {
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(-90deg) scale(0.9);
+}
+
+.accordion-section .item-content {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 8px;
+  border-radius: 8px;
+  z-index: 10;
+}
+.accordion-section .item:hover .item-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.accordion-section .item-description {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  font-size: {{ section.settings.desc_size_desktop }}px;
+  color: {{ section.settings.text_description_color }};
+
+}
+.accordion-section .item:hover .item-description {
+  opacity: 1;
+}
+
+.accordion-section .item-title {
+  color: {{ section.settings.title_color }};
+  font-weight: 700;
+  margin-bottom: 10px;
+  font-size: {{ section.settings.title_size_desktop }}px;
+  padding: 4px 8px;
+  display: inline-block;
+}
+
+/* Tablette */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .accordion-section .item-title {
+    font-size: {{ section.settings.title_size_tablet }}px;
+  }
+  .accordion-section .item-description {
+    font-size: {{ section.settings.desc_size_tablet }}px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .accordion-section .item-title {
+    font-size: {{ section.settings.title_size_mobile }}px;
+  }
+  .accordion-section .item-description {
+    font-size: {{ section.settings.desc_size_mobile }}px;
+  }
+}
+</style>

@@ -1,5 +1,7 @@
 import { Page, Card, Text, Button } from "@shopify/polaris";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useGoBack } from "../hooks/useGoBack";
 
 const sections = [
   {
@@ -7,7 +9,7 @@ const sections = [
     name: "Bannière Promo",
     description: "Bannière promotionnelle avec animation",
     price: 9,
-    image: "/images/banner1.jpg",
+    image: "/images/banner.jpg",
     filename: "promo-banner.liquid"
   },
   {
@@ -15,7 +17,7 @@ const sections = [
     name: "Bannière Info",
     description: "Bannière d'information élégante",
     price: 7,
-    image: "/images/banner2.jpg",
+    image: "/images/banner.jpg",
     filename: "info-banner.liquid"
   },
   {
@@ -23,13 +25,22 @@ const sections = [
     name: "Bannière Hero",
     description: "Grande bannière pour page d'accueil",
     price: 12,
-    image: "/images/banner3.jpg", 
+    image: "/images/banner.jpg", 
     filename: "hero-banner.liquid"
   }
 ];
 
 export default function BannieresPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
+
+  useEffect(() => {
+    console.log("✅ Page Bannières chargée avec succès!");
+  }, []);
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
 
   return (
     <Page>
@@ -121,9 +132,9 @@ export default function BannieresPage() {
 
       {/* Bouton retour */}
       <div style={{ marginTop: 40, textAlign: "center" }}>
-        <Button onClick={() => navigate("/app")} size="large">
-          ← Retour à l'accueil
-        </Button>
+    <Button onClick={goBack} size="large">
+      ← Retour à l’accueil
+    </Button>
       </div>
     </Page>
   );

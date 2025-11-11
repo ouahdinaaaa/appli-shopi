@@ -1,24 +1,4 @@
-<<<<<<< HEAD
 /** @type {import('@types/eslint').Linter.BaseConfig} */
-module.exports = {
-  root: true,
-  extends: [
-    "@remix-run/eslint-config",
-    "@remix-run/eslint-config/node",
-    "@remix-run/eslint-config/jest-testing-library",
-    "prettier",
-  ],
-  globals: {
-    shopify: "readonly"
-  },
-=======
-/**
- * This is intended to be a basic starting point for linting in your app.
- * It relies on recommended configs out of the box for simplicity, but you can
- * and should modify this configuration to best suit your team's needs.
- */
-
-/** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
   parserOptions: {
@@ -33,10 +13,18 @@ module.exports = {
     commonjs: true,
     es6: true,
   },
+  globals: {
+    shopify: "readonly"
+  },
   ignorePatterns: ["!**/.server", "!**/.client"],
 
-  // Base config
-  extends: ["eslint:recommended"],
+  extends: [
+    "eslint:recommended",
+    "@remix-run/eslint-config",
+    "@remix-run/eslint-config/node",
+    "@remix-run/eslint-config/jest-testing-library",
+    "prettier",
+  ],
 
   overrides: [
     // React
@@ -104,5 +92,4 @@ module.exports = {
       },
     },
   ],
->>>>>>> 9e37be4 (push)
 };

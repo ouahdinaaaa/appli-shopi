@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+// Utilisation de Response.json() natif
 import { authenticate } from "../shopify.server";
 import { SectionManager } from "../sections/section-manager";
 
@@ -12,7 +12,7 @@ export const action = async ({ request }) => {
     const { sectionName } = await request.json();
     
     if (!sectionName) {
-      return json({ error: "Nom de section requis" }, { status: 400 });
+      return Response.json({ error: "Nom de section requis" }, { status: 400 });
     }
 
     // 1. Lire le contenu de la section
@@ -23,7 +23,7 @@ export const action = async ({ request }) => {
 
     // 2. Méthode SIMPLE et DIRECTE : Instructions manuelles
     // (Car l'injection automatique nécessite des permissions spéciales)
-    return json({
+    return Response.json({
       success: true,
       message: `📋 Section "${cleanName}" prête pour installation manuelle`,
       data: {
@@ -43,7 +43,7 @@ export const action = async ({ request }) => {
 
   } catch (error) {
     console.error('❌ Erreur:', error);
-    return json({ 
+    return Response.json({ 
       success: false, 
       error: `Erreur: ${error.message}` 
     }, { status: 500 });

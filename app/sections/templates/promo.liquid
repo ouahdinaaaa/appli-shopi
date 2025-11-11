@@ -1,0 +1,86 @@
+{% schema %}
+{
+  "name": "Section Promo",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Titre", "default": "Don’t Miss Out! 30% Off All Ebooks" },
+    { "type": "range", "id": "title_size_desktop", "label": "Taille du titre (desktop)", "min": 10, "max": 80, "step": 1, "default": 46 },
+    { "type": "range", "id": "title_size_mobile", "label": "Taille du titre (mobile)", "min": 10, "max": 60, "step": 1, "default": 31 },
+
+    { "type": "text", "id": "subtitle", "label": "Sous-titre", "default": "Make The Best Of Our Limited Time Offer, Shop Now And Save The Most" },
+    { "type": "range", "id": "subtitle_size_desktop", "label": "Taille du sous-titre (desktop)", "min": 10, "max": 40, "step": 1, "default": 23 },
+    { "type": "range", "id": "subtitle_size_mobile", "label": "Taille du sous-titre (mobile)", "min": 10, "max": 30, "step": 1, "default": 16 },
+
+    { "type": "text", "id": "button_label", "label": "Texte du bouton", "default": "Buy Now" },
+    { "type": "url", "id": "button_link", "label": "Lien du bouton" },
+    { "type": "range", "id": "button_size_desktop", "label": "Taille du bouton (desktop, px)", "min": 20, "max": 100, "step": 2, "default": 26 },
+    { "type": "range", "id": "button_size_mobile", "label": "Taille du bouton (mobile, px)", "min": 10, "max": 80, "step": 2, "default": 22 },
+
+    { "type": "color", "id": "button_bg", "label": "Couleur de fond du bouton", "default": "#6c3af0" },
+    { "type": "color", "id": "button_text_color", "label": "Couleur du texte du bouton", "default": "#ffffff" },
+
+    { "type": "color", "id": "text_color", "label": "Couleur du texte", "default": "#000000" },
+    { "type": "color", "id": "bg_color", "label": "Couleur de fond", "default": "#f0eaff" },
+    { "type": "range", "id": "padding_vertical", "label": "Padding vertical (px)", "min": 10, "max": 200, "step": 5, "default": 60 }
+  ],
+  "presets": [
+    { "name": "Section Promo" }
+  ]
+}
+{% endschema %}
+
+
+<section class="promo-section" style="background-color: {{ section.settings.bg_color }}; padding: {{ section.settings.padding_vertical }}px 20px; text-align: center;">
+  <h2 class="promo-title" style="color: {{ section.settings.text_color }};">
+    {{ section.settings.title }}
+  </h2>
+  <p class="promo-subtitle" style="color: {{ section.settings.text_color }};">
+    {{ section.settings.subtitle }}
+  </p>
+  {% if section.settings.button_label != blank %}
+    <a href="{{ section.settings.button_link }}" class="promo-button">
+      {{ section.settings.button_label }}
+    </a>
+  {% endif %}
+</section>
+
+
+<style>
+.promo-title {
+  font-size: {{ section.settings.title_size_desktop }}px;
+  font-weight: bold;
+}
+
+.promo-subtitle {
+  font-size: {{ section.settings.subtitle_size_desktop }}px;
+  margin-top: 12px;
+}
+
+.promo-button {
+  display: inline-block;
+  margin-top: 24px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  background-color: {{ section.settings.button_bg }};
+  color: {{ section.settings.button_text_color }};
+  text-decoration: none;
+  font-size: {{ section.settings.button_size_desktop }}px;
+  transition: all 0.3s ease;
+}
+
+.promo-button:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .promo-title {
+    font-size: {{ section.settings.title_size_mobile }}px;
+  }
+  .promo-subtitle {
+    font-size: {{ section.settings.subtitle_size_mobile }}px;
+  }
+  .promo-button {
+    font-size: {{ section.settings.button_size_mobile }}px;
+  }
+}
+</style>

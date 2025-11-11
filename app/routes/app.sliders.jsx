@@ -1,5 +1,6 @@
 import { Page, Card, Text, Button } from "@shopify/polaris";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
+import { useGoBack } from "../hooks/useGoBack";
 
 const sections = [
   {
@@ -30,7 +31,7 @@ const sections = [
 
 export default function SlidersPage() {
   const navigate = useNavigate();
-
+ const goBack = useGoBack();
   return (
     <Page>
       {/* En-tête */}
@@ -121,9 +122,9 @@ export default function SlidersPage() {
 
       {/* Bouton retour */}
       <div style={{ marginTop: 40, textAlign: "center" }}>
-        <Button onClick={() => navigate("/app")} size="large">
-          ← Retour à l'accueil
-        </Button>
+    <Button onClick={goBack} size="large">
+      ← Retour à l’accueil
+    </Button>
       </div>
     </Page>
   );

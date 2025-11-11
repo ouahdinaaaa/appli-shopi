@@ -1,0 +1,268 @@
+{% schema %}
+{
+  "name": "Before / After",
+  "tag": "section",
+  "class": "before-after-slider-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "first-before-title",
+      "label": "Titre",
+      "default": "Before and after"
+    },
+    {
+      "type": "text",
+      "id": "first-before-subtitle",
+      "label": "Sous-titre",
+      "default": "This product will change everything, forever."
+    },
+    {
+      "type": "image_picker",
+      "id": "first-before-image_before",
+      "label": "Image Avant"
+    },
+    {
+      "type": "image_picker",
+      "id": "first-before-image_after",
+      "label": "Image Après"
+    },
+    {
+      "type": "url",
+      "id": "first-before-button_link",
+      "label": "Lien du bouton"
+    },
+    {
+      "type": "text",
+      "id": "first-before-button_label",
+      "label": "Texte du bouton",
+      "default": "Acheter Maintenant"
+    },
+    {
+      "type": "color",
+      "id": "first-before-background",
+      "label": "Couleur de Fond",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "text",
+      "id": "label_before",
+      "label": "Texte 'Avant'",
+      "default": "Avant"
+    },
+    {
+      "type": "text",
+      "id": "label_after",
+      "label": "Texte 'Après'",
+      "default": "Après"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Avant / Après - Glissière visible"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.before-after-slider-section {
+  padding: 10px 25px;
+  text-align: center;
+  background-color : {{section.settings.first-before-background}};
+}
+
+.before-after-slider-section h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: -1rem;
+}
+
+.before-after-slider-section p {
+  font-size: 1.4rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.before-after-container {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.before-after-container img {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.before-img {
+  z-index: 2;
+  clip-path: inset(0 50% 0 0);
+  transition: clip-path 0.05s ease-out;
+}
+
+.after-img {
+  z-index: 1;
+}
+
+.slider-bar {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  width: 4px;
+  background-color: white;
+  border: 1px solid #000;
+  transform: translateX(-50%);
+  z-index: 3;
+  cursor: ew-resize;
+  transition: left 0.05s ease-out;
+}
+
+.slider-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  background: black;
+  border: 3px solid white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+}
+
+.before-label,
+.after-label {
+  position: absolute;
+  bottom: 12px;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  text-shadow: 0 0 4px rgba(0,0,0,0.7);
+  z-index: 5;
+  padding: 0 10px;
+}
+
+.before-label {
+  left: 10px;
+}
+
+.after-label {
+  right: 10px;
+}
+
+.before-after-button {
+  margin-top: 30px;
+}
+
+.before-after-button a {
+  background-color: black;
+  color: white;
+  padding: 14px 28px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.before-after-button a:hover {
+  background-color: #333;
+}
+</style>
+
+<div class="before-after-slider-section">
+  {% if section.settings.first-before-title != blank %}
+    <h2>{{ section.settings.first-before-title }}</h2>
+  {% endif %}
+  {% if section.settings.first-before-subtitle != blank %}
+    <p>{{ section.settings.first-before-subtitle }}</p>
+  {% endif %}
+
+  {%- assign default_images = "https://images.pexels.com/photos/17637126/pexels-photo-17637126.jpeg,https://images.pexels.com/photos/17637128/pexels-photo-17637128.jpeg" | split: "," -%}
+
+  <div class="before-after-container" id="container-{{ section.id }}">
+    {% if section.settings.first-before-image_after != blank %}
+      <img src="{{ section.settings.first-before-image_after | image_url: width: 1600 }}" class="after-img" alt="Après">
+    {% else %}
+      <img src="{{ default_images[1] | strip }}" class="after-img" alt="Après">
+    {% endif %}
+    
+    {% if section.settings.first-before-image_before != blank %}
+      <img src="{{ section.settings.first-before-image_before | image_url: width: 1600 }}" class="before-img" id="before-img-{{ section.id }}" alt="Avant">
+    {% else %}
+      <img src="{{ default_images[0] | strip }}" class="before-img" id="before-img-{{ section.id }}" alt="Avant">
+    {% endif %}
+
+    <div class="slider-bar" id="slider-bar-{{ section.id }}">
+      <div class="slider-handle"></div>
+    </div>
+    <div class="before-label">{{ section.settings.label_before }}</div>
+    <div class="after-label">{{ section.settings.label_after }}</div>
+  </div>
+
+  {% if section.settings.first-before-button_label and section.settings.first-before-button_link %}
+    <div class="before-after-button">
+      <a href="{{ section.settings.first-before-button_link }}">{{ section.settings.first-before-button_label }}</a>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const container = document.getElementById("container-{{ section.id }}");
+  const beforeImg = document.getElementById("before-img-{{ section.id }}");
+  const sliderBar = document.getElementById("slider-bar-{{ section.id }}");
+
+  let isDragging = false;
+
+  function updateSlider(x) {
+    const rect = container.getBoundingClientRect();
+    let posX = Math.max(0, Math.min(x - rect.left, rect.width));
+    const percent = (posX / rect.width) * 100;
+    beforeImg.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+    sliderBar.style.left = `${percent}%`;
+  }
+
+  sliderBar.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    isDragging = true;
+  });
+
+  document.addEventListener("mouseup", () => isDragging = false);
+  document.addEventListener("mouseleave", () => isDragging = false);
+
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+      updateSlider(e.clientX);
+    }
+  });
+
+  // Touch support
+  sliderBar.addEventListener("touchstart", (e) => {
+    isDragging = true;
+    e.preventDefault();
+  });
+
+  document.addEventListener("touchend", () => isDragging = false);
+
+  document.addEventListener("touchmove", (e) => {
+    if (isDragging) {
+      updateSlider(e.touches[0].clientX);
+    }
+  });
+
+  // Init position center
+  window.addEventListener("load", () => {
+    const centerX = container.getBoundingClientRect().width / 2;
+    updateSlider(container.getBoundingClientRect().left + centerX);
+  });
+});
+</script>

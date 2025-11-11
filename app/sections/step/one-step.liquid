@@ -1,0 +1,209 @@
+{% schema %}
+{
+  "name": "How to use",
+  "tag": "section",
+  "class": "how-to-use",
+  "settings": [
+    {
+      "type": "text",
+      "id": "main_title",
+      "label": "Titre principal",
+      "default": "How to use"
+    },
+    {
+      "type": "range",
+      "id": "addict_step_title_size_desktop",
+      "label": "Taille du titre (Desktop)",
+      "default": 32,
+      "min": 16,
+      "max": 64,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "addict_step_title_size_mobile",
+      "label": "Taille du titre (Mobile)",
+      "default": 24,
+      "min": 14,
+      "max": 40,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type" : "color",
+      "id" : "addict_step_background-section",
+      "label" : "Couleur de fond de la section",
+      "default" : "#e7f0fe"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Étape",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "addict_step_image",
+          "label": "Image de l’étape"
+        },
+        {
+          "type": "text",
+          "id": "addict_step_title",
+          "label": "Titre de l’étape",
+          "default": "STEP 1"
+        },
+        {
+          "type": "textarea",
+          "id": "addict_step_subtitle",
+          "label": "Sous-titre",
+          "default": "Texte explicatif"
+        },
+        {
+          "type": "color",
+          "id" : "addict_step_background-block",
+          "label" : "Couleur de fond du bloc",
+          "default" : "#ffffff"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 9,
+  "presets": [
+    {
+      "name": "How to use",
+      "category": "Contenu",
+      "blocks": [
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<div class="how-to-container">
+  <h2 class="main-title">{{ section.settings.main_title }}</h2>
+  <div class="steps-wrapper">
+    {% assign default_images = 
+      "https://images.pexels.com/photos/8426697/pexels-photo-8426697.jpeg,
+       https://images.pexels.com/photos/4252139/pexels-photo-4252139.jpeg,
+       https://images.pexels.com/photos/842571/pexels-photo-842571.jpeg,
+       https://images.pexels.com/photos/10054905/pexels-photo-10054905.jpeg" | split: "," %}
+
+    {% for block in section.blocks %}
+      {% assign default_image = default_images[forloop.index0] | strip %}
+      <div class="step-card" style="background: {{ block.settings.addict_step_background-block }};">
+        <div class="image-wrapper">
+          {% if block.settings.addict_step_image != blank %}
+            <img src="{{ block.settings.addict_step_image | image_url: width: 600 }}" alt="Step image" loading="lazy" />
+          {% else %}
+            <img src="{{ default_image }}" alt="Default step image" loading="lazy" />
+          {% endif %}
+        </div>
+        <h3 class="step-title">{{ block.settings.addict_step_title }}</h3>
+        <p class="step-subtitle">{{ block.settings.addict_step_subtitle }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .how-to-container {
+    padding: 40px 20px;
+    text-align: center;
+    background: {{ section.settings.addict_step_background-section }};
+  }
+
+  .main-title {
+    margin-bottom: 40px;
+    font-weight: bold;
+  }
+
+  /* 💡 3 colonnes fixes sur toutes les tailles d’écran */
+  .steps-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    justify-items: center;
+    align-items: stretch;
+  }
+
+  .step-card {
+    width: 100%;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .step-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  }
+
+  .image-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* carré parfait */
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+  }
+
+  .step-card:hover img {
+    transform: scale(1.05);
+  }
+
+  .step-title {
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-weight: 700;
+    font-size: 18px;
+    text-align: left;
+  }
+
+  .step-subtitle {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+    text-align: left;
+  }
+
+  /* ✅ Même sur mobile : 3 colonnes ajustées */
+  @media (max-width: 768px) {
+    .steps-wrapper {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .step-card {
+      padding: 10px;
+    }
+
+    .step-title {
+      font-size: 14px;
+    }
+
+    .step-subtitle {
+      font-size: 12px;
+    }
+
+    .main-title {
+      font-size: {{ section.settings.addict_step_title_size_mobile }}px !important;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .main-title {
+      font-size: {{ section.settings.addict_step_title_size_desktop }}px !important;
+    }
+  }
+</style>

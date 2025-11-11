@@ -1,0 +1,180 @@
+<section class="newsletter-beauty">
+  <div class="newsletter-container page-width">
+    <div class="newsletter-left">
+      <h2 class="newsletter-title">{{ section.settings.title }}</h2>
+      <p class="newsletter-subtitle">{{ section.settings.subtitle }}</p>
+      <p class="newsletter-description">{{ section.settings.description }}</p>
+    </div>
+    <div class="newsletter-right">
+      <label for="newsletter-email" class="newsletter-label">{{ section.settings.email_label }}</label>
+      <form method="post" action="/contact#newsletter-form" id="newsletter-form" accept-charset="UTF-8" class="newsletter-form">
+        <input type="hidden" name="form_type" value="customer" />
+        <input type="hidden" name="utf8" value="✓" />
+        <input type="email" name="contact[email]" id="newsletter-email" placeholder="{{ section.settings.email_placeholder }}" required />
+        <button type="submit" class="newsletter-button">{{ section.settings.button_label }}</button>
+      </form>
+      <p class="newsletter-disclaimer">{{ section.settings.disclaimer }}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .newsletter-beauty {
+    background-color: #f6f6f6;
+    padding: 4rem 2rem;
+  }
+
+  .newsletter-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .newsletter-left {
+    flex: 1 1 50%;
+  }
+
+  .newsletter-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .newsletter-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .newsletter-description {
+    font-size: 0.95rem;
+    color: #555;
+  }
+
+  .newsletter-right {
+    flex: 1 1 40%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .newsletter-label {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+.newsletter-form {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  max-width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+
+.newsletter-form input[type="email"] {
+  padding: 1rem;
+  flex: 1;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+  height: 100%;
+}
+
+
+  
+.newsletter-button {
+  background-color: #000;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  height: 100%;
+}
+  
+
+  .newsletter-disclaimer {
+    font-size: 0.75rem;
+    color: #777;
+    margin-top: 0.5rem;
+  }
+
+  @media screen and (max-width: 749px) {
+    .newsletter-container {
+      flex-direction: column;
+    }
+
+    .newsletter-form {
+      /* flex-direction: column; */
+    }
+
+    .newsletter-form input,
+    .newsletter-button {
+      border-radius: 4px !important;
+    }
+
+    .newsletter-button {
+      margin-top: 0.5rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Newsletter Beauté",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre principal",
+      "default": "Newsletter beauté"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Sous-titre",
+      "default": "Recevez les nouveautés, actualités et offres Boutique par email"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "En m'inscrivant, j'accepte de recevoir par email mon code de réduction ainsi que les offres et actualités de boutique et je déclare avoir plus de 16 ans. Je consens au traitement de mes données personnelles et accepte la politique de confidentialité."
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Label du champ e-mail",
+      "default": "Saisissez votre e-mail*"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Placeholder de l’email",
+      "default": "Ex: pierre.dubois@gmail.com"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texte du bouton",
+      "default": "S’inscrire"
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Texte légal en bas du champ",
+      "default": "*Champs obligatoires"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter Beauté"
+    }
+  ]
+}
+{% endschema %}

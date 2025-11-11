@@ -1,26 +1,32 @@
 import { PassThrough } from "stream";
 import { renderToPipeableStream } from "react-dom/server";
-<<<<<<< HEAD
-import { RemixServer } from "@remix-run/react";
-import { createReadableStreamFromReadable } from "@remix-run/node";
-=======
 import { ServerRouter } from "react-router";
-import { createReadableStreamFromReadable } from "@react-router/node";
->>>>>>> 9e37be4 (push)
 import { isbot } from "isbot";
 import { addDocumentResponseHeaders } from "./shopify.server";
 
 export const streamTimeout = 5000;
 
+function createReadableStreamFromReadable(readable) {
+  return new ReadableStream({
+    start(controller) {
+      readable.on('data', (chunk) => {
+        controller.enqueue(chunk);
+      });
+      readable.on('end', () => {
+        controller.close();
+      });
+      readable.on('error', (error) => {
+        controller.error(error);
+      });
+    },
+  });
+}
+
 export default async function handleRequest(
   request,
   responseStatusCode,
   responseHeaders,
-<<<<<<< HEAD
   remixContext,
-=======
-  reactRouterContext,
->>>>>>> 9e37be4 (push)
 ) {
   addDocumentResponseHeaders(request, responseHeaders);
   const userAgent = request.headers.get("user-agent");
@@ -28,11 +34,7 @@ export default async function handleRequest(
 
   return new Promise((resolve, reject) => {
     const { pipe, abort } = renderToPipeableStream(
-<<<<<<< HEAD
-      <RemixServer context={remixContext} url={request.url} />,
-=======
-      <ServerRouter context={reactRouterContext} url={request.url} />,
->>>>>>> 9e37be4 (push)
+      <ServerRouter context={remixContext} url={request.url} />,
       {
         [callbackName]: () => {
           const body = new PassThrough();
@@ -57,8 +59,7 @@ export default async function handleRequest(
       },
     );
 
-    // Automatically timeout the React renderer after 6 seconds, which ensures
-    // React has enough time to flush down the rejected boundary contents
+    // Automatically timeout the React renderer after 6 seconds
     setTimeout(abort, streamTimeout + 1000);
   });
 }

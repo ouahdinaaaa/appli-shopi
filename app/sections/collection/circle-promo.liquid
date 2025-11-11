@@ -1,0 +1,399 @@
+{% schema %}
+{
+  "name": "Shop By Promo Circles",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur du fond",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "circle_spacing",
+      "label": "Espacement entre cercles (px)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "circle_offset_top",
+      "label": "Décalage vertical du cercle (px)",
+      "min": -100,
+      "max": 100,
+      "step": 2,
+      "default": 0
+    },
+
+    {
+      "type": "header",
+      "content": "Taille Cercles"
+    },
+    {
+      "type": "range",
+      "id": "circle_size_desktop",
+      "label": "Taille cercle desktop (px)",
+      "min": 50,
+      "max": 400,
+      "step": 10,
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "circle_size_tablet",
+      "label": "Taille cercle tablette (px)",
+      "min": 50,
+      "max": 300,
+      "step": 10,
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "circle_size_mobile",
+      "label": "Taille cercle mobile (px)",
+      "min": 50,
+      "max": 250,
+      "step": 10,
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "circle_border_thickness",
+      "label": "Épaisseur du contour cercle (px)",
+      "min": 1,
+      "max": 20,
+      "default": 4
+    },
+
+    {
+      "type": "header",
+      "content": "Contour Cercle & Encadré"
+    },
+    {
+      "type": "color",
+      "id": "circle_border_color",
+      "label": "Couleur contour cercle (uni)",
+      "default": "#00ff00"
+    },
+    {
+      "type": "color_background",
+      "id": "circle_border_gradient",
+      "label": "Dégradé contour cercle",
+      "default": "linear-gradient(90deg, #00ff00, #ffff00)"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_gradient_border",
+      "label": "Utiliser dégradé pour le contour",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "box_background_color",
+      "label": "Couleur fond encadré (uni)",
+      "default": "#ccff99"
+    },
+    {
+      "type": "color_background",
+      "id": "box_background_gradient",
+      "label": "Dégradé fond encadré",
+      "default": "linear-gradient(90deg, #ccff99, #ffff99)"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_gradient_box",
+      "label": "Utiliser dégradé pour l'encadré",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "box_padding",
+      "label": "Padding encadré (px) (gauche droite)",
+      "min": 2,
+      "max": 40,
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "box_padding2",
+      "label": "Padding encadré (px) (haut bas)",
+      "min": 2,
+      "max": 40,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "box_radius",
+      "label": "Arrondi encadré (px)",
+      "min": 0,
+      "max": 40,
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "box_top_offset",
+      "label": "Position encadré du haut (px)",
+      "min": -100,
+      "max": 100,
+      "step": 2,
+      "default": 10
+    },
+
+    {
+      "type": "header",
+      "content": "Tailles Texte Globales"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Taille titre desktop (px)",
+      "min": 10,
+      "max": 50,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "label": "Taille titre tablette (px)",
+      "min": 10,
+      "max": 40,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Taille titre mobile (px)",
+      "min": 10,
+      "max": 30,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_desktop",
+      "label": "Taille sous-titre desktop (px)",
+      "min": 10,
+      "max": 40,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_tablet",
+      "label": "Taille sous-titre tablette (px)",
+      "min": 10,
+      "max": 30,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "label": "Taille sous-titre mobile (px)",
+      "min": 10,
+      "max": 25,
+      "default": 12
+    }
+  ],
+  "blocks": [
+    {
+      "type": "circle_item",
+      "name": "Cercle promo",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titre (au-dessus du cercle)",
+          "default": "For Him"
+        },
+        {
+          "type": "image_picker",
+          "id": "circle_image",
+          "label": "Image cercle"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Sous-titre (dans l'encadré)",
+          "default": "Up to 50% off"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Lien de redirection"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Couleur titre",
+          "default": "#000000"
+        },
+        {
+          "type": "checkbox",
+          "id": "title_bold",
+          "label": "Titre en gras",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "subtitle_color",
+          "label": "Couleur sous-titre",
+          "default": "#000000"
+        },
+        {
+          "type": "checkbox",
+          "id": "subtitle_bold",
+          "label": "Sous-titre en gras",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promo Circles",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
+
+<section class="promo-circles" style="background: {{ section.settings.background_color }};">
+  <div class="container">
+    <div class="circles">
+      {% for block in section.blocks %}
+        <div class="circle-item" style="margin: 0 {{ section.settings.circle_spacing | divided_by: 2 }}px;">
+          {% if block.settings.title != blank %}
+            <p class="circle-title"
+              style="
+                color: {{ block.settings.title_color }};
+                font-weight: {% if block.settings.title_bold %}700{% else %}400{% endif %};
+              ">
+              {{ block.settings.title }}
+            </p>
+          {% endif %}
+
+          <a href="{{ block.settings.link }}">
+            <div class="circle-wrapper"
+              style="margin-top: {{ section.settings.circle_offset_top }}px;
+                padding: {{ section.settings.circle_border_thickness }}px;
+                {% if section.settings.use_gradient_border %}
+                  background: {{ section.settings.circle_border_gradient }};
+                {% else %}
+                  background: {{ section.settings.circle_border_color }};
+                {% endif %}
+              ">
+              {% if block.settings.circle_image != blank %}
+                <img src="{{ block.settings.circle_image | img_url: '400x400' }}" alt="{{ block.settings.title }}" class="circle-img" />
+              {% endif %}
+            </div>
+          </a>
+
+          {% if block.settings.subtitle != blank %}
+            <div class="circle-box"
+              style="
+                {% if section.settings.use_gradient_box %}
+                  background: {{ section.settings.box_background_gradient }};
+                {% else %}
+                  background: {{ section.settings.box_background_color }};
+                {% endif %};
+                padding-left: {{ section.settings.box_padding }}px;
+                padding-right: {{ section.settings.box_padding }}px;
+                padding-top: {{ section.settings.box_padding2 }}px; 
+                padding-bottom: {{ section.settings.box_padding2 }}px; 
+                border-radius: {{ section.settings.box_radius }}px;
+                position : relative;
+                top: {{ section.settings.box_top_offset }}px;
+              ">
+              <p class="circle-subtitle"
+                style="
+                  color: {{ block.settings.subtitle_color }};
+                  font-weight: {% if block.settings.subtitle_bold %}700{% else %}400{% endif %};
+                ">
+                {{ block.settings.subtitle }}
+              </p>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+.promo-circles {
+  padding: 40px 0;
+  text-align: center;
+}
+.circles {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.circle-item {
+  text-align: center;
+  display: inline-block;
+}
+.circle-wrapper {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.circle-wrapper:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+.circle-wrapper .circle-img {
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.circle-box {
+  display: inline-block;
+}
+.circle-title {
+  margin-bottom: 8px;
+}
+.circle-subtitle {
+  margin: 0;
+}
+
+/* Responsive tailles cercles et textes */
+@media (min-width: 1025px) {
+  .circle-wrapper {
+    width: {{ section.settings.circle_size_desktop }}px;
+    height: {{ section.settings.circle_size_desktop }}px;
+  }
+  .circle-title {
+    font-size: {{ section.settings.title_size_desktop }}px;
+  }
+  .circle-subtitle {
+    font-size: {{ section.settings.subtitle_size_desktop }}px;
+  }
+}
+@media (max-width: 1024px) and (min-width: 768px) {
+  .circle-wrapper {
+    width: {{ section.settings.circle_size_tablet }}px;
+    height: {{ section.settings.circle_size_tablet }}px;
+  }
+  .circle-title {
+    font-size: {{ section.settings.title_size_tablet }}px;
+  }
+  .circle-subtitle {
+    font-size: {{ section.settings.subtitle_size_tablet }}px;
+  }
+}
+@media (max-width: 767px) {
+  .circle-wrapper {
+    width: {{ section.settings.circle_size_mobile }}px;
+    height: {{ section.settings.circle_size_mobile }}px;
+  }
+  .circle-title {
+    font-size: {{ section.settings.title_size_mobile }}px;
+  }
+  .circle-subtitle {
+    font-size: {{ section.settings.subtitle_size_mobile }}px;
+  }
+}
+</style>

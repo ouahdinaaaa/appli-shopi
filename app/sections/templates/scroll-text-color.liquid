@@ -46,6 +46,35 @@
     margin-bottom: 25px;
   }
 
+  /* Bouton de contrôle */
+  .scroll-control-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid var(--text-color);
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: none;
+  }
+
+  .scroll-control-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .scroll-control-btn.active {
+    background: var(--scroll-color);
+    color: white;
+  }
+
   /* Responsive styles */
   @media (max-width: 1024px) {
     .scroll-title {
@@ -69,6 +98,13 @@
     .scroll-text {
       font-size: var(--text-size-mobile);
     }
+
+    .scroll-control-btn {
+      top: 10px;
+      right: 10px;
+      padding: 8px 16px;
+      font-size: 12px;
+    }
   }
 {%- endstyle -%}
 
@@ -78,7 +114,6 @@
     <div class="scroll-text">{{ section.settings.text }}</div>
   </div>
 </div>
-
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -91,7 +126,8 @@ document.addEventListener('DOMContentLoaded', function() {
   let isTextScrollActive = false;
   let sectionBounds = {};
   let isScrollBlocked = false;
-  const stepSize = 3; // ⚡ Nombre de lettres par scroll (modifiable)
+  const enableReverseScroll = {{ section.settings.enable_reverse_scroll | default: true }};
+  const stepSize = 8;
 
   function updateSectionBounds() {
     const rect = section.getBoundingClientRect();
@@ -102,12 +138,10 @@ document.addEventListener('DOMContentLoaded', function() {
     };
   }
 
-  // Vérifie si c’est une lettre/chiffre/ponctuation visible
   function isVisibleCharacter(char) {
     return /[a-zA-Z0-9À-ÿ\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF.,!?;:'"()\-]/.test(char);
   }
 
-  // Initialisation : découpe le texte en spans
   function initializeText() {
     totalLetters = 0;
     letters = [];
@@ -123,8 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
         span.style.color = '{{ section.settings.text_color }}';
         el.appendChild(span);
 
-        // On garde tous les spans pour l’affichage
-        // mais on ne stocke que les caractères visibles
         if (isVisibleCharacter(char)) {
           letters.push(span);
         }
@@ -183,31 +215,42 @@ document.addEventListener('DOMContentLoaded', function() {
   function handleWheel(e) {
     updateSectionBounds();
     if (isSectionFullyVisible()) {
+      const delta = e.deltaY || e.detail || (-e.wheelDelta);
+      const scrollDirection = delta > 0 ? 1 : -1;
+
+      // Si scroll inversé désactivé et qu'on essaie de remonter
+      if (!enableReverseScroll && scrollDirection < 0 && currentPosition > 0) {
+        // Laisser passer le scroll sans effet
+        return;
+      }
+
       if (!isTextScrollActive) {
         isTextScrollActive = true;
         blockScroll();
       }
+      
       e.preventDefault();
       e.stopPropagation();
 
-      const delta = e.deltaY || e.detail || (-e.wheelDelta);
-      const scrollDirection = delta > 0 ? 1 : -1;
-
       let newPosition = currentPosition + (scrollDirection * stepSize);
 
-      // Début du texte
+      // Début du texte - scroll vers le haut
       if (newPosition <= 0 && scrollDirection < 0) {
-        resetTextToStart();
+        if (enableReverseScroll) {
+          resetTextToStart();
+        }
         isTextScrollActive = false;
         unblockScroll();
-        setTimeout(() => window.scrollBy(0, delta), 0);
+        // Déblocage immédiat sans délai
+        window.scrollBy(0, -200);
 
-      // Fin du texte
+      // Fin du texte - scroll vers le bas
       } else if (newPosition >= totalLetters && scrollDirection > 0) {
         setTextToEnd();
         isTextScrollActive = false;
         unblockScroll();
-        setTimeout(() => window.scrollBy(0, delta), 0);
+        // Déblocage immédiat sans délai
+        window.scrollBy(0, 200);
 
       // Pendant le défilement
       } else {
@@ -233,7 +276,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateSectionBounds();
   }
 
-  // Support tactile mobile
   let touchStartY = 0;
 
   function handleTouchStart(e) {
@@ -243,35 +285,43 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function handleTouchEnd(e) {
-    if (isSectionFullyVisible()) {
-      const touchEndY = e.changedTouches[0].screenY;
-      const touchDelta = touchStartY - touchEndY;
+    if (!isSectionFullyVisible()) return;
 
-      if (Math.abs(touchDelta) > 10) {
-        if (!isTextScrollActive) {
-          isTextScrollActive = true;
-          blockScroll();
-        }
+    const touchEndY = e.changedTouches[0].screenY;
+    const touchDelta = touchStartY - touchEndY;
 
-        const scrollDirection = touchDelta > 0 ? 1 : -1;
-        let newPosition = currentPosition + (scrollDirection * stepSize);
+    if (Math.abs(touchDelta) > 10) {
+      const scrollDirection = touchDelta > 0 ? 1 : -1;
 
-        if (newPosition <= 0 && scrollDirection < 0) {
+      // Si scroll inversé désactivé et qu'on essaie de remonter
+      if (!enableReverseScroll && scrollDirection < 0 && currentPosition > 0) {
+        return;
+      }
+
+      if (!isTextScrollActive) {
+        isTextScrollActive = true;
+        blockScroll();
+      }
+
+      let newPosition = currentPosition + (scrollDirection * stepSize);
+
+      if (newPosition <= 0 && scrollDirection < 0) {
+        if (enableReverseScroll) {
           resetTextToStart();
-          isTextScrollActive = false;
-          unblockScroll();
-          window.scrollBy(0, -50); // scroll normal direct
-
-        } else if (newPosition >= totalLetters && scrollDirection > 0) {
-          setTextToEnd();
-          isTextScrollActive = false;
-          unblockScroll();
-          window.scrollBy(0, 50); // scroll normal direct
-
-        } else {
-          currentPosition = Math.max(0, Math.min(newPosition, totalLetters));
-          updateTextColors();
         }
+        isTextScrollActive = false;
+        unblockScroll();
+        window.scrollBy({ top: -120, behavior: 'instant' });
+
+      } else if (newPosition >= totalLetters && scrollDirection > 0) {
+        setTextToEnd();
+        isTextScrollActive = false;
+        unblockScroll();
+        window.scrollBy({ top: 120, behavior: 'instant' });
+
+      } else {
+        currentPosition = Math.max(0, Math.min(newPosition, totalLetters));
+        updateTextColors();
       }
     }
   }
@@ -279,7 +329,6 @@ document.addEventListener('DOMContentLoaded', function() {
   section.addEventListener('touchstart', handleTouchStart, { passive: true });
   section.addEventListener('touchend', handleTouchEnd, { passive: true });
 
-  // Initialisation
   updateSectionBounds();
   initializeText();
 
@@ -287,7 +336,6 @@ document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('scroll', handleGlobalScroll);
   window.addEventListener('resize', handleResize);
 
-  // Observer taille
   if (window.ResizeObserver) {
     const resizeObserver = new ResizeObserver(() => {
       updateSectionBounds();
@@ -295,18 +343,15 @@ document.addEventListener('DOMContentLoaded', function() {
     resizeObserver.observe(section);
   }
 
-  // Sécurité : débloque le scroll si bug
+  // Sécurité réduite pour déblocage plus rapide
   setInterval(() => {
     if (isScrollBlocked && !isSectionFullyVisible()) {
       unblockScroll();
       isTextScrollActive = false;
     }
-  }, 1000);
+  }, 200);
 });
 </script>
-
-
-
 
 {% schema %}
 {
@@ -349,6 +394,17 @@ document.addEventListener('DOMContentLoaded', function() {
       "id": "scroll_color",
       "label": "Couleur du texte après scroll",
       "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Comportement du scroll"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reverse_scroll",
+      "label": "Activer le scroll inversé (haut vers bas)",
+      "default": true,
+      "info": "Si désactivé, le texte restera coloré et ne redeviendra pas gris en scrollant vers le haut"
     },
     {
       "type": "header",

@@ -1,0 +1,862 @@
+<section id="before-after-carousel-{{ section.id }}" class="before-after-carousel" style="background: {{ section.settings.bg_color }};">
+  
+  <!-- Titre de la section -->
+  {% if section.settings.title != blank %}
+    <div class="bac-title-container">
+      <h2 class="bac-title" style="
+        color: {{ section.settings.title_color }};
+        font-weight: {{ section.settings.title_weight }};
+        text-align: {{ section.settings.title_alignment }};
+        padding-left: {{ section.settings.title_padding_left }}px;
+        padding-right: {{ section.settings.title_padding_right }}px;
+        margin-bottom: {{ section.settings.title_margin_bottom }}px;
+      ">{{ section.settings.title }}</h2>
+    </div>
+  {% endif %}
+
+  {% assign default_before_images = 'https://images.pexels.com/photos/16702313/pexels-photo-16702313.jpeg?auto=compress&cs=tinysrgb&w=900&h=600,https://images.pexels.com/photos/2735981/pexels-photo-2735981.jpeg?auto=compress&cs=tinysrgb&w=900&h=600,https://images.pexels.com/photos/32622561/pexels-photo-32622561.jpeg?auto=compress&cs=tinysrgb&w=900&h=600' | split: ',' %}
+  
+  {% assign default_after_images = 'https://images.pexels.com/photos/32652453/pexels-photo-32652453.jpeg?auto=compress&cs=tinysrgb&w=900&h=600,https://images.pexels.com/photos/17486880/pexels-photo-17486880.jpeg?auto=compress&cs=tinysrgb&w=900&h=600,https://images.pexels.com/photos/16438670/pexels-photo-16438670.jpeg?auto=compress&cs=tinysrgb&w=900&h=600' | split: ',' %}
+
+  <div class="bac-container">
+    <div class="bac-track">
+      {% for block in section.blocks %}
+        {% assign image_index = forloop.index0 | modulo: default_before_images.size %}
+        
+        <div class="bac-slide"
+             data-before="{{ block.settings.before_image | img_url: '900x600' }}"
+             data-after="{{ block.settings.after_image | img_url: '900x600' }}"
+             role="group" aria-label="{{ block.settings.title | default: 'Slide' }}">
+          
+          {% if block.settings.before_image != blank %}
+            {% assign before_src = block.settings.before_image | img_url: '900x600' %}
+          {% else %}
+            {% assign before_src = default_before_images[image_index] %}
+          {% endif %}
+
+          {% if block.settings.after_image != blank %}
+            {% assign after_src = block.settings.after_image | img_url: '900x600' %}
+          {% else %}
+            {% assign after_src = default_after_images[image_index] %}
+          {% endif %}
+
+          <img class="before-img"
+               src="{{ before_src }}"
+               alt="{{ block.settings.title | default: 'Before image' }}"
+               loading="lazy" />
+
+          <img class="after-img"
+               src="{{ after_src }}"
+               alt="{{ block.settings.title | default: 'After image' }}"
+               loading="lazy" />
+
+          {% if block.settings.title != blank %}
+            <div class="bac-slide-title">{{ block.settings.title }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Laser central -->
+    <div class="bac-laser-bar" aria-hidden="true">
+      <div class="bac-laser-handle">
+        <div class="bac-laser-beam-top"></div>
+        <div class="bac-laser-beam-bottom"></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2L12 22M2 12L22 12"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Zone visuelle de révélation -->
+    <div class="bac-laser-reveal-zone" aria-hidden="true"></div>
+
+    <!-- Particules décoratives -->
+    <div class="bac-laser-particles" aria-hidden="true">
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* Variables CSS pour les formats */
+:root {
+  {% assign format = section.settings.image_format %}
+  {% case format %}
+    {% when '16-9' %}
+      --slide-ratio: 0.5625; /* 9/16 */
+    {% when '4-3' %}
+      --slide-ratio: 0.75; /* 3/4 */
+    {% when '3-2' %}
+      --slide-ratio: 0.6667; /* 2/3 */
+    {% when '1-1' %}
+      --slide-ratio: 1; /* 1/1 */
+    {% when '3-4' %}
+      --slide-ratio: 1.3333; /* 4/3 */
+    {% else %}
+      --slide-ratio: 0.5625; /* Default 16:9 */
+  {% endcase %}
+  
+  /* Variables pour les hauteurs de slides calculées */
+  --slide-height-desktop: calc({{ section.settings.slide_width_desktop }}px * var(--slide-ratio));
+  --slide-height-tablet: calc({{ section.settings.slide_width_tablet }}px * var(--slide-ratio));
+  --slide-height-mobile: calc({{ section.settings.slide_width_mobile }}px * var(--slide-ratio));
+}
+
+/* Container */
+#before-after-carousel-{{ section.id }} {
+  padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px 0;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Titre */
+.bac-title-container {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.bac-title {
+  font-size: {{ section.settings.title_size_desktop }}px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Inner container */
+.bac-container {
+  position: relative;
+  width: 100%;
+  height: {{ section.settings.carousel_height_desktop }}px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Track */
+.bac-track {
+  display: flex;
+  flex-wrap: nowrap;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  align-items: center;
+  will-change: transform;
+  transform: translateX(0);
+}
+
+/* Slide avec format dynamique */
+.bac-slide {
+  flex: 0 0 auto;
+  width: {{ section.settings.slide_width_desktop }}px;
+  height: var(--slide-height-desktop);
+  margin-right: {{ section.settings.slide_gap }}px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Before / After Images */
+.bac-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: {{ section.settings.border_radius }}px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.bac-slide .before-img { z-index: 1; }
+.bac-slide .after-img {
+  z-index: 2;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.1s linear;
+}
+
+/* Title */
+.bac-slide-title {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  text-align: center;
+  font-size: 14px;
+  color: {{ section.settings.text_color }};
+  font-weight: 500;
+  z-index: 4;
+  pointer-events: none;
+  background: rgba(0,0,0,0.6);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Laser bar - Ajustée à la hauteur des slides */
+.bac-laser-bar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: {{ section.settings.laser_bar_width }}px;
+  height: var(--slide-height-desktop);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: {{section.settings.laser_color}};
+  box-shadow: 0 0 20px rgba({{ section.settings.laser_color | remove: '#' | color_to_rgb | join: ',' }}, 0.5);
+  pointer-events: none;
+}
+
+/* Laser handle + beams */
+.bac-laser-handle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, 
+    rgba(255,255,255,0.35), 
+    rgba({{ section.settings.laser_color | remove: '#' | color_to_rgb | join: ',' }}, 0.08));
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 
+    0 2px 18px rgba({{ section.settings.laser_color | remove: '#' | color_to_rgb | join: ',' }}, 0.3),
+    inset 0 0 14px rgba(255,255,255,0.08);
+  color: {{ section.settings.laser_color }};
+}
+
+.bac-laser-beam-top,
+.bac-laser-beam-bottom {
+  position: absolute;
+  left: 50%;
+  width: {{ section.settings.laser_bar_width }}px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, 
+    transparent, 
+    {{ section.settings.laser_color }}, 
+    transparent);
+  box-shadow: 0 0 20px rgba({{ section.settings.laser_color | remove: '#' | color_to_rgb | join: ',' }}, 0.5);
+}
+
+.bac-laser-beam-top { 
+  bottom: 100%; 
+  height: 120px; 
+  animation: laser-pulse 1800ms ease-in-out infinite; 
+}
+
+.bac-laser-beam-bottom { 
+  top: 100%; 
+  height: 120px; 
+  animation: laser-pulse 1800ms ease-in-out infinite .9s; 
+}
+
+@keyframes laser-pulse {
+  0% { opacity: .7; transform: translateX(-50%) scaleY(1); }
+  50% { opacity: 1; transform: translateX(-50%) scaleY(1.08); }
+  100% { opacity: .75; transform: translateX(-50%) scaleY(1); }
+}
+
+/* Reveal zone */
+.bac-laser-reveal-zone {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: {{ section.settings.laser_reveal_width }}px;
+  height: var(--slide-height-desktop);
+  z-index: 15;
+  pointer-events: none;
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0), 
+    rgba({{ section.settings.laser_color | remove: '#' | color_to_rgb | join: ',' }}, 0.03), 
+    rgba(255,255,255,0));
+  mix-blend-mode: screen;
+}
+
+/* Particles */
+.bac-laser-particles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 240px;
+  height: 6px;
+  pointer-events: none;
+  z-index: 18;
+}
+
+.bac-laser-particles .particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, 
+    #fff, 
+    rgba({{ section.settings.laser_color | remove: '#' | color_to_rgb | join: ',' }}, 0.9));
+  box-shadow: 0 0 12px rgba({{ section.settings.laser_color | remove: '#' | color_to_rgb | join: ',' }}, 0.8);
+  opacity: 0;
+  animation: particle-move 2800ms linear infinite;
+}
+
+.bac-laser-particles .particle:nth-child(1) { 
+  left: 6%; 
+  animation-delay: 0s; 
+  top: -10px; 
+}
+
+.bac-laser-particles .particle:nth-child(2) { 
+  left: 48%; 
+  animation-delay: .6s; 
+  top: 0px; 
+}
+
+.bac-laser-particles .particle:nth-child(3) { 
+  left: 88%; 
+  animation-delay: 1.2s; 
+  top: 10px; 
+}
+
+@keyframes particle-move {
+  0% { opacity: 0; transform: translateX(-30px) scale(.7); }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(30px) scale(1); }
+}
+
+/* Tablette */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .bac-title {
+    font-size: {{ section.settings.title_size_tablet }}px;
+  }
+  
+  .bac-container {
+    height: {{ section.settings.carousel_height_tablet }}px;
+  }
+  
+  .bac-slide {
+    width: {{ section.settings.slide_width_tablet }}px;
+    height: var(--slide-height-tablet);
+    margin-right: calc({{ section.settings.slide_gap }}px * 0.8);
+  }
+  
+  .bac-laser-bar {
+    height: var(--slide-height-tablet);
+  }
+  
+  .bac-laser-handle { width: 48px; height: 48px; }
+  .bac-laser-reveal-zone { 
+    width: calc({{ section.settings.laser_reveal_width }}px * 0.8); 
+    height: var(--slide-height-tablet);
+  }
+  .bac-laser-beam-top, .bac-laser-beam-bottom { 
+    width: calc({{ section.settings.laser_bar_width }}px * 0.8); 
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .bac-title {
+    font-size: {{ section.settings.title_size_mobile }}px;
+  }
+  
+  .bac-container {
+    height: {{ section.settings.carousel_height_mobile }}px;
+  }
+  
+  .bac-slide {
+    width: {{ section.settings.slide_width_mobile }}px;
+    height: var(--slide-height-mobile);
+    margin-right: calc({{ section.settings.slide_gap }}px * 0.6);
+  }
+  
+  .bac-laser-bar { 
+    width: calc({{ section.settings.laser_bar_width }}px * 0.6);
+    height: var(--slide-height-mobile);
+  }
+  .bac-laser-handle { width: 40px; height: 40px; }
+  .bac-laser-reveal-zone { 
+    width: calc({{ section.settings.laser_reveal_width }}px * 0.6);
+    height: var(--slide-height-mobile);
+  }
+  .bac-laser-beam-top, .bac-laser-beam-bottom { 
+    width: calc({{ section.settings.laser_bar_width }}px * 0.6); 
+  }
+  
+  .bac-slide-title {
+    font-size: 12px;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
+    padding: 2px 6px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const container = document.querySelector("#before-after-carousel-{{ section.id }} .bac-container");
+  if (!container) return;
+  
+  const track = container.querySelector(".bac-track");
+  let slides = Array.from(track.children);
+  if (!slides.length) return;
+  
+  const laserX = container.offsetWidth / 2;
+  const slideGap = {{ section.settings.slide_gap }};
+  const speed = {{ section.settings.scroll_speed | default: 120 }} / 60;
+  
+  function calculateDuplications() {
+    const containerWidth = container.offsetWidth;
+    const originalSlides = Array.from(track.children);
+    
+    // Calculer la largeur totale des slides originales
+    let totalOriginalWidth = 0;
+    originalSlides.forEach(slide => {
+      totalOriginalWidth += slide.offsetWidth + slideGap;
+    });
+    
+    // Calculer combien de fois dupliquer pour avoir au moins 3x la largeur de l'écran
+    const minRequiredWidth = containerWidth * 3;
+    const duplicationsNeeded = Math.ceil(minRequiredWidth / totalOriginalWidth);
+    
+    return Math.max(duplicationsNeeded, 3); // Minimum 3 duplications
+  }
+  
+  // Dupliquer les slides pour garantir un scroll infini fluide
+  const originalSlideCount = slides.length;
+  const duplicationsCount = calculateDuplications();
+  
+  // Supprimer les duplications existantes si il y en a
+  while (track.children.length > originalSlideCount) {
+    track.removeChild(track.lastChild);
+  }
+  
+  // Créer les duplications nécessaires
+  const originalSlides = Array.from(track.children);
+  for (let i = 0; i < duplicationsCount; i++) {
+    originalSlides.forEach(slide => {
+      track.appendChild(slide.cloneNode(true));
+    });
+  }
+  
+  slides = Array.from(track.children);
+  
+  let offset = 0;
+  
+  // Initialiser toutes les slides en état "before"
+  slides.forEach(slide => {
+    slide.dataset.revealed = "0";
+    const afterImg = slide.querySelector(".after-img");
+    if (afterImg) {
+      afterImg.style.clipPath = "inset(0 100% 0 0)";
+    }
+  });
+  
+  function resetSlideToBeforeState(slide) {
+    slide.dataset.revealed = "0";
+    const afterImg = slide.querySelector(".after-img");
+    if (afterImg) {
+      afterImg.style.clipPath = "inset(0 100% 0 0)";
+    }
+  }
+  
+  function animate() {
+    offset -= speed;
+    
+    // Gestion du recyclage des slides améliorée
+    const firstSlide = track.children[0];
+    const containerRect = container.getBoundingClientRect();
+    const slideRect = firstSlide.getBoundingClientRect();
+    
+    // Si la première slide est complètement sortie à gauche
+    if (slideRect.right < containerRect.left - 50) { // Marge de 50px
+      const slideWidth = firstSlide.offsetWidth + slideGap;
+      offset += slideWidth;
+      
+      // Reset de l'état avant recyclage
+      resetSlideToBeforeState(firstSlide);
+      
+      // Recycler en fin de track
+      track.appendChild(firstSlide);
+    }
+    
+    // Appliquer la transformation
+    track.style.transform = `translateX(${offset}px)`;
+    
+    // Gestion du laser reveal pour toutes les slides visibles
+    Array.from(track.children).forEach(slide => {
+      const rect = slide.getBoundingClientRect();
+      const afterImg = slide.querySelector(".after-img");
+      if (!afterImg) return;
+      
+      const slideLeft = rect.left;
+      const slideRight = rect.right;
+      const revealed = parseFloat(slide.dataset.revealed);
+      
+      // Vérifier si le laser traverse cette slide
+      if (laserX >= slideLeft && laserX <= slideRight) {
+        const width = rect.width;
+        const progress = Math.min(1, (laserX - slideLeft) / width);
+        
+        // Ne révéler que si le progrès augmente
+        if (progress > revealed) {
+          slide.dataset.revealed = progress;
+          const clipPercent = 100 * (1 - progress);
+          afterImg.style.clipPath = `inset(0 ${clipPercent}% 0 0)`;
+        }
+      }
+    });
+    
+    requestAnimationFrame(animate);
+  }
+  
+  // Gérer le redimensionnement de la fenêtre
+  let resizeTimeout;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+      // Recalculer les duplications si nécessaire
+      const newDuplicationsCount = calculateDuplications();
+      if (newDuplicationsCount > duplicationsCount) {
+        // Ajouter plus de duplications si nécessaire
+        const currentOriginalSlides = Array.from(track.children).slice(0, originalSlideCount);
+        for (let i = duplicationsCount; i < newDuplicationsCount; i++) {
+          currentOriginalSlides.forEach(slide => {
+            track.appendChild(slide.cloneNode(true));
+          });
+        }
+      }
+    }, 250);
+  });
+  
+  animate();
+});
+</script>
+
+{% schema %}
+{
+  "name": "Before / After Laser",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Titre de la section"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "placeholder": "Ex: Nos transformations"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#333333"
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Épaisseur du titre",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Alignement du titre",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centre" },
+        { "value": "right", "label": "Droite" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Taille titre - Desktop (px)",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "label": "Taille titre - Tablette (px)",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Taille titre - Mobile (px)",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "title_padding_left",
+      "label": "Padding gauche titre (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_padding_right",
+      "label": "Padding droit titre (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom",
+      "label": "Marge en bas du titre (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Format des images"
+    },
+    {
+      "type": "select",
+      "id": "image_format",
+      "label": "Format d'aspect des images",
+      "options": [
+        { "value": "16-9", "label": "16:9 - Paysage large" },
+        { "value": "4-3", "label": "4:3 - Paysage classique" },
+        { "value": "3-2", "label": "3:2 - Photo standard" },
+        { "value": "1-1", "label": "1:1 - Carré" },
+        { "value": "3-4", "label": "3:4 - Portrait" }
+      ],
+      "default": "16-9"
+    },
+    {
+      "type": "header",
+      "content": "Dimensions carrousel - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "carousel_height_desktop",
+      "label": "Hauteur carrousel - Desktop (px)",
+      "min": 200,
+      "max": 600,
+      "step": 10,
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "slide_width_desktop",
+      "label": "Largeur slides - Desktop (px)",
+      "min": 200,
+      "max": 500,
+      "step": 10,
+      "default": 320,
+      "info": "La hauteur sera calculée automatiquement selon le format choisi"
+    },
+    {
+      "type": "header",
+      "content": "Dimensions carrousel - Tablette"
+    },
+    {
+      "type": "range",
+      "id": "carousel_height_tablet",
+      "label": "Hauteur carrousel - Tablette (px)",
+      "min": 180,
+      "max": 500,
+      "step": 10,
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "slide_width_tablet",
+      "label": "Largeur slides - Tablette (px)",
+      "min": 150,
+      "max": 400,
+      "step": 10,
+      "default": 260
+    },
+    {
+      "type": "header",
+      "content": "Dimensions carrousel - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "carousel_height_mobile",
+      "label": "Hauteur carrousel - Mobile (px)",
+      "min": 150,
+      "max": 400,
+      "step": 10,
+      "default": 250
+    },
+    {
+      "type": "range",
+      "id": "slide_width_mobile",
+      "label": "Largeur slides - Mobile (px)",
+      "min": 120,
+      "max": 280,
+      "step": 10,
+      "default": 200
+    },
+    {
+      "type": "header",
+      "content": "Paramètres généraux"
+    },
+    {
+      "type": "range",
+      "id": "slide_gap",
+      "label": "Espacement entre slides (px)",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Arrondi des images (px)",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Vitesse de défilement (px/sec)",
+      "min": 30,
+      "max": 300,
+      "step": 10,
+      "default": 120
+    },
+    {
+      "type": "header",
+      "content": "Laser - Apparence"
+    },
+    {
+      "type": "range",
+      "id": "laser_bar_width",
+      "label": "Largeur de la barre laser (px)",
+      "min": 2,
+      "max": 20,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "color",
+      "id": "laser_color",
+      "label": "Couleur de la barre du laser",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "laser_reveal_width",
+      "label": "Largeur zone de révélation (px)",
+      "min": 60,
+      "max": 200,
+      "step": 10,
+      "default": 120
+    },
+    {
+      "type": "header",
+      "content": "Style général"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Couleur de fond",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding haut section (px)",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bas section (px)",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 50
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Before/After Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "before_image",
+          "label": "Image avant"
+        },
+        {
+          "type": "image_picker",
+          "id": "after_image",
+          "label": "Image après"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titre (optionnel)",
+          "placeholder": "Ex: Transformation client"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Before / After Laser",
+      "category": "Media",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ],
+  "max_blocks": 20
+}
+{% endschema %}

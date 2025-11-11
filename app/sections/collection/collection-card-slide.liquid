@@ -1,0 +1,761 @@
+{% assign default_images = "https://images.pexels.com/photos/17833829/pexels-photo-17833829.jpeg,https://images.pexels.com/photos/15871523/pexels-photo-15871523.jpeg,https://images.pexels.com/photos/11790171/pexels-photo-11790171.jpeg,https://images.pexels.com/photos/28716777/pexels-photo-28716777.jpeg,https://images.pexels.com/photos/10419336/pexels-photo-10419336.jpeg" | split: "," %}
+
+<section class="custom-cards-section" data-section="{{ section.id }}" style="background-color: {{ section.settings.section_bg_color }}; padding: {{ section.settings.section_padding_top }}px 20px {{ section.settings.section_padding_bottom }}px;">
+  <div class="cards-wrapper">
+    <div class="nav-arrows">
+      <button class="nav-arrow prev-arrow" id="prevBtn" 
+              style="background-color: {{ section.settings.button_bg_color }};">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="nav-arrow next-arrow" id="nextBtn"
+              style="background-color: {{ section.settings.button_bg_color }};">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="cards-container" id="cardsContainer">
+      <div class="cards-track" id="cardsTrack">
+        {% for block in section.blocks %}
+          {% assign image_src = block.settings.image %}
+          {% if image_src == blank %}
+            {% assign image_index = forloop.index0 | modulo: default_images.size %}
+            {% assign image_src = default_images[image_index] %}
+          {% endif %}
+
+          <figure class="snip1104 original" 
+                  style="background-color: rgba({{ block.settings.card_bg_color | color_extract: 'red' }},
+                              {{ block.settings.card_bg_color | color_extract: 'green' }},
+                              {{ block.settings.card_bg_color | color_extract: 'blue' }},
+                              {{ block.settings.card_bg_opacity | divided_by: 100.0 }});"
+                  {{ block.shopify_attributes }}>
+            <img src="{{ image_src | image_url: width: 400 }}" 
+                 alt="{{ block.settings.image.alt | default: block.settings.first_name }}" />
+            <figcaption>
+              <h2 style="background-color: {{ block.settings.name_bg_color }}; 
+                         color: {{ block.settings.name_text_color }};
+                         font-weight: {% if block.settings.text_bold %}800{% else %}400{% endif %};">
+                {{ block.settings.first_name }}
+              </h2>
+            </figcaption>
+            {% if block.settings.link != blank %}
+              <a href="{{ block.settings.link }}"></a>
+            {% endif %}
+          </figure>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<style>
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,800');
+
+.custom-cards-section {
+  position: relative;
+}
+
+.cards-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.nav-arrows {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.nav-arrow {
+  border-radius: 50%;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.nav-arrow:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.nav-arrow:active {
+  transform: scale(0.95);
+}
+
+.cards-container {
+  overflow: hidden;
+  width: 100%;
+}
+
+.cards-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+figure.snip1104 {
+  font-family: 'Raleway', Arial, sans-serif;
+  position: relative;
+  overflow: hidden;
+  color: #ffffff;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  figure.snip1104 {
+    width: {{ section.settings.card_width_mobile | default: 160 }}px;
+    height: {{ section.settings.card_height_mobile | default: 140 }}px;
+    margin-right: {{ section.settings.card_spacing_mobile | default: 15 }}px;
+  }
+  
+  .nav-arrows {
+    top: -45px;
+    right: 10px;
+  }
+  
+  .nav-arrow {
+    width: {{ section.settings.button_size_mobile | default: 35 }}px;
+    height: {{ section.settings.button_size_mobile | default: 35 }}px;
+  }
+  
+  figure.snip1104 h2 {
+    font-size: {{ section.settings.text_size_mobile | default: 12 }}px;
+    padding: 6px 8px;
+    left: 10px;
+    right: 10px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  figure.snip1104 {
+    width: {{ section.settings.card_width_tablet | default: 260 }}px;
+    height: {{ section.settings.card_height_tablet | default: 200 }}px;
+    margin-right: {{ section.settings.card_spacing_tablet | default: 18 }}px;
+  }
+  
+  .nav-arrow {
+    width: {{ section.settings.button_size_tablet | default: 40 }}px;
+    height: {{ section.settings.button_size_tablet | default: 40 }}px;
+  }
+  
+  figure.snip1104 h2 {
+    font-size: {{ section.settings.text_size_tablet | default: 14 }}px;
+    padding: 8px 10px;
+  }
+}
+
+@media (min-width: 1024px) {
+  figure.snip1104 {
+    width: {{ section.settings.card_width_desktop | default: 300 }}px;
+    height: {{ section.settings.card_height_desktop | default: 240 }}px;
+    margin-right: {{ section.settings.card_spacing_desktop | default: 25 }}px;
+  }
+  
+  .nav-arrow {
+    width: {{ section.settings.button_size_desktop | default: 40 }}px;
+    height: {{ section.settings.button_size_desktop | default: 40 }}px;
+  }
+  
+  figure.snip1104 h2 {
+    font-size: {{ section.settings.text_size_desktop | default: 18 }}px;
+    padding: 8px 12px;
+  }
+}
+
+figure.snip1104  {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+figure.snip1104 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  opacity: 0.4;
+  transition: all 0.4s ease-in-out;
+}
+
+figure.snip1104 figcaption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+figure.snip1104 h2 {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  display: inline-block;
+  background: #000000;
+  -webkit-transform: skew(-10deg) rotate(-10deg) translate(0, -50%);
+  transform: skew(-10deg) rotate(-10deg) translate(0, -50%);
+  margin: 0;
+  top: 50%;
+  text-transform: uppercase;
+  border-radius: 4px;
+  transition: all 0.4s ease-in-out;
+}
+
+figure.snip1104:before {
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  content: '';
+  background: #ffffff;
+  position: absolute;
+  -webkit-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  -webkit-transform: rotate(110deg) translateY(-50%);
+  transform: rotate(110deg) translateY(-50%);
+}
+
+figure.snip1104 a {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: 1;
+}
+
+figure.snip1104:hover img,
+figure.snip1104.hover img {
+  opacity: 1;
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+figure.snip1104:hover h2,
+figure.snip1104.hover h2 {
+  -webkit-transform: skew(-10deg) rotate(-10deg) translate(-150%, -50%);
+  transform: skew(-10deg) rotate(-10deg) translate(-150%, -50%);
+}
+
+figure.snip1104:hover:before,
+figure.snip1104.hover:before {
+  -webkit-transform: rotate(110deg) translateY(-150%);
+  transform: rotate(110deg) translateY(-150%);
+}
+
+figure.snip1104 {
+  animation: fadeInRight 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+@keyframes fadeInRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+{% for block in section.blocks %}
+figure.snip1104:nth-child({{ forloop.index }}) {
+  animation-delay: {{ forloop.index | times: 0.1 }}s;
+}
+{% endfor %}
+
+.cards-container {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.cards-container::-webkit-scrollbar {
+  display: none;
+}
+
+figure.snip1104 {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+figure.snip1104:hover {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  transform: translateY(-4px);
+}
+
+figure.snip1104 h2 {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  border-radius: 6px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const cardsTrack = document.getElementById('cardsTrack');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (!cardsTrack) return;
+
+  const originalCards = Array.from(document.querySelectorAll('.snip1104.original'));
+  const totalCards = originalCards.length;
+  if (totalCards === 0) return;
+
+  let currentTranslate = 0;
+  let isTransitioning = false;
+  let cardWidth = 0;
+
+  function getCardSpacing() {
+    if (window.innerWidth <= 767) {
+      return {{ section.settings.card_spacing_mobile | default: 15 }};
+    } else if (window.innerWidth <= 1023) {
+      return {{ section.settings.card_spacing_tablet | default: 18 }};
+    } else {
+      return {{ section.settings.card_spacing_desktop | default: 25 }};
+    }
+  }
+
+  function getCardWidth() {
+    const firstCard = cardsTrack.children[0];
+    if (!firstCard) return 0;
+    const style = window.getComputedStyle(firstCard);
+    const marginRight = parseFloat(style.marginRight) || getCardSpacing();
+    return firstCard.offsetWidth + marginRight;
+  }
+
+  function updatePosition(withTransition = true) {
+    cardsTrack.style.transition = withTransition
+      ? "transform 0.5s ease"
+      : "none";
+    cardsTrack.style.transform = `translateX(${currentTranslate}px)`;
+  }
+
+  function checkAndAddMoreCards() {
+    const totalClones = cardsTrack.children.length;
+    const currentIndex = Math.abs(currentTranslate / cardWidth);
+
+    if (currentIndex > totalClones - 5) {
+      originalCards.forEach((card, index) => {
+        const clone = card.cloneNode(true);
+        clone.classList.remove('original');
+        clone.classList.add('infinite-clone');
+        clone.setAttribute('data-original-index', index);
+        cardsTrack.appendChild(clone);
+      });
+    }
+
+    if (currentIndex < 5 && currentTranslate < 0) {
+      const fragment = document.createDocumentFragment();
+      for (let i = originalCards.length - 1; i >= 0; i--) {
+        const clone = originalCards[i].cloneNode(true);
+        clone.classList.remove('original');
+        clone.classList.add('infinite-clone');
+        clone.setAttribute('data-original-index', i);
+        fragment.insertBefore(clone, fragment.firstChild);
+      }
+      currentTranslate -= originalCards.length * cardWidth;
+      cardsTrack.insertBefore(fragment, cardsTrack.firstChild);
+      updatePosition(false);
+    }
+  }
+
+  function goToNext() {
+    if (isTransitioning) return;
+    isTransitioning = true;
+
+    currentTranslate -= cardWidth;
+    updatePosition(true);
+
+    setTimeout(() => {
+      checkAndAddMoreCards();
+      isTransitioning = false;
+    }, 500);
+  }
+
+  function goToPrev() {
+    if (isTransitioning) return;
+    isTransitioning = true;
+
+    currentTranslate += cardWidth;
+    updatePosition(true);
+
+    setTimeout(() => {
+      checkAndAddMoreCards();
+      isTransitioning = false;
+    }, 500);
+  }
+
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      cardWidth = getCardWidth();
+      const currentIndex = Math.round(Math.abs(currentTranslate) / cardWidth);
+      currentTranslate = -currentIndex * cardWidth;
+      updatePosition(false);
+    }, 100);
+  });
+
+  function init() {
+    cardWidth = getCardWidth();
+    if (cardWidth === 0) {
+      setTimeout(init, 100);
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    for (let copy = 0; copy < 5; copy++) {
+      originalCards.forEach((card, index) => {
+        const clone = card.cloneNode(true);
+        clone.classList.remove('original');
+        clone.classList.add('infinite-clone');
+        clone.setAttribute('data-original-index', index);
+        fragment.appendChild(clone);
+      });
+    }
+    cardsTrack.innerHTML = '';
+    cardsTrack.appendChild(fragment);
+
+    const middleIndex = Math.floor(cardsTrack.children.length / 2);
+    currentTranslate = -(middleIndex * cardWidth);
+    updatePosition(false);
+
+    console.log(`✅ Carousel infini initialisé (scroll 1 carte par clic)`);
+  }
+
+  nextBtn.addEventListener("click", goToNext);
+  prevBtn.addEventListener("click", goToPrev);
+
+  init();
+});
+</script>
+
+{% schema %}
+{
+  "name": "Cartes Défilantes",
+  "tag": "section",
+  "class": "custom-cards-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuration d'affichage"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Couleur de fond de la section",
+      "default": "#212121"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Espacement haut de la section (px)",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Espacement bas de la section (px)",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Boutons de navigation"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Couleur de fond des boutons",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "button_size_desktop",
+      "label": "Taille des boutons - Desktop (px)",
+      "min": 30,
+      "max": 60,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "button_size_tablet",
+      "label": "Taille des boutons - Tablette (px)",
+      "min": 30,
+      "max": 60,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "label": "Taille des boutons - Mobile (px)",
+      "min": 25,
+      "max": 50,
+      "step": 5,
+      "default": 35
+    },
+    {
+      "type": "header",
+      "content": "Dimensions des cartes"
+    },
+    {
+      "type": "range",
+      "id": "card_width_desktop",
+      "label": "Largeur des cartes - Desktop (px)",
+      "min": 200,
+      "max": 400,
+      "step": 10,
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "card_height_desktop",
+      "label": "Hauteur des cartes - Desktop (px)",
+      "min": 150,
+      "max": 350,
+      "step": 10,
+      "default": 240
+    },
+    {
+      "type": "range",
+      "id": "card_width_tablet",
+      "label": "Largeur des cartes - Tablette (px)",
+      "min": 180,
+      "max": 320,
+      "step": 10,
+      "default": 260
+    },
+    {
+      "type": "range",
+      "id": "card_height_tablet",
+      "label": "Hauteur des cartes - Tablette (px)",
+      "min": 140,
+      "max": 280,
+      "step": 10,
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "card_width_mobile",
+      "label": "Largeur des cartes - Mobile (px)",
+      "min": 140,
+      "max": 200,
+      "step": 10,
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "card_height_mobile",
+      "label": "Hauteur des cartes - Mobile (px)",
+      "min": 100,
+      "max": 180,
+      "step": 10,
+      "default": 140
+    },
+    {
+      "type": "header",
+      "content": "Espacement entre les cartes"
+    },
+    {
+      "type": "range",
+      "id": "card_spacing_desktop",
+      "label": "Espacement - Desktop (px)",
+      "min": -50,
+      "max": 50,
+      "step": 5,
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "card_spacing_tablet",
+      "label": "Espacement - Tablette (px)",
+      "min": -40,
+      "max": 40,
+      "step": 2,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "card_spacing_mobile",
+      "label": "Espacement - Mobile (px)",
+      "min": -30,
+      "max": 30,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Taille du texte"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Taille du texte - Desktop (px)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "text_size_tablet",
+      "label": "Taille du texte - Tablette (px)",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Taille du texte - Mobile (px)",
+      "min": 8,
+      "max": 16,
+      "step": 1,
+      "default": 12
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Carte",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image de fond"
+        },
+        {
+          "type": "header",
+          "content": "Contenu"
+        },
+        {
+          "type": "text",
+          "id": "first_name",
+          "label": "Categorie",
+          "default": "Collier"
+        },
+        {
+          "type": "checkbox",
+          "id": "text_bold",
+          "label": "Texte en gras",
+          "default": false
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Lien"
+        },
+        {
+          "type": "header",
+          "content": "Couleurs personnalisées"
+        },
+        {
+          "type": "color",
+          "id": "card_bg_color",
+          "label": "Couleur de fond de la carte",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "card_bg_opacity",
+          "label": "Opacité du fond de la carte (%)",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "default": 80,
+          "info": "0 = transparent, 100 = opaque"
+        },
+        {
+          "type": "color",
+          "id": "name_bg_color",
+          "label": "Couleur de fond du nom",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "name_text_color",
+          "label": "Couleur du texte du nom",
+          "default": "#ffffff"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cartes Défilantes",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "first_name": "Collier",
+            "card_bg_opacity": 80,
+            "card_bg_color": "#1a1a1a"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "first_name": "Bague",
+            "card_bg_opacity": 70,
+            "card_bg_color": "#1a1a1a"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "first_name": "Bracelets",
+            "card_bg_opacity": 90, 
+            "card_bg_color": "#1a1a1a"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "first_name": "Boucles d'oreilles",
+            "card_bg_opacity": 85,
+            "card_bg_color": "#1a1a1a"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "first_name": "Montres",
+            "card_bg_opacity": 75,
+            "card_bg_color": "#1a1a1a"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

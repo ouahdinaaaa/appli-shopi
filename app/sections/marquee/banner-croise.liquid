@@ -1,0 +1,402 @@
+{% schema %}
+{
+  "name": "Banner croisee",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre de la section",
+      "default": "Titre de la section"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Taille du titre (desktop)",
+      "min": 12,
+      "max": 80,
+      "step": 1,
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "label": "Taille du titre (tablette)",
+      "min": 12,
+      "max": 60,
+      "step": 1,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Taille du titre (mobile)",
+      "min": 12,
+      "max": 50,
+      "step": 1,
+      "default": 22
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "background-section",
+      "label": "Couleur du background de la section",
+      "default": "#000000"
+    },
+    {
+      "type": "checkbox",
+      "id": "title_bold",
+      "label": "Mettre le titre en gras",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "title_align",
+      "label": "Alignement du texte du titre",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centre" },
+        { "value": "right", "label": "Droite" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "title_position",
+      "label": "Position du bloc titre",
+      "options": [
+        { "value": "left", "label": "À gauche" },
+        { "value": "center", "label": "Au centre" },
+        { "value": "right", "label": "À droite" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "title_margin_top",
+      "label": "Marge top du titre (px)",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom",
+      "label": "Marge bottom du titre (px)",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "text",
+      "id": "banner1_text",
+      "label": "Texte Banner 1",
+      "default": "Banner 1 Text"
+    },
+    {
+      "type": "text",
+      "id": "banner2_text",
+      "label": "Texte Banner 2",
+      "default": "Banner 2 Text"
+    },
+    {
+      "type": "color",
+      "id": "banner1_bg",
+      "label": "Couleur fond Banner 1",
+      "default": "#007bff"
+    },
+    {
+      "type": "color",
+      "id": "banner2_bg",
+      "label": "Couleur fond Banner 2",
+      "default": "#00ff7b"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "text_bold",
+      "label": "Texte en gras",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Taille texte (desktop)",
+      "min": 12,
+      "max": 50,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "text_size_tablet",
+      "label": "Taille texte (tablette)",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Taille texte (mobile)",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "banner1_height_desktop",
+      "label": "Hauteur Banner 1 (desktop)",
+      "min": 40,
+      "max": 200,
+      "step": 5,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "banner1_height_tablet",
+      "label": "Hauteur Banner 1 (tablette)",
+      "min": 40,
+      "max": 150,
+      "step": 5,
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "banner1_height_mobile",
+      "label": "Hauteur Banner 1 (mobile)",
+      "min": 30,
+      "max": 120,
+      "step": 5,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "banner2_height_desktop",
+      "label": "Hauteur Banner 2 (desktop)",
+      "min": 40,
+      "max": 200,
+      "step": 5,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "banner2_height_tablet",
+      "label": "Hauteur Banner 2 (tablette)",
+      "min": 40,
+      "max": 150,
+      "step": 5,
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "banner2_height_mobile",
+      "label": "Hauteur Banner 2 (mobile)",
+      "min": 30,
+      "max": 120,
+      "step": 5,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "label": "Hauteur section (desktop)",
+      "min": 200,
+      "max": 1200,
+      "step": 20,
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "section_height_tablet",
+      "label": "Hauteur section (tablette)",
+      "min": 200,
+      "max": 1000,
+      "step": 20,
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "label": "Hauteur section (mobile)",
+      "min": 200,
+      "max": 800,
+      "step": 20,
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "text_margin_side",
+      "label": "Marge horizontale texte (px)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 15
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner croisee"
+    }
+  ]
+}
+
+
+{% endschema %}
+<section id="banner-container">
+
+  <!-- Titre -->
+  <h2 class="banner-title">
+    {{ section.settings.title }}
+  </h2>
+
+  <!-- Banner 1 -->
+  <div class="banner banner1">
+    <div class="banner-content">
+      {% for i in (1..10) %}
+        <span>{{ section.settings.banner1_text }}</span>
+        <i class="fas fa-star"></i>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Banner 2 -->
+  <div class="banner banner2">
+    <div class="banner-content">
+      {% for i in (1..10) %}
+        <span>{{ section.settings.banner2_text }}</span>
+        <i class="fas fa-heart"></i>
+      {% endfor %}
+    </div>
+  </div>
+
+</section>
+
+<style>
+  #banner-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: {{ section.settings.background-section }};
+    padding-top: {{ section.settings.title_margin_top }}px;
+    padding-bottom: {{ section.settings.title_margin_bottom }}px;
+  }
+
+  /* Responsive hauteurs section */
+  @media (min-width: 1025px) {
+    #banner-container { height: {{ section.settings.section_height_desktop }}px; }
+  }
+  @media (min-width: 768px) and (max-width: 1024px) {
+    #banner-container { height: {{ section.settings.section_height_tablet }}px; }
+  }
+  @media (max-width: 767px) {
+    #banner-container { height: {{ section.settings.section_height_mobile }}px; }
+  }
+
+  /* TITRE */
+  .banner-title {
+    color: {{ section.settings.title_color }};
+    text-align: {{ section.settings.title_align }};
+    font-weight: {% if section.settings.title_bold %}bold{% else %}normal{% endif %};
+
+    position: relative;
+  }
+
+  /* Position bloc titre */
+  {% if section.settings.title_position == 'left' %}
+    .banner-title { margin-left: 0; margin-right: auto; display: block; }
+  {% elsif section.settings.title_position == 'center' %}
+    .banner-title { margin-left: auto; margin-right: auto; display: block; }
+  {% elsif section.settings.title_position == 'right' %}
+    .banner-title { margin-left: auto; margin-right: 0; display: block; }
+  {% endif %}
+
+  /* Responsive tailles titre */
+  @media (min-width: 1025px) {
+    .banner-title { font-size: {{ section.settings.title_size_desktop }}px; }
+  }
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .banner-title { font-size: {{ section.settings.title_size_tablet }}px; }
+  }
+  @media (max-width: 767px) {
+    .banner-title { font-size: {{ section.settings.title_size_mobile }}px; }
+  }
+
+  .banner {
+    position: absolute;
+    top: 50%;
+    left: -25%;
+    width: 150%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: {% if section.settings.text_bold %}bold{% else %}normal{% endif %};
+    color: {{ section.settings.text_color }};
+  }
+
+  .banner span, 
+  .banner i {
+    margin: 0 {{ section.settings.text_margin_side }}px;
+  }
+
+  .banner1 {
+    transform: translateY(-50%) rotate(5deg);
+    background: {{ section.settings.banner1_bg }};
+  }
+
+  .banner2 {
+    transform: translateY(-50%) rotate(-5deg);
+    background: {{ section.settings.banner2_bg }};
+  }
+
+  /* Responsive tailles texte + hauteurs */
+  @media (min-width: 1025px) {
+    .banner { font-size: {{ section.settings.text_size_desktop }}px; }
+    .banner1 { height: {{ section.settings.banner1_height_desktop }}px; }
+    .banner2 { height: {{ section.settings.banner2_height_desktop }}px; }
+  }
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .banner { font-size: {{ section.settings.text_size_tablet }}px; }
+    .banner1 { height: {{ section.settings.banner1_height_tablet }}px; }
+    .banner2 { height: {{ section.settings.banner2_height_tablet }}px; }
+  }
+  @media (max-width: 767px) {
+    .banner { font-size: {{ section.settings.text_size_mobile }}px; }
+    .banner1 { height: {{ section.settings.banner1_height_mobile }}px; }
+    .banner2 { height: {{ section.settings.banner2_height_mobile }}px; }
+  }
+
+  /* Défilement */
+  .banner-content {
+    display: inline-flex;
+    animation: scroll-left 20s linear infinite;
+  }
+  .banner2 .banner-content {
+    animation: scroll-right 25s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes scroll-right {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

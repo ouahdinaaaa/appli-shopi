@@ -1,0 +1,307 @@
+<style>
+.console-aventure1 {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: center;
+  gap: 2rem;
+  padding: 4rem 1rem;
+  background : {{section.settings.background-section }};
+  color: {{ section.settings.text_color }};
+  font-family: 'Orbitron', sans-serif;
+}
+
+.console-aventure-image {
+  flex: 1;
+  min-width: 300px;
+  max-width: 20%;
+  display: flex;
+}
+
+.console-aventure-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: {{ section.settings.image_radius }}px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.console-aventure-text {
+  flex: 1;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.console-aventure-text h3 {
+  font-size: {{ section.settings.title_size_desktop }}px;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  color: {{ section.settings.title_color }};
+}
+
+.console-aventure-features {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.console-aventure-feature {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.console-aventure-feature-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.console-aventure-feature-text {
+  font-weight: var(--bloc-font-weight);
+  color: var(--bloc-text-color);
+  font-size: var(--bloc-text-size-desktop);
+  -webkit-text-stroke: var(--bloc-stroke-width) var(--bloc-stroke-color);
+}
+
+@media (max-width: 768px) {
+  .console-aventure1 {
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+  }
+
+  .console-aventure-image,
+  .console-aventure-text {
+    max-width: 100%;
+  }
+
+  .console-aventure-text h3 {
+    font-size: {{ section.settings.title_size_mobile }}px;
+  }
+
+  .console-aventure-feature-text {
+    font-size: var(--bloc-text-size-mobile);
+  }
+
+  .console-aventure-image img {
+    height: auto;
+    max-height: 300px;
+  }
+}
+</style>
+
+<div class="console-aventure1">
+<div class="console-aventure-image">
+  {% if section.settings.image != blank %}
+    <img src="{{ section.settings.image | img_url: '800x' }}" alt="Console R36S">
+  {% else %}
+    <img src="https://images.pexels.com/photos/27035625/pexels-photo-27035625.jpeg" alt="Console R36S par défaut">
+  {% endif %}
+</div>
+
+  <div class="console-aventure-text">
+    <h3>{{ section.settings.title }}</h3>
+    <div class="console-aventure-features">
+      {% for block in section.blocks %}
+        <div class="console-aventure-feature" style="
+          background: {{ block.settings.bg_color }};
+        ">
+          <div class="console-aventure-feature-icon" style="background: {{ block.settings.icon_background_color }};">
+            ✔
+          </div>
+          <div class="console-aventure-feature-text" style="
+            --bloc-text-color: {{ block.settings.text_color }};
+            --bloc-text-size-desktop: {{ block.settings.text_size_desktop }}px;
+            --bloc-text-size-mobile: {{ block.settings.text_size_mobile }}px;
+            --bloc-stroke-width: {{ block.settings.text_stroke_width }}px;
+            --bloc-stroke-color: {{ block.settings.text_stroke_color }};
+            --bloc-font-weight: {{ block.settings.font_weight }};
+          color:{{ section.settings.text_color }}; font-weight:bold;">
+            {{ block.settings.text }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "argument product",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image du produit"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "Une produit taillée pour vous."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#1a1a1f"
+    },
+    {
+      "type" : "color",
+      "id" : "background-section",
+      "label" : "Color Background Section",
+      "default" : "#CBCBCB"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#522C2C"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#161616"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Arrondi de l'image",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Taille du titre (desktop)",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Taille du texte (desktop)",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Taille du titre (mobile)",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Taille du texte (mobile)",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 14
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Bloc caractéristique",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texte du bloc",
+          "default": "Argument à écrire"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Couleur de fond du bloc",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "icon_background_color",
+          "label": "Couleur de fond de l’icône",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "text_size_desktop",
+          "label": "Taille du texte (desktop)",
+          "min": 12,
+          "max": 30,
+          "step": 1,
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "text_size_mobile",
+          "label": "Taille du texte (mobile)",
+          "min": 10,
+          "max": 24,
+          "step": 1,
+          "default": 14
+        },
+        {
+          "type": "color",
+          "id": "text_stroke_color",
+          "label": "Couleur du contour du texte (stroke)",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "text_stroke_width",
+          "label": "Épaisseur du contour (stroke px)",
+          "min": 0,
+          "max": 5,
+          "step": 0.1,
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "font_weight",
+          "label": "Texte en gras ?",
+          "default": "bold",
+          "options": [
+            { "value": "normal", "label": "Non" },
+            { "value": "bold", "label": "Oui" }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bloc Product",
+      "blocks": [
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" }
+      ]
+    }
+  ]
+}
+{% endschema %}

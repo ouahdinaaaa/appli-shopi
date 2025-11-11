@@ -1,0 +1,626 @@
+<div class="faq-section" style="background-color: {{ section.settings.bg_color }};">
+  <div class="faq-container">
+    <h2 class="faq-title" style="text-align: {{ section.settings.title_align }}; font-size: {{ section.settings.title_size }}px;">
+      {{ section.settings.faq_title }}
+    </h2>
+    <p class="faq-subtext" style="text-align: {{ section.settings.text_align }}; font-size: {{ section.settings.text_size }}px; font-weight: {% if section.settings.text_bold %}bold{% else %}normal{% endif %};">
+      {{ section.settings.faq_subtext }}
+    </p>
+
+    <div class="faq-items">
+      {% for block in section.blocks %}
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)" style="font-size: {{ section.settings.question_size }}px; font-weight: {% if section.settings.question_bold %}bold{% else %}normal{% endif %};">
+            <span class="question-text">{{ block.settings.question }}</span>
+            <span class="faq-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 3L17 17H3L10 3Z" class="triangle"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-answer" style="font-size: {{ section.settings.answer_size }}px; font-weight: {% if section.settings.answer_bold %}bold{% else %}normal{% endif %};">
+            <div class="answer-content">
+              {{ block.settings.answer }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <!-- Particules d'ambiance -->
+  <div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+</div>
+
+<script>
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const icon = btn.querySelector('.triangle');
+  const isActive = answer.classList.contains('active');
+  
+  // Fermer toutes les autres FAQ
+  document.querySelectorAll('.faq-answer.active').forEach(item => {
+    if (item !== answer) {
+      item.classList.remove('active');
+      item.parentElement.querySelector('.triangle').style.transform = 'rotate(0deg)';
+    }
+  });
+  
+  // Toggle la FAQ actuelle
+  answer.classList.toggle('active');
+  
+  if (answer.classList.contains('active')) {
+    icon.style.transform = 'rotate(180deg)';
+  } else {
+    icon.style.transform = 'rotate(0deg)';
+  }
+}
+
+// Animation d'apparition au scroll
+function handleScroll() {
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach((item, index) => {
+    const rect = item.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 100) {
+      setTimeout(() => {
+        item.classList.add('visible');
+      }, index * 150);
+    }
+  });
+}
+
+window.addEventListener('scroll', handleScroll);
+window.addEventListener('load', handleScroll);
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.faq-section {
+  padding: 20px 20px;
+  position: relative;
+  overflow: hidden;
+  
+}
+
+.faq-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(139, 0, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(25, 25, 112, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(139, 0, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.faq-container {
+  max-width: 800px;
+  margin: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.faq-title {
+  margin-bottom: 15px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  color: {{ section.settings.title }};
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 1px;
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(139, 0, 0, 0.3); }
+  to { text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 20px rgba(139, 0, 0, 0.6), 0 0 30px rgba(139, 0, 0, 0.4); }
+}
+
+.faq-subtext {
+  margin-bottom: 40px;
+  color: {{ section.settings.color_subject }};
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  opacity: 0.9;
+}
+
+.faq-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.faq-item {
+  background: #2a1a1a;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 25px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  border: 1px solid rgba(139, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.faq-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(139, 0, 0, 0.1);
+  transition: left 0.8s ease;
+}
+
+.faq-item:hover::before {
+  left: 100%;
+}
+
+.faq-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.faq-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 15px 35px rgba(0,0,0,0.6),
+    0 0 20px rgba(139, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+  border-color: rgba(139, 0, 0, 0.6);
+}
+
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 25px 30px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  color: #f0f0f0;
+  font-family: 'Crimson Text', serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.faq-question::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  width: 4px;
+  height: 0;
+  background: #8b0000;
+  transition: height 0.3s ease;
+  transform: translateY(-50%);
+}
+
+.faq-question:hover::before {
+  height: 60%;
+}
+
+.faq-question:hover {
+  background: rgba(139, 0, 0, 0.15);
+  color: #fff;
+  padding-left: 35px;
+}
+
+.question-text {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.faq-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b0000;
+  transition: all 0.3s ease;
+}
+
+.triangle {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.faq-question:hover .faq-icon {
+  color: #ff4444;
+  transform: scale(1.1);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  background: #1a1010;
+  border-top: 1px solid rgba(139, 0, 0, 0.2);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+}
+
+.faq-answer.active {
+  max-height: 500px;
+  opacity: 1;
+  padding: 25px 30px;
+}
+
+.answer-content {
+  color: #d0d0d0;
+  font-family: 'Crimson Text', serif;
+  line-height: 1.7;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.faq-more-wrapper {
+  margin-top: 50px;
+  text-align: center;
+  opacity: 0;
+  animation: fadeIn 1s ease-out 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.more-button {
+  display: inline-block;
+  padding: 15px 35px;
+  background: #8b0000;
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-family: 'Crimson Text', serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.4s ease;
+  box-shadow: 
+    0 8px 20px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.more-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.2);
+  transition: all 0.4s ease;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.more-button:hover::before {
+  width: 200px;
+  height: 200px;
+}
+
+.more-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 15px 30px rgba(0,0,0,0.6),
+    0 0 30px rgba(139, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  background: #a01010;
+}
+
+/* Particules d'ambiance */
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #8b0000;
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+.particle:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 8s;
+}
+
+.particle:nth-child(2) {
+  top: 60%;
+  left: 80%;
+  animation-delay: 2s;
+  animation-duration: 6s;
+}
+
+.particle:nth-child(3) {
+  top: 80%;
+  left: 20%;
+  animation-delay: 4s;
+  animation-duration: 10s;
+}
+
+.particle:nth-child(4) {
+  top: 30%;
+  left: 70%;
+  animation-delay: 1s;
+  animation-duration: 7s;
+  background: #191970;
+}
+
+.particle:nth-child(5) {
+  top: 70%;
+  left: 50%;
+  animation-delay: 3s;
+  animation-duration: 9s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translateY(-20px) rotate(90deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-10px) rotate(180deg);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateY(-30px) rotate(270deg);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .faq-section {
+    padding: 60px 15px;
+  }
+  
+  .faq-question {
+    padding: 20px;
+  }
+  
+  .faq-answer.active {
+    padding: 20px;
+  }
+  
+  .more-button {
+    padding: 12px 25px;
+    font-size: 14px;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "FAQ Mystérieuse",
+  "tag": "section",
+  "class": "faq-custom",
+  "settings": [
+    {
+      "type": "text",
+      "id": "faq_title",
+      "label": "Titre de la section",
+      "default": "Vérités Cachées - FAQ"
+    },
+    {
+      "type": "text",
+      "id": "faq_subtext",
+      "label": "Texte sous le titre",
+      "default": "Découvrez les réponses aux questions que vous n'osiez pas poser... La vérité vous attend."
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Couleur de fond",
+      "default": "#1a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "color_subject",
+      "label": "Couleur subject",
+      "default": "#d0d0d0"
+    },
+    {
+      "type": "color",
+      "id": "title",
+      "label": "Couleur title",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "select",
+      "id": "title_align",
+      "label": "Alignement du titre",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centré" },
+        { "value": "right", "label": "Droite" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Alignement du texte",
+      "options": [
+        { "value": "left", "label": "Gauche" },
+        { "value": "center", "label": "Centré" },
+        { "value": "right", "label": "Droite" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 24,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "label": "Taille du titre",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille du texte descriptif",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "min": 16,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille des questions",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "answer_size",
+      "min": 14,
+      "max": 26,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille des réponses",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "question_bold",
+      "label": "Questions en gras",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "answer_bold",
+      "label": "Réponses en gras",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "text_bold",
+      "label": "Texte sous-titre en gras",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_more_button",
+      "label": "Afficher le bouton Voir plus",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "more_button_text",
+      "label": "Texte du bouton Voir plus",
+      "default": "Révéler Plus de Secrets ↓"
+    },
+    {
+      "type": "url",
+      "id": "more_button_link",
+      "label": "Lien du bouton Voir plus"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "Question / Réponse",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Ces révélations sont-elles vraiment authentiques ?"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Réponse",
+          "default": "Nos ebooks contiennent des informations soigneusement recherchées et documentées, provenant de sources fiables et de témoignages vérifiés. Chaque révélation est étayée par des preuves tangibles."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "FAQ Vérités Cachées",
+      "category": "Contenu",
+      "blocks": [
+        { 
+          "type": "faq_item",
+          "settings": {
+            "question": "Ces révélations sont-elles vraiment authentiques ?",
+            "answer": "Nos ebooks contiennent des informations soigneusement recherchées et documentées, provenant de sources fiables et de témoignages vérifiés."
+          }
+        },
+        { 
+          "type": "faq_item",
+          "settings": {
+            "question": "Puis-je partager ces informations ?",
+            "answer": "Les ebooks sont destinés à un usage personnel. Nous encourageons la diffusion de la vérité, mais dans le respect des droits d'auteur."
+          }
+        },
+        { 
+          "type": "faq_item",
+          "settings": {
+            "question": "Y a-t-il des risques à connaître ces vérités ?",
+            "answer": "La connaissance est un pouvoir. Nos contenus sont éducatifs et visent à éveiller les consciences de manière responsable."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

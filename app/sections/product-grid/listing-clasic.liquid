@@ -1,0 +1,444 @@
+<script>
+<!-- Support Me 🙏🥰 -->
+
+kofiWidgetOverlay.draw("mohamedghulam", {
+  type: "floating-chat",
+  "floating-chat.donateButton.text": "Support me",
+  "floating-chat.donateButton.background-color": "#323842",
+  "floating-chat.donateButton.text-color": "#fff"
+});
+
+</script>
+
+<style>
+/* Namespace pour éviter collisions dans l'aperçu */
+.listing-classic,
+.listing-classic * { box-sizing: border-box; }
+
+/* Variables de section (fallbacks) */
+.listing-classic {
+  --sec-bg: var(--sec-bg, transparent);
+  --sec-text: var(--sec-text, #111);
+  --gap: var(--grid-gap, 1.25rem);
+  --cols-mobile: var(--cols-mobile, 1);
+  --cols-tablet: var(--cols-tablet, 2);
+  --cols-desktop: var(--cols-desktop, 3);
+  --card-w: var(--card-w, 18rem);
+  --img-h: var(--img-h, 320px);
+  --card-bg: var(--card-bg, #fff);
+  --card-text: var(--card-text, #111);
+  --card-radius: var(--card-radius, 12px);
+  --card-shadow: var(--card-shadow, 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24));
+  --card-shadow-hover: var(--card-shadow-hover, 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04));
+  --hover-scale: var(--hover-scale, 1.05);
+  --brand-color: var(--brand-color, #6b7280);
+  --price-color: var(--price-color, #111);
+  --compare-color: var(--compare-color, #4b5563);
+  --icon-color: var(--icon-color, #111);
+  --section-padding: var(--sec-pad, 2rem);
+}
+
+/* Section wrapper */
+.listing-classic {
+  background: var(--sec-bg);
+  color: var(--sec-text);
+  padding: var(--section-padding);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.35;
+}
+
+/* Header */
+.listing-classic .lc-header {
+  text-align: var(--header-align, center);
+  margin: 0 0 1.25rem;
+}
+.listing-classic .lc-title {
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.3rem);
+  font-weight: var(--header-title-weight, 700);
+  margin: 0 0 .4rem;
+}
+.listing-classic .lc-subtitle {
+  font-size: clamp(1rem, .9rem + .5vw, 1.4rem);
+  font-weight: var(--header-subtitle-weight, 600);
+  margin: 0;
+  opacity: .85;
+}
+
+/* Grid */
+.listing-classic .lc-grid {
+  display: grid;
+  gap: var(--gap);
+  justify-content: center;
+}
+
+/* Colonnes responsives via variables */
+@media (max-width: 767px) {
+  .listing-classic .lc-grid { grid-template-columns: repeat(var(--cols-mobile), minmax(0, 1fr)); }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .listing-classic .lc-grid { grid-template-columns: repeat(var(--cols-tablet), minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .listing-classic .lc-grid { grid-template-columns: repeat(var(--cols-desktop), minmax(0, 1fr)); }
+}
+
+/* Card */
+.listing-classic .lc-card {
+  position: relative;
+  width: 100%;
+  max-width: var(--card-w);
+  background: var(--card-bg);
+  color: var(--card-text);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  transition: transform .35s cubic-bezier(.4,0,.2,1), box-shadow .25s ease;
+}
+.listing-classic .lc-card:focus-within {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+.listing-classic .lc-card:hover {
+  transform: scale(var(--hover-scale));
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Image */
+.listing-classic .lc-image-wrapper {
+  position: relative;
+  aspect-ratio: 4/5;
+  width: 100%;
+  overflow: hidden;
+}
+.listing-classic .lc-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .8s ease;
+}
+.listing-classic .lc-card:hover .lc-image {
+  transform: scale(1.08);
+}
+
+/* Body */
+.listing-classic .lc-body {
+  padding: .8rem 1rem 1rem;
+  text-align: var(--card-align, center);
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  flex-grow: 1;
+}
+
+/* Brand */
+.listing-classic .lc-brand {
+  text-transform: uppercase;
+  font-size: .68rem;
+  letter-spacing: .08em;
+  color: var(--brand-color);
+  font-weight: var(--brand-weight, 600);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Title */
+.listing-classic .lc-product-title {
+  font-size: 1.05rem;
+  font-weight: var(--title-weight, 700);
+  line-height: 1.25;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  min-height: 2.6em;
+}
+
+/* Prices */
+.listing-classic .lc-price-row {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  margin-top: .2rem;
+}
+.listing-classic .lc-price {
+  font-size: 1.05rem;
+  font-weight: var(--price-weight, 700);
+  color: var(--price-color);
+  margin: 0;
+}
+.listing-classic .lc-compare {
+  font-size: .75rem;
+  color: var(--compare-color);
+  text-decoration: line-through;
+  margin: 0;
+}
+
+/* Cart icon */
+.listing-classic .lc-cart-icon {
+  margin-left: auto;
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  color: var(--icon-color);
+  opacity: .9;
+  transition: opacity .25s;
+}
+.listing-classic .lc-card:hover .lc-cart-icon {
+  opacity: 1;
+}
+
+/* Link overlay */
+.listing-classic .lc-card > a {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Fallback card */
+.listing-classic .lc-card--placeholder .lc-image {
+  filter: saturate(.85) contrast(1.05);
+}
+
+/* High contrast mode */
+@media (prefers-contrast: more) {
+  .listing-classic .lc-card { box-shadow: 0 0 0 1px rgba(0,0,0,.25); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .listing-classic .lc-card,
+  .listing-classic .lc-image { transition: none; }
+}
+
+/* Utility alignment classes */
+.listing-classic .text-left { text-align: left; }
+.listing-classic .text-center { text-align: center; }
+.listing-classic .text-right { text-align: right; }
+</style>
+
+<section
+  class="listing-classic"
+  style="
+    --sec-bg: {{ section.settings.section_bg | default: 'transparent' }};
+    --sec-text: {{ section.settings.section_text | default: '#111111' }};
+    --header-align: {{ section.settings.header_align | default: 'center' }};
+    --header-title-weight: {{ section.settings.header_title_bold | default: true | json | replace: 'true', '700' | replace: 'false', '600' }};
+    --header-subtitle-weight: {{ section.settings.header_subtitle_bold | default: false | json | replace: 'true', '700' | replace: 'false', '500' }};
+    --grid-gap: {{ section.settings.grid_gap | default: 20 }}px;
+    --cols-mobile: {{ section.settings.columns_mobile | default: 1 }};
+    --cols-tablet: {{ section.settings.columns_tablet | default: 2 }};
+    --cols-desktop: {{ section.settings.columns_desktop | default: 3 }};
+    --card-w: {{ section.settings.card_width }};
+    --img-h: {{ section.settings.image_height }}px;
+    --card-bg: {{ section.settings.card_bg | default: '#ffffff' }};
+    --card-text: {{ section.settings.card_text | default: '#111111' }};
+    --card-radius: {{ section.settings.card_radius }};
+    --card-shadow: {{ section.settings.card_shadow | default: true | json | replace: 'true', '0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24)' | replace: 'false', 'none' }};
+    --card-shadow-hover: {{ section.settings.card_shadow_hover | default: true | json | replace: 'true', '0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04)' | replace: 'false', 'var(--card-shadow)' }};
+    --hover-scale: {{ section.settings.hover_scale | default: true | json | replace: 'true', '1.05' | replace: 'false', '1.0' }};
+    --card-align: {{ section.settings.card_align | default: 'center' }};
+    --brand-color: {{ section.settings.brand_color | default: '#6b7280' }};
+    --title-weight: {{ section.settings.title_bold | default: true | json | replace: 'true', '700' | replace: 'false', '600' }};
+    --brand-weight: {{ section.settings.brand_bold | default: false | json | replace: 'true', '700' | replace: 'false', '600' }};
+    --price-weight: {{ section.settings.price_bold | default: true | json | replace: 'true', '700' | replace: 'false', '600' }};
+    --price-color: {{ section.settings.price_color | default: '#111111' }};
+    --compare-color: {{ section.settings.compare_color | default: '#4b5563' }};
+    --icon-color: {{ section.settings.icon_color | default: '#111111' }};
+    --sec-pad: {{ section.settings.section_padding }}px;
+  "
+>
+  <header class="lc-header">
+    {% if section.settings.title != blank %}
+      <h1 class="lc-title">{{ section.settings.title }}</h1>
+    {% endif %}
+    {% if section.settings.subtitle != blank %}
+      <p class="lc-subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+  </header>
+
+  <div class="lc-grid">
+    {% for block in section.blocks %}
+      {% assign product = block.settings.product %}
+      {% assign card_link = block.settings.link | default: product.url %}
+      {% assign brand_text = block.settings.brand | default: product.vendor %}
+      {% assign title_text = block.settings.title | default: product.title %}
+      {% assign image = block.settings.image | default: product.featured_image %}
+      {% assign price = product.price %}
+      {% assign compare_at = product.compare_at_price %}
+      {% assign show_compare = block.settings.show_compare | default: section.settings.show_compare %}
+
+      <div class="lc-card" {{ block.shopify_attributes }}>
+        <a href="{{ card_link | default: '#' }}">
+          <div class="lc-image-wrapper">
+            {% if image %}
+              <img
+                class="lc-image"
+                src="{{ image | image_url: width: 720 }}"
+                alt="{{ title_text | escape }}"
+                loading="lazy"
+              >
+            {% endif %}
+          </div>
+
+          <div class="lc-body">
+            {% if section.settings.show_brand and brand_text %}
+              <p class="lc-brand">{{ brand_text }}</p>
+            {% endif %}
+
+            {% if title_text %}
+              <h3 class="lc-product-title">{{ title_text }}</h3>
+            {% endif %}
+
+            {% if product %}
+              <div class="lc-price-row">
+                <p class="lc-price">
+                  {% if section.settings.price_with_currency %}
+                    {{ price | money_with_currency }}
+                  {% else %}
+                    {{ price | money }}
+                  {% endif %}
+                </p>
+                {% if show_compare and compare_at > price %}
+                  <p class="lc-compare">
+                    {% if section.settings.price_with_currency %}
+                      {{ compare_at | money_with_currency }}
+                    {% else %}
+                      {{ compare_at | money }}
+                    {% endif %}
+                  </p>
+                {% endif %}
+                {% if section.settings.show_cart_icon %}
+                  <span class="lc-cart-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                      <path fill-rule="evenodd" d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5z"/>
+                      <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+                    </svg>
+                  </span>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        </a>
+      </div>
+    {% else %}
+      <div class="lc-card lc-card--placeholder">
+        <a href="#">
+          <div class="lc-image-wrapper">
+            <img class="lc-image" src="https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png" alt="Product placeholder" loading="lazy">
+          </div>
+          <div class="lc-body">
+            <p class="lc-brand">Brand</p>
+            <h3 class="lc-product-title">Produit exemple</h3>
+            <div class="lc-price-row">
+              <p class="lc-price">$149.00</p>
+              <p class="lc-compare">$199.00</p>
+              {% if section.settings.show_cart_icon %}
+                <span class="lc-cart-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5z"/>
+                    <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+                  </svg>
+                </span>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Grille produits (classic)",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Titre", "default": "Best-Seller" },
+    { "type": "text", "id": "subtitle", "label": "Sous-titre", "default": "Nos meilleurs offres" },
+
+    { "type": "select", "id": "header_align", "label": "Alignement entête", "default": "center", "options": [
+      { "value": "left", "label": "Gauche" },
+      { "value": "center", "label": "Centre" },
+      { "value": "right", "label": "Droite" }
+    ]},
+    { "type": "checkbox", "id": "header_title_bold", "label": "Titre en gras", "default": true },
+    { "type": "checkbox", "id": "header_subtitle_bold", "label": "Sous-titre en gras", "default": false },
+
+    { "type": "color", "id": "section_bg", "label": "Fond de section", "default": "#ffffff" },
+    { "type": "color", "id": "section_text", "label": "Couleur texte section", "default": "#111111" },
+    { "type": "range", "id": "section_padding", "label": "Padding section (px)", "min": 0, "max": 120, "step": 4, "default": 40 },
+
+    { "type": "range", "id": "grid_gap", "label": "Espace entre cartes (px)", "min": 0, "max": 48, "step": 2, "default": 20 },
+
+    { "type": "range", "id": "columns_mobile", "label": "Colonnes (mobile)", "min": 1, "max": 3, "step": 1, "default": 1 },
+    { "type": "range", "id": "columns_tablet", "label": "Colonnes (tablette)", "min": 1, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "columns_desktop", "label": "Colonnes (ordinateur)", "min": 2, "max": 6, "step": 1, "default": 5 },
+
+    { "type": "select", "id": "card_width", "label": "Largeur carte", "default": "18rem", "options": [
+      { "value": "16rem", "label": "16rem (~256px)" },
+      { "value": "18rem", "label": "18rem (~288px)" },
+      { "value": "20rem", "label": "20rem (~320px)" }
+    ]},
+    { "type": "range", "id": "image_height", "label": "Hauteur image (px)", "min": 160, "max": 480, "step": 8, "default": 320 },
+
+    { "type": "color", "id": "card_bg", "label": "Fond carte", "default": "#ffffff" },
+    { "type": "color", "id": "card_text", "label": "Texte carte", "default": "#111111" },
+    { "type": "select", "id": "card_radius", "label": "Arrondi cartes", "default": "12px", "options": [
+      { "value": "8px", "label": "8px" },
+      { "value": "12px", "label": "12px" },
+      { "value": "16px", "label": "16px" },
+      { "value": "24px", "label": "24px" }
+    ]},
+    { "type": "checkbox", "id": "card_shadow", "label": "Ombre", "default": true },
+    { "type": "checkbox", "id": "card_shadow_hover", "label": "Ombre au survol", "default": true },
+    { "type": "checkbox", "id": "hover_scale", "label": "Zoom au survol", "default": true },
+
+    { "type": "select", "id": "card_align", "label": "Alignement texte carte", "default": "center", "options": [
+      { "value": "left", "label": "Gauche" },
+      { "value": "center", "label": "Centre" },
+      { "value": "right", "label": "Droite" }
+    ]},
+    { "type": "checkbox", "id": "show_brand", "label": "Afficher la marque", "default": true },
+    { "type": "color", "id": "brand_color", "label": "Couleur marque", "default": "#6b7280" },
+    { "type": "checkbox", "id": "brand_bold", "label": "Marque en gras", "default": false },
+
+    { "type": "checkbox", "id": "title_bold", "label": "Titre produit en gras", "default": true },
+
+    { "type": "checkbox", "id": "show_compare", "label": "Afficher prix barré si promo", "default": true },
+    { "type": "checkbox", "id": "price_bold", "label": "Prix en gras", "default": true },
+    { "type": "checkbox", "id": "price_with_currency", "label": "Afficher devise", "default": true },
+    { "type": "color", "id": "price_color", "label": "Couleur prix", "default": "#111111" },
+    { "type": "color", "id": "compare_color", "label": "Couleur prix barré", "default": "#4b5563" },
+
+    { "type": "checkbox", "id": "show_cart_icon", "label": "Afficher icône panier", "default": true },
+    { "type": "color", "id": "icon_color", "label": "Couleur icône", "default": "#111111" }
+  ],
+  "blocks": [
+    {
+      "type": "product_card",
+      "name": "Carte produit",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Produit" },
+        { "type": "image_picker", "id": "image", "label": "Image (remplace l’image produit)" },
+        { "type": "text", "id": "brand", "label": "Marque (override vendor)" },
+        { "type": "text", "id": "title", "label": "Titre (override product.title)" },
+        { "type": "url", "id": "link", "label": "Lien (override product.url)" },
+        { "type": "checkbox", "id": "show_compare", "label": "Prix barré (ce bloc)", "default": true }
+      ]
+    }
+  ],
+  "max_blocks": 24,
+  "presets": [
+    { "name": "Grille produits (classic)", "category": "Produits" }
+  ]
+}
+{% endschema %}
