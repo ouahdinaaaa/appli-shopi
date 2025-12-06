@@ -443,9 +443,11 @@ function DemoModal({ section, isOpen, onClose }) {
 
     // 3) Boucle des blocks
     const forRegex = /\{%-?\s*for\s+block\s+in\s+section\.blocks\s*-?%\}([\s\S]*?)\{%-?\s*endfor\s*-?%\}/;
-    const forMatch = html.match(forRegex);
+    let forMatch;
+    let loopGuard = 0;
 
-    if (forMatch) {
+    while ((forMatch = html.match(forRegex)) && loopGuard < 25) {
+      loopGuard += 1;
       const [fullMatch, blockContent] = forMatch;
       let blocksHtml = '';
       const useBlocks = blocks.length > 0 ? blocks : Array.from({ length: presetCount || 3 }, () => ({}));
@@ -1523,7 +1525,7 @@ function generatePreviewFromLiquid(liquidCode, schema, category) {
         ${[1,2].map(i => `
           <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; text-align: center; position: relative;">
             <div style="position: absolute; top: -8px; left: 8px; background: #000; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Best-seller</div>
-            <div style="background: #f0f0f0; height: 120px; margin-bottom: 10px; border-radius: 4px;"></div>
+            <div style="background: #f0f0f0; height: 120px; margin-bottom:  10px; border-radius: 4px;"></div>
             <h4>Produit ${i}</h4>
             <p style="color: #BF0603; font-weight: bold;">€${i*15}.99</p>
           </div>
