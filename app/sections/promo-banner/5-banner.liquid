@@ -1,0 +1,683 @@
+<!-- sections/announcement-bar.liquid -->
+
+{%- if section.settings.enable_announcement -%}
+<style>
+  .announcement-bar {
+    position: relative;
+    z-index: 999;
+    width: 100%;
+    overflow: hidden;
+    font-family: {{ section.settings.font_family }}, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-weight: {{ section.settings.font_weight }};
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    
+    {%- if section.settings.enable_gradient -%}
+      background: linear-gradient(45deg, {{ section.settings.gradient_color_1 }}, {{ section.settings.gradient_color_2 }});
+      background-size: 400% 400%;
+      animation: gradientShift {{ section.settings.gradient_duration }}s ease infinite;
+    {%- endif -%}
+    
+    {%- if section.settings.sticky_bar -%}
+      position: sticky;
+      top: 0;
+    {%- endif -%}
+  }
+
+  .announcement-bar__container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ section.settings.padding_desktop }}px {{ section.settings.horizontal_padding }}px;
+    min-height: {{ section.settings.height_desktop }}px;
+    gap: 1rem;
+  }
+
+.announcement-bar__content {
+  display: flex;
+  align-items: center; /* aligne tout au centre verticalement */
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+  .announcement-bar__text {
+    font-size: {{ section.settings.font_size_desktop }}px;
+    font-weight: {{ section.settings.font_weight }};
+    margin: 0;
+    line-height: 1;
+  }
+
+  .announcement-bar__emoji {
+    font-size: {{ section.settings.font_size_desktop | times: 1.2 }}px;
+    line-height: 1;
+  }
+
+
+
+ .announcement-countdown {
+  display: flex;
+  align-items: center; /* au lieu de baseline */
+  gap: 0.3rem;
+}
+
+
+.countdown-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0 4px; /* réduit la hauteur interne */
+  line-height: 1; /* évite les marges haut/bas */
+  height: auto; /* la boîte prend juste la hauteur du contenu */
+}
+
+
+
+.countdown-number {
+  font-weight: 800;
+  font-size: {{ section.settings.countdown_font_size }}px;
+  line-height: 1;
+  margin: 0;
+}
+
+  .countdown-separator {
+    font-weight: 800;
+    opacity: 0.8;
+    font-size: {{ section.settings.countdown_font_size }}px;
+    line-height: 1;
+    margin: 0 2px;
+  }
+
+.countdown-label {
+  font-size: {{ section.settings.countdown_font_size | times: 0.6 }}px;
+  margin: 0; /* supprime la marge qui créait de l'espace blanc */
+  line-height: 1.1;
+}
+
+  .announcement-bar__close {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 20px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    padding: 5px;
+  }
+
+  .announcement-bar__close:hover {
+    opacity: 1;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Tablet styles */
+  @media screen and (max-width: 991px) {
+    .announcement-bar__container {
+      padding: {{ section.settings.padding_tablet }}px {{ section.settings.horizontal_padding }}px;
+      min-height: {{ section.settings.height_tablet }}px;
+    }
+    
+    .announcement-bar__text {
+      font-size: {{ section.settings.font_size_tablet }}px;
+    }
+    
+    .announcement-bar__emoji {
+      font-size: {{ section.settings.font_size_tablet | times: 1.2 }}px;
+    }
+    
+    .countdown-box {
+      padding: 2px 3px;
+    }
+    
+    .countdown-number {
+      font-size: {{ section.settings.countdown_font_size | times: 0.9 }}px;
+    }
+    
+    .countdown-separator {
+      font-size: {{ section.settings.countdown_font_size | times: 0.9 }}px;
+    }
+    
+    .countdown-label {
+      font-size: {{ section.settings.countdown_font_size | times: 0.55 }}px;
+    }
+  }
+
+  /* Mobile styles */
+  @media screen and (max-width: 767px) {
+    .announcement-bar__container {
+      padding: {{ section.settings.padding_mobile }}px {{ section.settings.horizontal_padding | times: 0.75 }}px;
+      min-height: {{ section.settings.height_mobile }}px;
+    }
+    
+    .announcement-bar__text {
+      font-size: {{ section.settings.font_size_mobile }}px;
+    }
+    
+    .announcement-bar__emoji {
+      font-size: {{ section.settings.font_size_mobile | times: 1.2 }}px;
+    }
+    
+    .announcement-countdown {
+      gap: 0.2rem;
+    }
+    
+    .countdown-box {
+      padding: 1px 3px;
+    }
+    
+    .countdown-number {
+      font-size: {{ section.settings.countdown_font_size | times: 0.8 }}px;
+    }
+    
+    .countdown-separator {
+      font-size: {{ section.settings.countdown_font_size | times: 0.8 }}px;
+      margin: 0 1px;
+    }
+    
+    .countdown-label {
+      font-size: {{ section.settings.countdown_font_size | times: 0.5 }}px;
+    }
+    
+    .announcement-bar__content {
+      gap: 0.5rem;
+    }
+  }
+</style>
+
+<div class="announcement-bar" id="announcement-bar-{{ section.id }}">
+  <div class="announcement-bar__container">
+    <div class="announcement-bar__content">
+      {%- if section.settings.show_emoji -%}
+        <span class="announcement-bar__emoji">{{ section.settings.emoji_text }}</span>
+      {%- endif -%}
+      
+      <div class="announcement-bar__text">
+        {{ section.settings.announcement_text }}
+      </div>
+      
+      {%- if section.settings.show_countdown -%}
+        <div class="announcement-countdown" id="countdown-{{ section.id }}">
+          <div class="countdown-box">
+            <div class="countdown-number" id="hours-{{ section.id }}">00</div>
+            <div class="countdown-label">{{ section.settings.hours_label }}</div>
+          </div>
+          <div class="countdown-separator">:</div>
+          <div class="countdown-box">
+            <div class="countdown-number" id="minutes-{{ section.id }}">00</div>
+            <div class="countdown-label">{{ section.settings.minutes_label }}</div>
+          </div>
+          <div class="countdown-separator">:</div>
+          <div class="countdown-box">
+            <div class="countdown-number" id="seconds-{{ section.id }}">00</div>
+            <div class="countdown-label">{{ section.settings.seconds_label }}</div>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+    
+    {%- if section.settings.show_close_button -%}
+      <button class="announcement-bar__close" onclick="closeAnnouncementBar('{{ section.id }}')" aria-label="Fermer l'annonce">
+        ✕
+      </button>
+    {%- endif -%}
+  </div>
+</div>
+
+<script>
+  (function() {
+    const sectionId = '{{ section.id }}';
+    const enableCountdown = {{ section.settings.show_countdown }};
+    const endDate = new Date('{{ section.settings.countdown_end_date }}').getTime();
+    const resetDaily = {{ section.settings.reset_daily }};
+    const countdownHours = {{ section.settings.countdown_hours | default: 24 }};
+    
+    if (enableCountdown) {
+      function updateCountdown() {
+        const now = new Date().getTime();
+        let targetTime;
+        
+        if (resetDaily) {
+          // Réinitialise chaque jour à minuit
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          tomorrow.setHours(0, 0, 0, 0);
+          targetTime = tomorrow.getTime();
+        } else if (endDate && endDate > now) {
+          // utilise la date de fin définie
+          targetTime = endDate;
+        } else {
+          // Utilise le nombre d'heures défini
+          targetTime = now + (countdownHours * 60 * 60 * 1000);
+        }
+        
+        const distance = targetTime - now;
+        
+        if (distance > 0) {
+          const hours = Math.floor(distance / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+          
+          const hoursEl = document.getElementById('hours-' + sectionId);
+          const minutesEl = document.getElementById('minutes-' + sectionId);
+          const secondsEl = document.getElementById('seconds-' + sectionId);
+          
+          if (hoursEl) hoursEl.textContent = hours.toString().padStart(2, '0');
+          if (minutesEl) minutesEl.textContent = minutes.toString().padStart(2, '0');
+          if (secondsEl) secondsEl.textContent = seconds.toString().padStart(2, '0');
+        } else {
+          // Le compte à rebours est terminé, réinitialise si nécessaire
+          if (resetDaily) {
+            updateCountdown();
+          }
+        }
+      }
+      
+      // Mise à jour initiale
+      updateCountdown();
+      
+      // Mise à jour chaque seconde
+      setInterval(updateCountdown, 1000);
+    }
+  })();
+  
+  function closeAnnouncementBar(sectionId) {
+    const bar = document.getElementById('announcement-bar-' + sectionId);
+    if (bar) {
+      bar.style.display = 'none';
+      // Sauvegarde dans le sessionStorage pour ne pas réafficher pendant la session
+      sessionStorage.setItem('announcement-bar-closed-' + sectionId, 'true');
+    }
+  }
+  
+  // Vérifie si la barre a été fermée dans cette session
+  (function() {
+    const sectionId = '{{ section.id }}';
+    if (sessionStorage.getItem('announcement-bar-closed-' + sectionId) === 'true') {
+      const bar = document.getElementById('announcement-bar-' + sectionId);
+      if (bar) {
+        bar.style.display = 'none';
+      }
+    }
+  })();
+</script>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Barre d'annonce",
+  "tag": "section",
+  "class": "section-announcement-bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_announcement",
+      "label": "Activer la barre d'annonce",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_bar",
+      "label": "Barre collante (sticky)",
+      "default": true,
+      "info": "La barre restera en haut de la page lors du défilement"
+    },
+    {
+      "type": "header",
+      "content": "Contenu"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Texte d'annonce",
+      "default": "SUMMER SALE - SAVE 20% OFF + FREE SHIPPING"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_emoji",
+      "label": "Afficher emoji",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "emoji_text",
+      "label": "Emoji/Icône",
+      "default": "☀️"
+    },
+    {
+      "type": "header",
+      "content": "Compte à rebours"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Afficher le compte à rebours",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "countdown_end_date",
+      "label": "Date de fin (YYYY-MM-DD HH:MM:SS)",
+      "info": "Format: 2024-12-31 23:59:59. Laissez vide pour utiliser le nombre d'heures"
+    },
+    {
+      "type": "number",
+      "id": "countdown_hours",
+      "label": "Durée en heures",
+      "default": 24,
+      "info": "Utilisé si aucune date de fin n'est définie"
+    },
+    {
+      "type": "checkbox",
+      "id": "reset_daily",
+      "label": "Réinitialiser quotidiennement",
+      "default": false,
+      "info": "Le compte à rebours redémarre chaque jour à minuit"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Label heures",
+      "default": "Hrs"
+    },
+    {
+      "type": "text",
+      "id": "minutes_label",
+      "label": "Label minutes",
+      "default": "Min"
+    },
+    {
+      "type": "text",
+      "id": "seconds_label",
+      "label": "Label secondes",
+      "default": "Sec"
+    },
+    {
+      "type": "header",
+      "content": "Style - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "min": 40,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Hauteur desktop",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "min": 5,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding vertical desktop",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille de police desktop",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Style - Tablette"
+    },
+    {
+      "type": "range",
+      "id": "height_tablet",
+      "min": 35,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Hauteur tablette",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_tablet",
+      "min": 5,
+      "max": 25,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding vertical tablette",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "font_size_tablet",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille de police tablette",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Style - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Hauteur mobile",
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "min": 5,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Padding vertical mobile",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille de police mobile",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Style général"
+    },
+    {
+      "type": "range",
+      "id": "horizontal_padding",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding horizontal",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "font_family",
+      "label": "Police",
+      "options": [
+        {
+          "value": "system-ui",
+          "label": "Système"
+        },
+        {
+          "value": "Arial",
+          "label": "Arial"
+        },
+        {
+          "value": "Helvetica",
+          "label": "Helvetica"
+        },
+        {
+          "value": "Georgia",
+          "label": "Georgia"
+        },
+        {
+          "value": "Times",
+          "label": "Times"
+        }
+      ],
+      "default": "system-ui"
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Poids de police",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-Bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extra-Bold"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "header",
+      "content": "Couleurs"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#200340"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_gradient",
+      "label": "Activer le dégradé animé",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_1",
+      "label": "Couleur dégradé 1",
+      "default": "#ff6b6b"
+    },
+    {
+      "type": "color",
+      "id": "gradient_color_2",
+      "label": "Couleur dégradé 2",
+      "default": "#4ecdc4"
+    },
+    {
+      "type": "range",
+      "id": "gradient_duration",
+      "min": 3,
+      "max": 15,
+      "step": 1,
+      "unit": "s",
+      "label": "Durée animation dégradé",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Style du compte à rebours"
+    },
+    {
+      "type": "color",
+      "id": "countdown_bg_color",
+      "label": "Fond des boîtes de compte à rebours",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "countdown_text_color",
+      "label": "Texte des boîtes de compte à rebours",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "countdown_font_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille police compte à rebours",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "countdown_border_radius",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "unit": "px",
+      "label": "Bordure arrondie",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_close_button",
+      "label": "Afficher bouton de fermeture",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Barre d'annonce",
+      "settings": {
+        "enable_announcement": true,
+        "announcement_text": "SUMMER SALE - SAVE 20% OFF + FREE SHIPPING",
+        "show_countdown": true,
+        "show_emoji": true,
+        "emoji_text": "☀️"
+      }
+    }
+  ]
+}
+{% endschema %}

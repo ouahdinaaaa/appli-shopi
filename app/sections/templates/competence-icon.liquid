@@ -1,0 +1,200 @@
+{% comment %} Section for 7 key competencies with icons {% endcomment %}
+
+<section class="competence-icons-section" style="text-align: center; padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px 0; background-color: {{ section.settings.background_color }}">
+    <h2 style="color: {{ section.settings.title_color }}; font-size: {{ section.settings.title_font_size }}px; margin-bottom: {{ section.settings.title_margin_bottom }}px; font-weight: {{ section.settings.title_bold }};">
+
+    {{ section.settings.title }}
+  </h2>
+
+  <div class="competence-icons-wrapper" style="display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 100%; padding: 0 5%; gap: {{ section.settings.icon_gap }}px;">
+    {% for block in section.blocks %}
+        <div class="competence-icon-block" style="text-align: center; margin-right: {{ block.settings.margin_right }}px; margin-left: {{ block.settings.icon_margin_left }}px; flex: 1; min-width: 100px;">
+
+        <div class="competence-icon" style="width: {{ block.settings.icon_size }}px; height: {{ block.settings.icon_size }}px; margin: 0 auto;">
+          {% if block.settings.icon != blank %}
+            <img src="{{ block.settings.icon | image_url }}" alt="" style="width: 100%; height: 100%; object-fit: contain;">
+          {% endif %}
+        </div>
+        <p style="margin-top: {{ block.settings.text_margin_top }}px; color: {{ block.settings.text_color }}; font-size: {{ block.settings.text_size }}px; font-weight: {{ block.settings.text_bold }};">
+          {{ block.settings.text }}
+        </p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Compétences clés",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre principal",
+      "default": "7 compétences clés que votre enfant développe avec nos activités"
+    },
+    {
+  "type": "range",
+  "id": "icon_margin_left",
+  "label": "Marge gauche de l'icône",
+  "min": 0,
+  "max": 100,
+  "step": 5,
+  "default": 0
+},
+    {
+  "type": "select",
+  "id": "title_bold",
+  "label": "Style du titre",
+  "options": [
+    { "value": "normal", "label": "Normal" },
+    { "value": "bold", "label": "Gras" }
+  ],
+  "default": "normal"
+},
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#f1fbe9"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Taille du texte du titre",
+      "min": 12,
+      "max": 48,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom",
+      "label": "Espace sous le titre",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "icon_gap",
+      "label": "Espace entre les icônes",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 30
+    }
+  ],
+  "blocks": [
+    {
+      "type": "icon_block",
+      "name": "Icône + texte",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icône"
+        },
+        {
+          "type": "range",
+          "id": "icon_size",
+          "label": "Taille de l'icône (px)",
+          "min": 20,
+          "max": 200,
+          "step": 5,
+          "default": 60
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texte sous l'icône",
+          "default": "Motricité"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Couleur du texte",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "text_size",
+          "label": "Taille du texte (px)",
+          "min": 8,
+          "max": 30,
+          "step": 1,
+          "default": 14
+        },
+        {
+          "type": "select",
+          "id": "text_bold",
+          "label": "Style du texte",
+          "options": [
+            { "value": "normal", "label": "Normal" },
+            { "value": "bold", "label": "Gras" }
+          ],
+          "default": "normal"
+        },
+        {
+          "type": "range",
+          "id": "text_margin_top",
+          "label": "Espace entre l'icône et le texte (px)",
+          "min": 0,
+          "max": 50,
+          "step": 2,
+          "default": 10
+        },
+        {
+          "type": "range",
+          "id": "margin_right",
+          "label": "Marge droite de l'icône",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Compétences clés",
+      "blocks": [
+        { "type": "icon_block" },
+        { "type": "icon_block" },
+        { "type": "icon_block" },
+        { "type": "icon_block" },
+        { "type": "icon_block" },
+        { "type": "icon_block" },
+        { "type": "icon_block" }
+      ]
+    }
+  ]
+}
+{% endschema %}

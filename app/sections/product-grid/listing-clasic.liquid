@@ -1,14 +1,4 @@
-<script>
-<!-- Support Me 🙏🥰 -->
 
-kofiWidgetOverlay.draw("mohamedghulam", {
-  type: "floating-chat",
-  "floating-chat.donateButton.text": "Support me",
-  "floating-chat.donateButton.background-color": "#323842",
-  "floating-chat.donateButton.text-color": "#fff"
-});
-
-</script>
 
 <style>
 /* Namespace pour éviter collisions dans l'aperçu */
@@ -226,6 +216,13 @@ kofiWidgetOverlay.draw("mohamedghulam", {
 .listing-classic .text-right { text-align: right; }
 </style>
 
+{% assign default_images =  "https://images.pexels.com/photos/10983782/pexels-photo-10983782.jpeg,
+                             https://images.pexels.com/photos/10983785/pexels-photo-10983785.jpeg,
+                             https://images.pexels.com/photos/10983780/pexels-photo-10983780.jpeg" | split: "," %}
+                             
+{% assign default_titles = "Collier cœur de diamant,Collier Pure Diamant,Collier flocons en diamant" | split: "," %}
+{% assign default_prices =  "180,260,180" | split: "," %}
+
 <section
   class="listing-classic"
   style="
@@ -268,80 +265,31 @@ kofiWidgetOverlay.draw("mohamedghulam", {
 
   <div class="lc-grid">
     {% for block in section.blocks %}
-      {% assign product = block.settings.product %}
-      {% assign card_link = block.settings.link | default: product.url %}
-      {% assign brand_text = block.settings.brand | default: product.vendor %}
-      {% assign title_text = block.settings.title | default: product.title %}
-      {% assign image = block.settings.image | default: product.featured_image %}
-      {% assign price = product.price %}
-      {% assign compare_at = product.compare_at_price %}
-      {% assign show_compare = block.settings.show_compare | default: section.settings.show_compare %}
+      {% assign index = forloop.index0 %}
+      {% assign image = block.settings.image | default: default_images[index] %}
+      {% assign title_text = block.settings.title | default: default_titles[index] %}
+      {% assign price_text = block.settings.price | default: default_prices[index] %}
 
       <div class="lc-card" {{ block.shopify_attributes }}>
-        <a href="{{ card_link | default: '#' }}">
+        <a href="{{ block.settings.link | default: '#' }}">
           <div class="lc-image-wrapper">
-            {% if image %}
-              <img
-                class="lc-image"
-                src="{{ image | image_url: width: 720 }}"
-                alt="{{ title_text | escape }}"
-                loading="lazy"
-              >
-            {% endif %}
+            <img
+              class="lc-image"
+              src="{{ image }}"
+              alt="{{ title_text | escape }}"
+              loading="lazy"
+            >
           </div>
 
           <div class="lc-body">
-            {% if section.settings.show_brand and brand_text %}
-              <p class="lc-brand">{{ brand_text }}</p>
+            {% if section.settings.show_brand %}
+              <p class="lc-brand">{{ block.settings.brand | default: 'Maison SMK' }}</p>
             {% endif %}
 
-            {% if title_text %}
-              <h3 class="lc-product-title">{{ title_text }}</h3>
-            {% endif %}
+            <h3 class="lc-product-title">{{ title_text }}</h3>
 
-            {% if product %}
-              <div class="lc-price-row">
-                <p class="lc-price">
-                  {% if section.settings.price_with_currency %}
-                    {{ price | money_with_currency }}
-                  {% else %}
-                    {{ price | money }}
-                  {% endif %}
-                </p>
-                {% if show_compare and compare_at > price %}
-                  <p class="lc-compare">
-                    {% if section.settings.price_with_currency %}
-                      {{ compare_at | money_with_currency }}
-                    {% else %}
-                      {{ compare_at | money }}
-                    {% endif %}
-                  </p>
-                {% endif %}
-                {% if section.settings.show_cart_icon %}
-                  <span class="lc-cart-icon" aria-hidden="true">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
-                      <path fill-rule="evenodd" d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5z"/>
-                      <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
-                    </svg>
-                  </span>
-                {% endif %}
-              </div>
-            {% endif %}
-          </div>
-        </a>
-      </div>
-    {% else %}
-      <div class="lc-card lc-card--placeholder">
-        <a href="#">
-          <div class="lc-image-wrapper">
-            <img class="lc-image" src="https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png" alt="Product placeholder" loading="lazy">
-          </div>
-          <div class="lc-body">
-            <p class="lc-brand">Brand</p>
-            <h3 class="lc-product-title">Produit exemple</h3>
             <div class="lc-price-row">
-              <p class="lc-price">$149.00</p>
-              <p class="lc-compare">$199.00</p>
+              <p class="lc-price">{{ price_text }}€</p>
               {% if section.settings.show_cart_icon %}
                 <span class="lc-cart-icon" aria-hidden="true">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
@@ -436,9 +384,19 @@ kofiWidgetOverlay.draw("mohamedghulam", {
       ]
     }
   ],
-  "max_blocks": 24,
-  "presets": [
-    { "name": "Grille produits (classic)", "category": "Produits" }
-  ]
+    "max_blocks": 24,
+    "presets": [
+    {
+        "name": "Grille produits (classic)",
+        "category": "Produits",
+        "blocks": [
+        { "type": "product_card", "settings": {} },
+        { "type": "product_card", "settings": {} },
+        { "type": "product_card", "settings": {} }
+        ]
+    }
+    ]
+
+
 }
 {% endschema %}

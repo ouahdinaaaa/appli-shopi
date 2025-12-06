@@ -1,0 +1,127 @@
+<section class="counter-section" style="background-color: #fef8ec; padding: 40px 0; text-align: center;">
+  <div class="counter-wrapper">
+    <div id="counter" class="counter-value" style="
+      font-size: {{ section.settings.counter_size }}px;
+      font-weight: {{ section.settings.counter_bold | default: false | if: '700', else: '400' }};
+      color: {{ section.settings.counter_color }};
+    ">
+      23,587 +
+    </div>
+    <div class="counter-label" style="
+      font-size: {{ section.settings.label_size }}px;
+      font-weight: {{ section.settings.label_bold | default: false | if: '700', else: '400' }};
+      color: {{ section.settings.label_color }};
+      margin-top: {{ section.settings.space_between }}px;
+    ">
+      {{ section.settings.counter_label }}
+    </div>
+  </div>
+</section>
+
+
+<style>
+
+  .counter-section {
+    font-family: 'Georgia', serif;
+  }
+
+
+  .counter-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+</style>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const startTime = new Date("2025-07-23T00:00:00Z");
+    const now = new Date();
+
+    const minutesDiff = Math.floor((now - startTime) / 1000 / 60);
+    const incrementSteps = Math.floor(minutesDiff / 45);
+
+    const baseCount = 200;
+    const currentCount = baseCount + (incrementSteps * 2);
+
+    const formatter = new Intl.NumberFormat('fr-FR');
+    document.getElementById("counter").innerText = formatter.format(currentCount) + " +";
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Section Compteur",
+  "tag": "section",
+  "class": "section-counter",
+  "settings": [
+    {
+      "type": "range",
+      "id": "counter_size",
+      "label": "Taille du texte du compteur",
+      "min": 16,
+      "max": 80,
+      "step": 1,
+      "default": 45,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "counter_color",
+      "label": "Couleur du nombre",
+      "default": "#e63946"
+    },
+    {
+      "type": "checkbox",
+      "id": "counter_bold",
+      "label": "Mettre le nombre en gras",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "counter_label",
+      "label": "Texte sous le compteur",
+      "default": "Utilisateurs satisfaits dans le monde"
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Taille du texte du label",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Couleur du texte du label",
+      "default": "#000000"
+    },
+    {
+      "type": "checkbox",
+      "id": "label_bold",
+      "label": "Mettre le texte en gras",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "space_between",
+      "label": "Espace entre le nombre et le texte",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "default": 8,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Compteur utilisateurs",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

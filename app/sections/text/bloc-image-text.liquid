@@ -1,0 +1,902 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Oswald:wght@300;400;600&display=swap');
+
+  .truth-section {
+    background: {{ section.settings.section_background | default: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 30%, #16213e 70%, #000000 100%)' }};
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+    color: #ffffff;
+    font-family: 'Roboto Condensed', sans-serif;
+  }
+
+  .truth-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 15% 20%, rgba(139, 0, 0, 0.2) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(16, 33, 62, 0.3) 0%, transparent 50%),
+      linear-gradient(45deg, transparent 30%, rgba(139, 0, 0, 0.1) 50%, transparent 70%);
+    animation: shadowPulse 12s ease-in-out infinite alternate;
+  }
+
+  @keyframes shadowPulse {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .truth-header {
+    text-align: center;
+  }
+
+  /* TAILLES DESKTOP PAR DÉFAUT */
+  .truth-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: {{ section.settings.title_size_desktop | default: 4 }}rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, {{ section.settings.title_color | default: '#8b0000' }}, #ff0000, {{ section.settings.title_color | default: '#8b0000' }});
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleGlow 4s ease-in-out infinite;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+  }
+
+  .truth-subtitle {
+    font-size: {{ section.settings.subtitle_size_desktop | default: 1.4 }}rem;
+    color: {{ section.settings.subtitle_color | default: '#b0b0b0' }};
+    margin-bottom: 30px;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.5s forwards;
+  }
+
+  .card-icon {
+    font-size: {{ section.settings.icon_size_desktop | default: 2.5 }}rem;
+    margin-bottom: 25px;
+    display: block;
+    text-align: center;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+  }
+
+  .card-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: {{ section.settings.card_title_size_desktop | default: 1.6 }}rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #ffffff;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.3;
+  }
+
+  .truth-points li {
+    margin-bottom: 18px;
+    padding-left: 40px;
+    position: relative;
+    color: #d0d0d0;
+    line-height: 1.7;
+    font-size: {{ section.settings.list_size_desktop | default: 1 }}rem;
+    opacity: 0;
+    animation: fadeInLeft 0.6s ease-out forwards;
+    border-left: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+.classified-stamp1 {
+  position: absolute;
+  right: 5px; /* sort clairement à droite */
+  background: rgb(0, 0, 0);
+  color:rgb(190, 2, 2);
+  padding: 10px 25px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 2px dashed #8b0000;
+  border-radius: 4px;
+  transform: rotate(12deg);
+  letter-spacing: 2px;
+  opacity: 0.9;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999; /* toujours au-dessus */
+  top : 10px;
+}
+
+
+  @keyframes titleGlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .warning-badge {
+    display: inline-block;
+    background: rgba(139, 0, 0, 0.8);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid #8b0000;
+    animation: pulseWarning 3s ease-in-out infinite;
+  }
+
+  @keyframes pulseWarning {
+    0%, 100% { 
+      box-shadow: 0 0 10px rgba(139, 0, 0, 0.3);
+      transform: scale(1);
+    }
+    50% { 
+      box-shadow: 0 0 20px rgba(139, 0, 0, 0.6);
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .truth-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 40px;
+    margin-bottom: 80px;
+  }
+
+  @media (min-width: 900px) {
+    .truth-grid {
+      gap: 25px;
+    }
+        .truth-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+  }
+
+  @media (min-width: 570px) {
+    .truth-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .truth-grid {
+      grid-template-columns: repeat(1, 3fr);
+      gap: 10px;
+    }
+  }
+
+.truth-card {
+  background: {{ section.settings.card_background | default: 'rgba(10, 10, 10, 0.9)' }};
+  border: 2px solid #16213e;
+  border-radius: 8px;
+  padding: 35px;
+  position: relative;
+  /* overflow: hidden;  ❌ à enlever sinon ça coupe le tampon */
+  overflow: visible; /* ✅ permet au tampon de dépasser */
+  backdrop-filter: blur(5px);
+  transform: translateY(50px);
+  opacity: 0;
+  animation: slideInUp 0.8s ease-out forwards;
+  transition: all 0.4s ease;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1; /* carte en dessous */
+}
+
+  .truth-card:nth-child(1) { animation-delay: 0.2s; }
+  .truth-card:nth-child(2) { animation-delay: 0.4s; }
+  .truth-card:nth-child(3) { animation-delay: 0.6s; }
+
+  @keyframes slideInUp {
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .truth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, #8b0000, #16213e, #000000);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 8px;
+  }
+
+  .truth-card:hover::before {
+    opacity: 0.1;
+  }
+
+  .truth-card:hover {
+    transform: translateY(-8px);
+    border-color: #8b0000;
+    box-shadow: 0 15px 30px rgba(139, 0, 0, 0.3);
+  }
+
+  .card-content {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .truth-points {
+    list-style: none;
+    padding: 0;
+    flex: 1;
+  }
+
+  .truth-points li:hover {
+    color: #ffffff;
+    border-left-color: #8b0000;
+    padding-left: 45px;
+  }
+
+  .truth-points li:nth-child(1) { animation-delay: 0.8s; }
+  .truth-points li:nth-child(2) { animation-delay: 1s; }
+  .truth-points li:nth-child(3) { animation-delay: 1.2s; }
+  .truth-points li:nth-child(4) { animation-delay: 1.4s; }
+
+  @keyframes fadeInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* TRIANGLES CSS PURS - GARANTIS ROUGES SUR TOUS APPAREILS */
+  .truth-points li::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 8px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid #8b0000;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  .truth-points li:hover::before {
+    border-left-color: #ffffff;
+    transform: translateX(3px);
+  }
+
+  .cta-section {
+    text-align: center;
+    margin-top: 80px;
+  }
+
+  .truth-cta {
+    display: inline-block;
+    background: linear-gradient(45deg, #8b0000, #16213e);
+    color: white;
+    padding: 20px 50px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.4s ease;
+    border: 2px solid #8b0000;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .truth-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .truth-cta:hover::before {
+    left: 100%;
+  }
+
+  .truth-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(139, 0, 0, 0.4);
+    background: linear-gradient(45deg, #a00000, #1e2a4a);
+  }
+
+  .network-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.1;
+    z-index: 1;
+    background-image: 
+      linear-gradient(90deg, rgba(139,0,0,0.1) 1px, transparent 1px),
+      linear-gradient(rgba(139,0,0,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: networkMove 20s linear infinite;
+  }
+
+  @keyframes networkMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
+  }
+
+  /* MEDIA QUERIES TABLETTE - 891px à 1024px */
+  @media (max-width: 1024px) and (min-width: 891px) {
+    .truth-title {
+      font-size: {{ section.settings.title_size_tablet | default: 3 }}rem;
+      letter-spacing: 2px;
+    }
+
+    .truth-subtitle {
+      font-size: {{ section.settings.subtitle_size_tablet | default: 1.1 }}rem;
+    }
+
+    .card-icon {
+      font-size: {{ section.settings.icon_size_tablet | default: 1.8 }}rem;
+      margin-bottom: 15px;
+    }
+
+    .card-title {
+      font-size: {{ section.settings.card_title_size_tablet | default: 1.1 }}rem;
+      margin-bottom: 15px;
+    }
+
+    .truth-points li {
+      font-size: {{ section.settings.list_size_tablet | default: 1.7 }}rem;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    /* Triangles tablette */
+    .truth-points li::before {
+      left: 10px;
+      top: 6px;
+      border-left: 7px solid #8b0000;
+      border-top: 3px solid transparent;
+      border-bottom: 3px solid transparent;
+    }
+
+    .classified-stamp1 {
+      font-size: {{ section.settings.stamp_size_tablet | default: 0.5 }}rem;
+      padding: 3px 8px;
+    }
+
+    .truth-card {
+      padding: 20px;
+      min-height: 350px;
+    }
+
+    .truth-cta {
+      padding: 15px 35px;
+      font-size: 1.7rem;
+    }
+  }
+
+  /* MEDIA QUERIES MOBILE - max 890px */
+  @media (max-width: 890px) {
+    .truth-title {
+      font-size: {{ section.settings.title_size_mobile | default: 2.2 }}rem;
+      letter-spacing: 1px;
+    }
+
+    .truth-subtitle {
+      font-size: {{ section.settings.subtitle_size_mobile | default: 1 }}rem;
+    }
+    
+    .truth-card {
+      padding: 15px;
+      min-height: 300px;
+    }
+
+    .card-icon {
+      font-size: {{ section.settings.icon_size_mobile | default: 1.5 }}rem;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: {{ section.settings.card_title_size_mobile | default: 0.9 }}rem;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .truth-points li {
+      font-size: {{ section.settings.list_size_mobile | default: 0.7 }}rem;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      padding-left: 25px;
+    }
+
+    /* Triangles mobile - plus petits et bien rouges */
+    .truth-points li::before {
+      left: 8px;
+      top: 6px;
+      border-left: 6px solid #8b0000;
+      border-top: 3px solid transparent;
+      border-bottom: 3px solid transparent;
+    }
+
+    .truth-points li:hover {
+      padding-left: 28px;
+    }
+
+    .truth-points li:hover::before {
+      border-left-color: #ffffff;
+    }
+
+    .classified-stamp1 {
+      font-size: {{ section.settings.stamp_size_mobile | default: 0.4 }}rem;
+      padding: 2px 6px;
+      right: -10px;
+    }
+
+    .truth-cta {
+      padding: 12px 20px;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+    }
+  }
+
+  /* MEDIA QUERIES TRÈS PETIT MOBILE - max 480px */
+  @media (max-width: 480px) {
+    .truth-card {
+      padding: 10px;
+      min-height: 280px;
+    }
+
+    .truth-points li {
+      font-size: {{ section.settings.list_size_mobile | default: 0.6 }}rem;
+    }
+
+    .card-title {
+      font-size: {{ section.settings.card_title_size_mobile | default: 0.8 }}rem;
+    }
+
+    /* Triangles très petit mobile */
+    .truth-points li::before {
+      left: 6px;
+      top: 5px;
+      border-left: 5px solid #8b0000;
+      border-top: 2px solid transparent;
+      border-bottom: 2px solid transparent;
+    }
+  }
+
+  .card-icon {
+  display: block;
+  text-align: center;
+  margin-bottom: 25px;
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-left: auto;
+  margin-right: auto;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+
+</style>
+
+
+<div class="truth-section">
+  <div class="network-bg"></div>
+  
+  <div class="container">
+    <div class="truth-header">
+      <h2 class="truth-title">{{ section.settings.main_title }}</h2>
+      <p class="truth-subtitle">{{ section.settings.subtitle }}</p>
+    </div>
+    
+    <div class="truth-grid">
+      <div class="truth-card">
+        <div class="classified-stamp1">CONFIDENTIEL</div>
+        <div class="card-content">
+          {% if section.settings.card1_icon_image != blank %}
+  <img src="{{ section.settings.card1_icon_image | image_url: width: 100 }}" alt="Icône carte 1" class="card-icon" />
+{% endif %}
+          <h3 class="card-title">{{ section.settings.card1_title }}</h3>
+          <ul class="truth-points">
+            <li>Réseaux d'influence dans les gouvernements</li>
+            <li>Manipulations économiques mondiales</li>
+            <li>Contrôle des médias mainstream</li>
+            <li>Lobbying et corruption systémique</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="truth-card">
+        <div class="classified-stamp1">CLASSIFIÉ</div>
+        <div class="card-content">
+          {% if section.settings.card2_icon_image != blank %}
+          <img src="{{ section.settings.card2_icon_image | image_url: width: 100 }}" alt="Icône carte 2" class="card-icon" />
+          {% endif %}
+          <h3 class="card-title">{{ section.settings.card2_title }}</h3>
+          <ul class="truth-points">
+            <li>Opérations psychologiques modernes</li>
+            <li>Surveillance de masse dissimulée</li>
+            <li>Contrôle de l'opinion publique</li>
+            <li>Censure algorithmique des réseaux</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="truth-card">
+        <div class="classified-stamp1">SECRET</div>
+        <div class="card-content">
+          {% if section.settings.card3_icon_image != blank %}
+            <img src="{{ section.settings.card3_icon_image | image_url: width: 100 }}" alt="Icône carte 3" class="card-icon" />
+          {% endif %}
+          <h3 class="card-title">{{ section.settings.card3_title }}</h3>
+          <ul class="truth-points">
+            <li>Technologies supprimées du public</li>
+            <li>Événements historiques revisités</li>
+            <li>Documents déclassifiés révélateurs</li>
+            <li>Preuves et témoignages exclusifs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cta-section">
+      <a href="{{ section.settings.cta_link }}" class="truth-cta">
+        {{ section.settings.cta_text }}
+      </a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Section Vérités Cachées",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenu de la section"
+    },
+    {
+      "type": "text",
+      "id": "main_title",
+      "label": "Titre principal",
+      "default": "Vérités Interdites"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Sous-titre",
+      "default": "Découvrez ce qu'ils ne veulent pas que vous sachiez"
+    },
+    {
+      "type": "text",
+      "id": "card1_title",
+      "label": "Titre carte 1",
+      "default": "Pouvoir & Corruption"
+    },
+    {
+      "type": "text",
+      "id": "card2_title",
+      "label": "Titre carte 2", 
+      "default": "Manipulation Sociale"
+    },
+    {
+      "type": "text",
+      "id": "card3_title",
+      "label": "Titre carte 3",
+      "default": "Documents Secrets"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Texte du bouton",
+      "default": "Accéder aux Ebooks"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Lien du bouton"
+    },
+    {
+      "type": "header",
+      "content": "Tailles des textes - Desktop (1025px+)"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Taille titre principal (Desktop)",
+      "min": 1,
+      "max": 8,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_desktop",
+      "label": "Taille sous-titre (Desktop)",
+      "min": 0.8,
+      "max": 3,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.4
+    },
+    {
+      "type": "range",
+      "id": "card_title_size_desktop",
+      "label": "Taille titres des cartes (Desktop)",
+      "min": 0.8,
+      "max": 3,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.6
+    },
+    {
+      "type": "range",
+      "id": "list_size_desktop",
+      "label": "Taille listes (Desktop)",
+      "min": 0.7,
+      "max": 2,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "icon_size_desktop",
+      "label": "Taille icônes (Desktop)",
+      "min": 1,
+      "max": 5,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 2.5
+    },
+    {
+      "type": "range",
+      "id": "stamp_size_desktop",
+      "label": "Taille tampons (Desktop)",
+      "min": 0.5,
+      "max": 2,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.7
+    },
+    {
+      "type": "header",
+      "content": "Tailles des textes - Tablette (891px-1024px)"
+    },
+    {
+      "type": "range",
+      "id": "title_size_tablet",
+      "label": "Taille titre principal (Tablette)",
+      "min": 1,
+      "max": 6,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_tablet",
+      "label": "Taille sous-titre (Tablette)",
+      "min": 0.8,
+      "max": 2.5,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.1
+    },
+    {
+      "type": "range",
+      "id": "card_title_size_tablet",
+      "label": "Taille titres des cartes (Tablette)",
+      "min": 0.8,
+      "max": 2,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.1
+    },
+    {
+      "type": "range",
+      "id": "list_size_tablet",
+      "label": "Taille listes (Tablette)",
+      "min": 0.5,
+      "max": 1.5,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.8
+    },
+    {
+      "type": "range",
+      "id": "icon_size_tablet",
+      "label": "Taille icônes (Tablette)",
+      "min": 1,
+      "max": 3,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.8
+    },
+    {
+      "type": "range",
+      "id": "stamp_size_tablet",
+      "label": "Taille tampons (Tablette)",
+      "min": 0.2,
+      "max": 1,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.5
+    },
+    {
+      "type": "header",
+      "content": "Tailles des textes - Mobile (max 890px)"
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Taille titre principal (Mobile)",
+      "min": 1,
+      "max": 4,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 2.2
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "label": "Taille sous-titre (Mobile)",
+      "min": 0.7,
+      "max": 4,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "card_title_size_mobile",
+      "label": "Taille titres des cartes (Mobile)",
+      "min": 0.5,
+      "max": 4,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.9
+    },
+    {
+      "type": "range",
+      "id": "list_size_mobile",
+      "label": "Taille listes (Mobile)",
+      "min": 0.5,
+      "max": 4,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.7
+    },
+    {
+      "type": "range",
+      "id": "icon_size_mobile",
+      "label": "Taille icônes (Mobile)",
+      "min": 1,
+      "max": 4,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "stamp_size_mobile",
+      "label": "Taille tampons (Mobile)",
+      "min": 0.3,
+      "max": 4,
+      "step": 0.1,
+      "unit": "rem",
+      "default": 0.4
+    },
+    {
+      "type": "header",
+      "content": "Couleurs"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#8b0000"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Couleur du sous-titre",
+      "default": "#b0b0b0"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Couleur d'accent",
+      "default": "#8b0000"
+    },
+    {
+      "type": "color",
+      "id": "secondary_color",
+      "label": "Couleur secondaire",
+      "default": "#16213e"
+    },
+{
+  "type": "image_picker",
+  "id": "card1_icon_image",
+  "label": "Icône image carte 1"
+},
+{
+  "type": "image_picker",
+  "id": "card2_icon_image",
+  "label": "Icône image carte 2"
+},
+{
+  "type": "image_picker",
+  "id": "card3_icon_image",
+  "label": "Icône image carte 3"
+},
+    {
+      "type": "header",
+      "content": "Arrière-plans"
+    },
+    {
+      "type": "textarea",
+      "id": "section_background",
+      "label": "Fond de la section (CSS)",
+      "info": "Utilisez du CSS valide (ex: linear-gradient, couleur unie, etc.)",
+      "default": "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 30%, #16213e 70%, #000000 100%)"
+    },
+    {
+      "type": "textarea",
+      "id": "card_background",
+      "label": "Fond des cartes (CSS)",
+      "info": "Utilisez du CSS valide (ex: rgba(10, 10, 10, 0.9), couleur unie, etc.)",
+      "default": "rgba(10, 10, 10, 0.9)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vérités Cachées",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

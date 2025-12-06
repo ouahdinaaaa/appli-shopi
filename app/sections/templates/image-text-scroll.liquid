@@ -41,13 +41,13 @@
       "type": "text",
       "id": "title",
       "label": "Titre",
-      "default": "Immerse Yourself"
+      "default": "Our winter boots"
     },
     {
       "type": "textarea",
       "id": "text",
       "label": "Texte",
-      "default": "Nous innovons et développons constamment de nouvelles expériences VR."
+      "default": "Our stylish boots will keep you warm all winter long."
     },
     {
       "type": "text",
@@ -178,7 +178,7 @@
       "type": "color",
       "id": "background_left",
       "label": "Couleur de fond bloc texte",
-      "default": "#111111"
+      "default": "#281405"
     },
     {
       "type": "select",
@@ -189,7 +189,7 @@
         {"value": "center", "label": "Centre"},
         {"value": "right", "label": "Droite"}
       ],
-      "default": "center"
+      "default": "left"
     },
     {
       "type": "header",
@@ -283,11 +283,17 @@
         <span>{{ section.settings.separator_text }}</span>
         <span>{{ section.settings.separator_text }}</span>
         <span>{{ section.settings.separator_text }}</span>
+        <span>{{ section.settings.separator_text }}</span>
+        <span>{{ section.settings.separator_text }}</span>
+        <span>{{ section.settings.separator_text }}</span>
+        <span>{{ section.settings.separator_text }}</span>
+        <span>{{ section.settings.separator_text }}</span>
       </div>
     </div>
     
     <!-- Bloc droit -->
-    <div class="vr-immersive-right" style="background-image: url({{ section.settings.image | img_url: '1200x' }});">
+    {% assign default_image = "https://images.pexels.com/photos/27256458/pexels-photo-27256458.jpeg" %}
+    <div class="vr-immersive-right" style="background-image: url({% if section.settings.image != blank %}{{ section.settings.image | img_url: '1200x' }}{% else %}{{ default_image }}{% endif %});">
     </div>
   </div>
 </section>
@@ -382,7 +388,7 @@
 }
 
 @keyframes vr-scroll-up {
-  0% { transform: translateY(0%); }
+  0% { transform: translateY(0); }
   100% { transform: translateY(-50%); }
 }
 

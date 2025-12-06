@@ -1,0 +1,662 @@
+{% comment %}
+  Section Instagram Style Carousel
+  Paramètres configurables via l'interface Shopify
+{% endcomment %}
+
+{{ 'section-instagram-carousel.css' | asset_url | stylesheet_tag }}
+
+<div class="instagram-carousel-section" style="background-color: {{ section.settings.bg_color }};">
+  <div class="page-width">
+    {% if section.settings.title != blank %}
+      <h2 class="section-title" style="margin-left:30px; font-size: {{ section.settings.title_size_desktop }}px; color: {{ section.settings.text_color }};">
+        {{ section.settings.title }}
+      </h2>
+    {% endif %}
+
+    <div class="carousel-wrapper" style="padding-left: {{ section.settings.padding_left_desktop }}px; padding-right: {{ section.settings.padding_right_desktop }}px;">
+      <button class="carousel-btn carousel-btn-prev" 
+              style="background-color: {{ section.settings.btn_bg_color }}; color: {{ section.settings.btn_text_color }};"
+              aria-label="Précédent">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="carousel-container">
+        <div class="carousel-track" style="gap: {{ section.settings.card_spacing }}px;">
+          {% for block in section.blocks %}
+            <div class="carousel-card" 
+                 data-desktop-width="{{ section.settings.card_width_desktop }}"
+                 data-desktop-height="{{ section.settings.card_height_desktop }}"
+                 data-mobile-width="{{ section.settings.card_width_mobile }}"
+                 data-mobile-height="{{ section.settings.card_height_mobile }}">
+              <a href="{{ block.settings.product.url }}{% if block.settings.variant_id != blank %}?variant={{ block.settings.variant_id }}{% endif %}" class="card-link">
+                <div class="card-image">
+                  {% if block.settings.image != blank %}
+                    <img 
+                      src="{{ block.settings.image | image_url: width: 800 }}"
+                      alt="{{ block.settings.image.alt | escape }}"
+                      loading="lazy"
+                    >
+                  {% else %}
+                    <div class="placeholder-image">
+                      {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="card-stats" style="color: {{ section.settings.text_color }};">
+                  <div class="stat-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <span>{{ block.settings.likes_count }}</span>
+                  </div>
+
+                  <div class="stat-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                    <span>{{ block.settings.comments_count }}</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+          
+          <!-- Clone des cartes pour l'effet infini -->
+          {% for block in section.blocks %}
+            <div class="carousel-card carousel-card-clone" 
+                 data-desktop-width="{{ section.settings.card_width_desktop }}"
+                 data-desktop-height="{{ section.settings.card_height_desktop }}"
+                 data-mobile-width="{{ section.settings.card_width_mobile }}"
+                 data-mobile-height="{{ section.settings.card_height_mobile }}">
+              <a href="{{ block.settings.product.url }}{% if block.settings.variant_id != blank %}?variant={{ block.settings.variant_id }}{% endif %}" class="card-link">
+                <div class="card-image">
+                  {% if block.settings.image != blank %}
+                    <img 
+                      src="{{ block.settings.image | image_url: width: 800 }}"
+                      alt="{{ block.settings.image.alt | escape }}"
+                      loading="lazy"
+                    >
+                  {% else %}
+                    <div class="placeholder-image">
+                      {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="card-stats" style="color: {{ section.settings.text_color }};">
+                  <div class="stat-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <span>{{ block.settings.likes_count }}</span>
+                  </div>
+
+                  <div class="stat-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                    <span>{{ block.settings.comments_count }}</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <button class="carousel-btn carousel-btn-next" 
+              style="background-color: {{ section.settings.btn_bg_color }}; color: {{ section.settings.btn_text_color }};"
+              aria-label="Suivant">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .instagram-carousel-section {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    text-align: left;
+    margin-bottom: 30px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .carousel-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .carousel-wrapper:hover .carousel-btn {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .carousel-container {
+    overflow: hidden;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .carousel-container:active {
+    cursor: grabbing;
+  }
+
+  .carousel-track {
+    display: flex;
+    transition: transform 0.3s ease;
+  }
+
+  .carousel-card {
+    flex-shrink: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    width: {{ section.settings.card_width_desktop }}px;
+    height: {{ section.settings.card_height_desktop }}px;
+  }
+
+  .card-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #f5f5f5;
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .carousel-card:hover .card-image img {
+    transform: scale(1.05);
+  }
+
+  .placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e5e5e5;
+  }
+
+  .card-stats {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    display: flex;
+    gap: 20px;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .stat-item svg {
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+  }
+
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .carousel-btn:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .carousel-btn-prev {
+    left: 10px;
+  }
+
+  .carousel-btn-next {
+    right: 10px;
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: {{ section.settings.title_size_mobile }}px !important;
+    }
+
+    .carousel-card {
+      width: {{ section.settings.card_width_mobile }}px !important;
+      height: {{ section.settings.card_height_mobile }}px !important;
+    }
+
+    .carousel-track {
+      gap: {{ section.settings.card_spacing_mobile }}px !important;
+    }
+
+    .carousel-wrapper {
+      padding-left: {{ section.settings.padding_left_mobile }}px !important;
+      padding-right: {{ section.settings.padding_right_mobile }}px !important;
+    }
+
+    .carousel-btn {
+      display: none;
+    }
+
+    .instagram-carousel-section {
+      padding: 40px 0;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const carouselContainer = document.querySelector('.carousel-container');
+    const carouselTrack = document.querySelector('.carousel-track');
+    const prevBtn = document.querySelector('.carousel-btn-prev');
+    const nextBtn = document.querySelector('.carousel-btn-next');
+    const allCards = document.querySelectorAll('.carousel-card');
+    const originalCards = document.querySelectorAll('.carousel-card:not(.carousel-card-clone)');
+    
+    if (!carouselContainer || !carouselTrack || allCards.length === 0) return;
+
+    const isMobile = window.innerWidth <= 768;
+    const cardWidth = isMobile 
+      ? parseInt(originalCards[0].dataset.mobileWidth)
+      : parseInt(originalCards[0].dataset.desktopWidth);
+    const gap = isMobile 
+      ? parseInt('{{ section.settings.card_spacing_mobile }}')
+      : parseInt('{{ section.settings.card_spacing }}');
+    const originalCardsCount = originalCards.length;
+    
+    let currentIndex = 0;
+    let isDragging = false;
+    let startPos = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+    let animationID = 0;
+
+    // Fonction pour mettre à jour la position
+    function updateCarousel(smooth = true) {
+      if (smooth) {
+        carouselTrack.style.transition = 'transform 0.3s ease';
+      } else {
+        carouselTrack.style.transition = 'none';
+      }
+      
+      const offset = -(currentIndex * (cardWidth + gap));
+      carouselTrack.style.transform = `translateX(${offset}px)`;
+      currentTranslate = offset;
+      prevTranslate = offset;
+    }
+
+    // Gestion de l'infini
+    function handleInfiniteScroll() {
+      const totalWidth = originalCardsCount * (cardWidth + gap);
+      
+      if (currentIndex >= originalCardsCount) {
+        currentIndex = 0;
+        updateCarousel(false);
+        setTimeout(() => {
+          carouselTrack.style.transition = 'transform 0.3s ease';
+        }, 50);
+      } else if (currentIndex < 0) {
+        currentIndex = originalCardsCount - 1;
+        updateCarousel(false);
+        setTimeout(() => {
+          carouselTrack.style.transition = 'transform 0.3s ease';
+        }, 50);
+      }
+    }
+
+    // Navigation buttons
+    prevBtn.addEventListener('click', () => {
+      currentIndex--;
+      updateCarousel();
+      setTimeout(handleInfiniteScroll, 300);
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentIndex++;
+      updateCarousel();
+      setTimeout(handleInfiniteScroll, 300);
+    });
+
+    // Touch/Mouse drag
+    carouselContainer.addEventListener('mousedown', dragStart);
+    carouselContainer.addEventListener('touchstart', dragStart);
+    carouselContainer.addEventListener('mouseup', dragEnd);
+    carouselContainer.addEventListener('touchend', dragEnd);
+    carouselContainer.addEventListener('mouseleave', dragEnd);
+    carouselContainer.addEventListener('mousemove', drag);
+    carouselContainer.addEventListener('touchmove', drag);
+
+    function dragStart(e) {
+      isDragging = true;
+      startPos = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+      carouselTrack.style.transition = 'none';
+      cancelAnimationFrame(animationID);
+    }
+
+    function drag(e) {
+      if (!isDragging) return;
+      e.preventDefault();
+      
+      const currentPosition = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+      const diff = currentPosition - startPos;
+      currentTranslate = prevTranslate + diff;
+      carouselTrack.style.transform = `translateX(${currentTranslate}px)`;
+    }
+
+    function dragEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+      
+      const movedBy = currentTranslate - prevTranslate;
+      
+      if (movedBy < -50) {
+        currentIndex++;
+      } else if (movedBy > 50) {
+        currentIndex--;
+      }
+      
+      carouselTrack.style.transition = 'transform 0.3s ease';
+      updateCarousel();
+      setTimeout(handleInfiniteScroll, 300);
+    }
+
+    // Responsive resize - recalculer sans recharger
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const newIsMobile = window.innerWidth <= 768;
+        const newCardWidth = newIsMobile 
+          ? parseInt(originalCards[0].dataset.mobileWidth)
+          : parseInt(originalCards[0].dataset.desktopWidth);
+        
+        // Réinitialiser la position
+        currentIndex = 0;
+        updateCarousel(false);
+      }, 250);
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Instagram Carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre de la section",
+      "default": "BUCKLE UP @buckleybelts"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Couleur de fond",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Taille du titre"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Taille du titre (Desktop)",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Taille du titre (Mobile)",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Dimensions des cartes - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "card_width_desktop",
+      "label": "Largeur (Desktop)",
+      "min": 200,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "card_height_desktop",
+      "label": "Hauteur (Desktop)",
+      "min": 200,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Dimensions des cartes - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "card_width_mobile",
+      "label": "Largeur (Mobile)",
+      "min": 150,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "card_height_mobile",
+      "label": "Hauteur (Mobile)",
+      "min": 150,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "default": 350
+    },
+    {
+      "type": "header",
+      "content": "Espacement entre les cartes"
+    },
+    {
+      "type": "range",
+      "id": "card_spacing",
+      "label": "Espacement (Desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_spacing_mobile",
+      "label": "Espacement (Mobile)",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Boutons de navigation"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Couleur de fond des boutons",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Couleur du texte/icône des boutons",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Padding - Desktop"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_desktop",
+      "label": "Padding gauche (Desktop)",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_right_desktop",
+      "label": "Padding droit (Desktop)",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Padding - Mobile"
+    },
+    {
+      "type": "range",
+      "id": "padding_left_mobile",
+      "label": "Padding gauche (Mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_right_mobile",
+      "label": "Padding droit (Mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Carte Instagram",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Produit à lier"
+        },
+        {
+          "type": "text",
+          "id": "variant_id",
+          "label": "ID de la variante (couleur)",
+          "info": "Entrez l'ID de la variante du produit pour la couleur spécifique"
+        },
+        {
+          "type": "text",
+          "id": "likes_count",
+          "label": "Nombre de likes",
+          "default": "0",
+          "info": "Vous pouvez écrire n'importe quel texte (ex: 10.254, 1.2M, etc.)"
+        },
+        {
+          "type": "text",
+          "id": "comments_count",
+          "label": "Nombre de commentaires",
+          "default": "0",
+          "info": "Vous pouvez écrire n'importe quel texte (ex: 89, 1.5K, etc.)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Instagram Carousel",
+      "blocks": [
+        {
+          "type": "card"
+        },
+        {
+          "type": "card"
+        },
+        {
+          "type": "card"
+        },
+        {
+          "type": "card"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

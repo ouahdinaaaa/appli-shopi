@@ -1,0 +1,64 @@
+{% schema %}
+{
+  "name": "Bannière Custom",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banniere_image",
+      "label": "Image personnalisée"
+    },
+    {
+      "type": "text",
+      "id": "titre",
+      "label": "Titre",
+      "default": "texte"
+    },
+    {
+      "type": "textarea",
+      "id": "texte",
+      "label": "Description",
+      "default": "description."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "padding_section",
+      "label": "Marge intérieure (padding)",
+      "default": 40,
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bannière personnalisée"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="banniere-console" style="background-color: {{ section.settings.background_color }}; padding: {{ section.settings.padding_section }}px;">
+  {% if section.settings.banniere_image %}
+    <div class="banniere-image" style="text-align: center;">
+      <img src="{{ section.settings.banniere_image | image_url: width: 1400 }}" alt="Image bannière" style="width: 100%; height: auto;">
+    </div>
+  {% endif %}
+
+  <!-- <div class="banniere-texte" style="text-align: center; color: {{ section.settings.text_color }}; margin-top: 20px;">
+    <h2 style="margin-bottom: 10px;">{{ section.settings.titre }}</h2>
+    <p style="max-width: 800px; margin: 0 auto;">{{ section.settings.texte }}</p>
+  </div> -->
+</div>

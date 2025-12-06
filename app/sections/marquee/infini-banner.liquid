@@ -1,0 +1,516 @@
+<!-- sections/infinite-scroll-text.liquid -->
+<style>
+  #infinite-scroll-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  #infinite-scroll-{{ section.id }} .scroll {
+    width: 100%;
+    display: flex;
+  }
+
+  #infinite-scroll-{{ section.id }} .scroll div {
+    background-color: {{ section.settings.band_background_color }};
+    color: {{ section.settings.text_color }};
+    font-size: {{ section.settings.font_size_desktop }}px;
+    font-weight: 900;
+    white-space: nowrap;
+    text-transform: uppercase;
+    animation: animate-{{ section.id }} 40s linear infinite;
+    animation-delay: -40s;
+  }
+
+  #infinite-scroll-{{ section.id }} .scroll div:nth-child(2) {
+    animation: animate2-{{ section.id }} 40s linear infinite;
+    animation-delay: -20s;
+  }
+
+  #infinite-scroll-{{ section.id }} .scroll div:nth-child(3) {
+    animation: animate-{{ section.id }} 40s linear infinite;
+    animation-delay: -40s;
+  }
+
+  #infinite-scroll-{{ section.id }} .scroll div span {
+    -webkit-text-stroke: 2px {{ section.settings.text_color }};
+    color: {{ section.settings.outline_text_color }};
+  }
+
+  @keyframes animate-{{ section.id }} {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes animate2-{{ section.id }} {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-200%);
+    }
+  }
+
+  {% for block in section.blocks %}
+    #infinite-scroll-{{ section.id }} .scroll.text{{ forloop.index }} {
+      transform: rotate({{ block.settings.rotation }}deg) 
+                 translateY({{ block.settings.translate_y }}px) 
+                 translateX({{ block.settings.translate_x }}px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    }
+  {% endfor %}
+
+  @media screen and (max-width: 768px) {
+    #infinite-scroll-{{ section.id }} .scroll div {
+      font-size: {{ section.settings.font_size_mobile }}px;
+    }
+
+    {% for block in section.blocks %}
+      #infinite-scroll-{{ section.id }} .scroll.text{{ forloop.index }} {
+        transform: rotate({{ block.settings.rotation_mobile }}deg) 
+                   translateY({{ block.settings.translate_y_mobile }}px) 
+                   translateX({{ block.settings.translate_x_mobile }}px);
+      }
+    {% endfor %}
+  }
+</style>
+
+<section id="infinite-scroll-{{ section.id }}">
+  {% for block in section.blocks %}
+    <div class="scroll text{{ forloop.index }}" {{ block.shopify_attributes }}>
+      <div>
+        {% assign word1_is_outline = false %}
+        {% if block.settings.word_1_style == 'outline' %}
+          {% assign word1_is_outline = true %}
+        {% endif %}
+        
+        {% assign word2_is_outline = false %}
+        {% if block.settings.word_2_style == 'outline' %}
+          {% assign word2_is_outline = true %}
+        {% endif %}
+        
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+        
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+        
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+        
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+      </div>
+      
+      <div>
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+        
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+        
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+        
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+      </div>
+      
+      <div>
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+        
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+        
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+        
+        {% if word1_is_outline %}
+          <span>{{ block.settings.word_1 }} </span>
+        {% else %}
+          {{ block.settings.word_1 }} 
+        {% endif %}
+        
+        {% if word2_is_outline %}
+          <span>{{ block.settings.word_2 }} </span>
+        {% else %}
+          {{ block.settings.word_2 }} 
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</section>
+
+{% schema %}
+{
+  "name": "Infinite Scroll Text",
+  "tag": "section",
+  "class": "infinite-scroll-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Couleurs générales"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond de la section",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "band_background_color",
+      "label": "Couleur de fond des bandes",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte plein",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "outline_text_color",
+      "label": "Couleur du texte contour",
+      "default": "transparent"
+    },
+    {
+      "type": "header",
+      "content": "Taille de police"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "min": 20,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "label": "Taille de police (Desktop)",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Taille de police (Mobile)",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "scroll_band",
+      "name": "Bande défilante",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Contenu du texte"
+        },
+        {
+          "type": "text",
+          "id": "word_1",
+          "label": "Mot 1",
+          "default": "SHOP"
+        },
+        {
+          "type": "select",
+          "id": "word_1_style",
+          "label": "Style du mot 1",
+          "options": [
+            {
+              "value": "solid",
+              "label": "Plein"
+            },
+            {
+              "value": "outline",
+              "label": "Contour"
+            }
+          ],
+          "default": "solid"
+        },
+        {
+          "type": "text",
+          "id": "word_2",
+          "label": "Mot 2",
+          "default": "NOW •"
+        },
+        {
+          "type": "select",
+          "id": "word_2_style",
+          "label": "Style du mot 2",
+          "options": [
+            {
+              "value": "solid",
+              "label": "Plein"
+            },
+            {
+              "value": "outline",
+              "label": "Contour"
+            }
+          ],
+          "default": "outline"
+        },
+        {
+          "type": "header",
+          "content": "Position Desktop"
+        },
+        {
+          "type": "range",
+          "id": "rotation",
+          "min": -45,
+          "max": 45,
+          "step": 1,
+          "unit": "deg",
+          "label": "Rotation",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "translate_y",
+          "min": -500,
+          "max": 500,
+          "step": 10,
+          "unit": "px",
+          "label": "Position verticale",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "translate_x",
+          "min": -500,
+          "max": 500,
+          "step": 10,
+          "unit": "px",
+          "label": "Position horizontale",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Position Mobile"
+        },
+        {
+          "type": "range",
+          "id": "rotation_mobile",
+          "min": -45,
+          "max": 45,
+          "step": 1,
+          "unit": "deg",
+          "label": "Rotation",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "translate_y_mobile",
+          "min": -300,
+          "max": 300,
+          "step": 10,
+          "unit": "px",
+          "label": "Position verticale",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "translate_x_mobile",
+          "min": -300,
+          "max": 300,
+          "step": 10,
+          "unit": "px",
+          "label": "Position horizontale",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Infinite Scroll Text",
+      "blocks": [
+        {
+          "type": "scroll_band",
+          "settings": {
+            "word_1": "Shop",
+            "word_1_style": "solid",
+            "word_2": "Now •",
+            "word_2_style": "outline",
+            "rotation": 30,
+            "translate_y": 200,
+            "translate_x": 200,
+            "rotation_mobile": 15,
+            "translate_y_mobile": 100,
+            "translate_x_mobile": 0
+          }
+        },
+        {
+          "type": "scroll_band",
+          "settings": {
+            "word_1": "Shop",
+            "word_1_style": "solid",
+            "word_2": "Now •",
+            "word_2_style": "outline",
+            "rotation": -25,
+            "translate_y": 120,
+            "translate_x": -200,
+            "rotation_mobile": -15,
+            "translate_y_mobile": 60,
+            "translate_x_mobile": 0
+          }
+        },
+        {
+          "type": "scroll_band",
+          "settings": {
+            "word_1": "Shop",
+            "word_1_style": "solid",
+            "word_2": "Now •",
+            "word_2_style": "outline",
+            "rotation": 25,
+            "translate_y": 300,
+            "translate_x": -200,
+            "rotation_mobile": 10,
+            "translate_y_mobile": 150,
+            "translate_x_mobile": 0
+          }
+        },
+        {
+          "type": "scroll_band",
+          "settings": {
+            "word_1": "Shop",
+            "word_1_style": "solid",
+            "word_2": "Now •",
+            "word_2_style": "outline",
+            "rotation": -2,
+            "translate_y": -150,
+            "translate_x": -200,
+            "rotation_mobile": -5,
+            "translate_y_mobile": -80,
+            "translate_x_mobile": 0
+          }
+        },
+        {
+          "type": "scroll_band",
+          "settings": {
+            "word_1": "Shop",
+            "word_1_style": "solid",
+            "word_2": "Now •",
+            "word_2_style": "outline",
+            "rotation": 5,
+            "translate_y": 250,
+            "translate_x": -200,
+            "rotation_mobile": 5,
+            "translate_y_mobile": 120,
+            "translate_x_mobile": 0
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

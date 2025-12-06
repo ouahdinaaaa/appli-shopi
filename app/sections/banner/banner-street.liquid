@@ -1,0 +1,843 @@
+<!-- Section Hero Streetwear Ultra Personnalisable -->
+<div class="streetwear-hero" 
+     style="
+       background: {{ section.settings.bg_gradient_start }} linear-gradient({{ section.settings.gradient_direction }}deg, {{ section.settings.bg_gradient_start }}, {{ section.settings.bg_gradient_end }});
+       min-height: {{ section.settings.section_height }}vh;
+       position: relative;
+       overflow: hidden;
+     ">
+  
+  <!-- Background Effects -->
+  {% if section.settings.show_noise_texture %}
+    <div class="noise-overlay"></div>
+  {% endif %}
+  
+  {% if section.settings.show_grid_pattern %}
+    <div class="grid-pattern"></div>
+  {% endif %}
+
+  <!-- Background Image -->
+  {% if section.settings.bg_image %}
+    <div class="bg-image-container">
+      <img src="{{ section.settings.bg_image | img_url: '2000x' }}" 
+           alt="Background"
+           style="opacity: {{ section.settings.bg_opacity }}%;">
+    </div>
+  {% endif %}
+
+  <!-- Main Content Container -->
+  <div class="hero-container">
+    
+    <!-- Badge/Tag -->
+    {% if section.settings.show_badge and section.settings.badge_text != blank %}
+      <div class="streetwear-badge" 
+           style="
+             background: {{ section.settings.badge_bg_color }};
+             color: {{ section.settings.badge_text_color }};
+             border: 2px solid {{ section.settings.badge_border_color }};
+           ">
+        <span>{{ section.settings.badge_text }}</span>
+        {% if section.settings.badge_icon %}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="{{ section.settings.badge_icon }}"/>
+          </svg>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Main Title -->
+    <{{ section.settings.title_tag }} class="hero-title glitch-text"
+         style="
+           color: {{ section.settings.title_color }};
+           font-size: {{ section.settings.title_size }}px;
+           text-align: {{ section.settings.text_alignment }};
+           font-weight: {{ section.settings.title_weight }};
+           letter-spacing: {{ section.settings.title_spacing }}px;
+           text-transform: {{ section.settings.title_transform }};
+         ">
+      {{ section.settings.title | default: "STREETWEAR COLLECTION" }}
+    </{{ section.settings.title_tag }}>
+
+    <!-- Subtitle -->
+    {% if section.settings.subtitle != blank %}
+      <p class="hero-subtitle"
+         style="
+           color: {{ section.settings.subtitle_color }};
+           font-size: {{ section.settings.subtitle_size }}px;
+           text-align: {{ section.settings.text_alignment }};
+           font-weight: {{ section.settings.subtitle_weight }};
+         ">
+        {{ section.settings.subtitle }}
+      </p>
+    {% endif %}
+
+    <!-- Description -->
+    {% if section.settings.description != blank %}
+      <div class="hero-description"
+           style="
+             color: {{ section.settings.description_color }};
+             font-size: {{ section.settings.description_size }}px;
+             text-align: {{ section.settings.text_alignment }};
+           ">
+        {{ section.settings.description }}
+      </div>
+    {% endif %}
+
+    <!-- CTA Buttons -->
+    {% if section.settings.show_cta %}
+      <div class="cta-container" style="text-align: {{ section.settings.text_alignment }};">
+        
+        <!-- Primary Button -->
+        {% if section.settings.cta_primary_text != blank %}
+          <a href="{{ section.settings.cta_primary_url }}" 
+             class="btn-primary streetwear-btn"
+             style="
+               background: {{ section.settings.cta_primary_bg }};
+               color: {{ section.settings.cta_primary_text_color }};
+               border: 2px solid {{ section.settings.cta_primary_border }};
+             ">
+            {{ section.settings.cta_primary_text }}
+            {% if section.settings.cta_show_arrow %}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            {% endif %}
+          </a>
+        {% endif %}
+
+        <!-- Secondary Button -->
+        {% if section.settings.cta_secondary_text != blank %}
+          <a href="{{ section.settings.cta_secondary_url }}" 
+             class="btn-secondary streetwear-btn"
+             style="
+               background: {{ section.settings.cta_secondary_bg }};
+               color: {{ section.settings.cta_secondary_text_color }};
+               border: 2px solid {{ section.settings.cta_secondary_border }};
+             ">
+            {{ section.settings.cta_secondary_text }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Stats/Features (si activé) -->
+    {% if section.settings.show_stats %}
+      <div class="stats-grid">
+        {% for i in (1..3) %}
+          {% assign stat_value = 'stat_' | append: i | append: '_value' %}
+          {% assign stat_label = 'stat_' | append: i | append: '_label' %}
+          {% if section.settings[stat_value] != blank %}
+            <div class="stat-item">
+              <div class="stat-value">{{ section.settings[stat_value] }}</div>
+              <div class="stat-label">{{ section.settings[stat_label] }}</div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Decorative Elements -->
+  {% if section.settings.show_decorative_shapes %}
+    <div class="decorative-shapes">
+      <div class="shape-1"></div>
+      <div class="shape-2"></div>
+      <div class="shape-3"></div>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+.streetwear-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-family: 'Arial Black', 'Helvetica', sans-serif;
+}
+
+.noise-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+  background-image: 
+    radial-gradient(circle at 25% 25%, #ffffff 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, #ffffff 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: 0 0, 25px 25px;
+  z-index: 1;
+}
+
+.grid-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.05;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  z-index: 1;
+}
+
+.bg-image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.bg-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.streetwear-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.hero-title {
+  margin: 20px 0;
+  line-height: 1.1;
+  position: relative;
+}
+
+.glitch-text {
+  position: relative;
+}
+
+.glitch-text:hover::before,
+.glitch-text:hover::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text:hover::before {
+  animation: glitch-1 0.3s infinite linear alternate-reverse;
+  color: #ff0040;
+  z-index: -1;
+}
+
+.glitch-text:hover::after {
+  animation: glitch-2 0.3s infinite linear alternate-reverse;
+  color: #00ffff;
+  z-index: -2;
+}
+
+.hero-subtitle {
+  margin: 15px 0;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+.hero-description {
+  margin: 20px 0;
+  line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-container {
+  margin: 40px 0;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.streetwear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 30px;
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+}
+
+.streetwear-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.btn-primary:hover {
+  animation: pulse 1s infinite;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+  padding: 30px 0;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.7);
+}
+
+.decorative-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.decorative-shapes > div {
+  position: absolute;
+  border: 2px solid rgba(255,255,255,0.1);
+}
+
+.shape-1 {
+  width: 100px;
+  height: 100px;
+  top: 10%;
+  right: 10%;
+  transform: rotate(45deg);
+  animation: rotate 20s linear infinite;
+}
+
+.shape-2 {
+  width: 60px;
+  height: 60px;
+  bottom: 20%;
+  left: 15%;
+  border-radius: 50%;
+  animation: float 4s ease-in-out infinite;
+}
+
+.shape-3 {
+  width: 80px;
+  height: 80px;
+  top: 30%;
+  left: 10%;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes glitch-1 {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(-2px); }
+  60% { transform: translateX(2px); }
+  80% { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes glitch-2 {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(45deg); }
+  to { transform: rotate(405deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-container {
+    padding: 0 15px;
+  }
+  
+  .cta-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .streetwear-btn {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 20px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Ajouter l'effet glitch au hover
+  const glitchText = document.querySelector('.glitch-text');
+  if (glitchText) {
+    glitchText.setAttribute('data-text', glitchText.textContent);
+  }
+  
+  // Animation d'apparition au scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.animation = 'fadeInUp 1s ease forwards';
+      }
+    });
+  });
+  
+  document.querySelectorAll('.hero-container > *').forEach(el => {
+    observer.observe(el);
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Hero Streetwear",
+  "tag": "section",
+  "class": "streetwear-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🎨 Style & Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Hauteur de section",
+      "default": 80
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alignement du texte",
+      "options": [
+        {"value": "left", "label": "Gauche"},
+        {"value": "center", "label": "Centre"},
+        {"value": "right", "label": "Droite"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "🌈 Arrière-plan"
+    },
+    {
+      "type": "color",
+      "id": "bg_gradient_start",
+      "label": "Couleur de début",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "bg_gradient_end",
+      "label": "Couleur de fin",
+      "default": "#2d2d2d"
+    },
+    {
+      "type": "range",
+      "id": "gradient_direction",
+      "min": 0,
+      "max": 360,
+      "step": 15,
+      "unit": "deg",
+      "label": "Direction du gradient",
+      "default": 135
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Image d'arrière-plan"
+    },
+    {
+      "type": "range",
+      "id": "bg_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacité de l'image",
+      "default": 30
+    },
+    {
+      "type": "checkbox",
+      "id": "show_noise_texture",
+      "label": "Afficher texture noise",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_grid_pattern",
+      "label": "Afficher grille",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "🏷️ Badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Afficher badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Texte du badge",
+      "default": "NEW DROP"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Couleur de fond",
+      "default": "#ff6b35"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Couleur du texte",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "badge_border_color",
+      "label": "Couleur de bordure",
+      "default": "#ff6b35"
+    },
+    {
+      "type": "header",
+      "content": "📝 Titre Principal"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "URBAN STREETWEAR"
+    },
+    {
+      "type": "select",
+      "id": "title_tag",
+      "label": "Balise HTML",
+      "options": [
+        {"value": "h1", "label": "H1"},
+        {"value": "h2", "label": "H2"},
+        {"value": "h3", "label": "H3"}
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Taille du titre",
+      "default": 64
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Couleur du titre",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Graisse du titre",
+      "options": [
+        {"value": "400", "label": "Normal"},
+        {"value": "700", "label": "Bold"},
+        {"value": "900", "label": "Black"}
+      ],
+      "default": "900"
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "min": -5,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Espacement lettres",
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "title_transform",
+      "label": "Transformation texte",
+      "options": [
+        {"value": "none", "label": "Normal"},
+        {"value": "uppercase", "label": "MAJUSCULES"},
+        {"value": "lowercase", "label": "minuscules"},
+        {"value": "capitalize", "label": "Capitalize"}
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "header",
+      "content": "📖 Sous-titre"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Sous-titre",
+      "default": "Collection Automne/Hiver 2024"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Taille",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Couleur",
+      "default": "#cccccc"
+    },
+    {
+      "type": "select",
+      "id": "subtitle_weight",
+      "label": "Graisse",
+      "options": [
+        {"value": "400", "label": "Normal"},
+        {"value": "600", "label": "Semi-Bold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "400"
+    },
+    {
+      "type": "header",
+      "content": "📄 Description"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Découvrez notre nouvelle collection streetwear alliant style urbain et confort premium."
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Couleur",
+      "default": "#999999"
+    },
+    {
+      "type": "header",
+      "content": "🔘 Boutons CTA"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Afficher les boutons",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_primary_text",
+      "label": "Texte bouton principal",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "cta_primary_url",
+      "label": "Lien bouton principal"
+    },
+    {
+      "type": "color",
+      "id": "cta_primary_bg",
+      "label": "Fond bouton principal",
+      "default": "#ff6b35"
+    },
+    {
+      "type": "color",
+      "id": "cta_primary_text_color",
+      "label": "Texte bouton principal",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cta_primary_border",
+      "label": "Bordure bouton principal",
+      "default": "#ff6b35"
+    },
+    {
+      "type": "text",
+      "id": "cta_secondary_text",
+      "label": "Texte bouton secondaire",
+      "default": "LOOKBOOK"
+    },
+    {
+      "type": "url",
+      "id": "cta_secondary_url",
+      "label": "Lien bouton secondaire"
+    },
+    {
+      "type": "color",
+      "id": "cta_secondary_bg",
+      "label": "Fond bouton secondaire",
+      "default": "transparent"
+    },
+    {
+      "type": "color",
+      "id": "cta_secondary_text_color",
+      "label": "Texte bouton secondaire",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cta_secondary_border",
+      "label": "Bordure bouton secondaire",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "cta_show_arrow",
+      "label": "Afficher flèche",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "📊 Statistiques"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stats",
+      "label": "Afficher statistiques",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "stat_1_value",
+      "label": "Stat 1 - Valeur",
+      "default": "1000+"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_label",
+      "label": "Stat 1 - Label",
+      "default": "Happy Customers"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_value",
+      "label": "Stat 2 - Valeur",
+      "default": "50+"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_label",
+      "label": "Stat 2 - Label",
+      "default": "Products"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_value",
+      "label": "Stat 3 - Valeur",
+      "default": "24/7"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_label",
+      "label": "Stat 3 - Label",
+      "default": "Support"
+    },
+    {
+      "type": "header",
+      "content": "🎭 Effets Visuels"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_decorative_shapes",
+      "label": "Formes décoratives",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Streetwear",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

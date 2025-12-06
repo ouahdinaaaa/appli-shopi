@@ -1,0 +1,469 @@
+<!-- sections/sculpture-gallery.liquid -->
+{%- liquid
+  assign section_id = 'sculpture-gallery-' | append: section.id
+  assign desktop_height = section.settings.desktop_height | default: '100vh'
+  assign tablet_height = section.settings.tablet_height | default: '80vh'
+  assign mobile_height = section.settings.mobile_height | default: '70vh'
+  assign bg_color = section.settings.background_color | default: '#111111'
+  assign text_color = section.settings.text_color | default: '#ffffff'
+  assign accent_color = section.settings.accent_color | default: '#FFD700'
+  assign scroll_speed = section.settings.scroll_speed | default: 30
+  assign text_stroke_width = section.settings.text_stroke_width | default: 0
+  assign text_stroke_color = section.settings.text_stroke_color | default: '#000000'
+  assign desktop_spacing = section.settings.desktop_text_spacing | default: 2
+  assign tablet_spacing = section.settings.tablet_text_spacing | default: 2
+  assign mobile_spacing = section.settings.mobile_text_spacing | default: 1
+-%}
+
+<style>
+  #{{ section_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ desktop_height }};
+    background: {{ bg_color }};
+    overflow: hidden;
+    font-family: "Krona One", monospace;
+  }
+
+  #{{ section_id }} ::selection {
+    background: {{ accent_color }};
+    color: {{ bg_color }};
+  }
+
+  #{{ section_id }} .sculpture-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #{{ section_id }} .marquee {
+    position: absolute;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: {{ section.settings.desktop_font_size | default: 10 }}rem;
+    color: {{ text_color }};
+    font-weight: bold;
+  }
+
+  #{{ section_id }} .marquee-track {
+    display: inline-flex;
+    width: max-content;
+    animation: scroll-{{ section_id }} {{ scroll_speed }}s linear infinite;
+  }
+
+  #{{ section_id }} .marquee-track .content {
+    display: flex;
+  }
+
+  #{{ section_id }} .marquee-track span {
+    margin-right: {{ desktop_spacing }}rem;
+    {% if text_stroke_width > 0 %}
+      -webkit-text-stroke: {{ text_stroke_width }}px {{ text_stroke_color }};
+      text-stroke: {{ text_stroke_width }}px {{ text_stroke_color }};
+    {% endif %}
+  }
+
+  @keyframes scroll-{{ section_id }} {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  #{{ section_id }} .marquee-back {
+    top: 25%;
+    z-index: 1;
+    opacity: 0.6;
+  }
+
+  #{{ section_id }} .center-media {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(300px, 60vw, 850px);
+    max-width: 90vw;
+    height: auto;
+    z-index: 2;
+  }
+
+  #{{ section_id }} .center-media img,
+  #{{ section_id }} .center-media video {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  #{{ section_id }} .marquee-front {
+    bottom: 25%;
+    z-index: 3;
+    opacity: 0.8;
+  }
+
+  /* Tablet */
+  @media (max-width: 1024px) and (min-width: 769px) {
+    #{{ section_id }} {
+      height: {{ tablet_height }};
+    }
+
+    #{{ section_id }} .marquee {
+      font-size: {{ section.settings.tablet_font_size | default: 8 }}rem;
+    }
+
+    #{{ section_id }} .marquee-track span {
+      margin-right: {{ tablet_spacing }}rem;
+    }
+
+    #{{ section_id }} .center-media {
+      width: clamp(250px, 70vw, 600px);
+    }
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    #{{ section_id }} {
+      height: {{ mobile_height }};
+    }
+
+    #{{ section_id }} .marquee {
+      font-size: {{ section.settings.mobile_font_size | default: 4 }}rem;
+    }
+
+    #{{ section_id }} .marquee-track span {
+      margin-right: {{ mobile_spacing }}rem;
+    }
+
+    #{{ section_id }} .marquee-back {
+      top: 20%;
+    }
+
+    #{{ section_id }} .center-media {
+      top: 45%;
+      width: clamp(200px, 80vw, 400px);
+    }
+
+    #{{ section_id }} .marquee-front {
+      bottom: 20%;
+    }
+  }
+
+  /* Very small mobile */
+  @media (max-width: 480px) {
+    #{{ section_id }} .marquee {
+      font-size: {{ section.settings.mobile_font_size | default: 4 | minus: 1 }}rem;
+    }
+
+    #{{ section_id }} .center-media {
+      width: clamp(150px, 90vw, 300px);
+      top: 40%;
+    }
+
+    #{{ section_id }} .marquee-back {
+      top: 15%;
+    }
+
+    #{{ section_id }} .marquee-front {
+      bottom: 15%;
+    }
+  }
+
+  /* Landscape mobile */
+  @media (max-height: 500px) and (orientation: landscape) {
+    #{{ section_id }} .center-media {
+      width: clamp(150px, 30vh, 250px);
+      top: 45%;
+    }
+
+    #{{ section_id }} .marquee {
+      font-size: clamp(2rem, 6vh, 4rem);
+    }
+
+    #{{ section_id }} .marquee-back {
+      top: 10%;
+    }
+
+    #{{ section_id }} .marquee-front {
+      bottom: 10%;
+    }
+  }
+</style>
+
+<section id="{{ section_id }}" class="sculpture-gallery-section">
+  <div class="sculpture-container">
+    
+    <!-- Back Marquee -->
+    <div class="marquee marquee-back">
+      <div class="marquee-track">
+        <div class="content">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'scroll_text_1' and block.settings.text != blank -%}
+              <span>{{ block.settings.text | upcase }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        <div class="content">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'scroll_text_1' and block.settings.text != blank -%}
+              <span>{{ block.settings.text | upcase }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+
+<!-- Center Media -->
+    <div class="center-media">
+      {%- if section.settings.media_type == 'video' -%}
+        {%- if section.settings.desktop_video != blank -%}
+          <video autoplay muted loop playsinline class="desktop-video">
+            <source src="{{ section.settings.desktop_video | file_url }}" type="video/mp4">
+          </video>
+        {%- endif -%}
+      {%- else -%}
+        {%- if section.settings.desktop_image != blank -%}
+          <img src="{{ section.settings.desktop_image | image_url: width: 1000 }}" alt="Sculpture" class="desktop-image"/>
+        {%- else -%}
+          <img src="https://images.pexels.com/photos/34860208/pexels-photo-34860208.jpeg" alt="Sculpture" class="desktop-image"/>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    <!-- Front Marquee -->
+    <div class="marquee marquee-front">
+      <div class="marquee-track">
+        <div class="content">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'scroll_text_2' and block.settings.text != blank -%}
+              <span>{{ block.settings.text | upcase }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        <div class="content">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'scroll_text_2' and block.settings.text != blank -%}
+              <span>{{ block.settings.text | upcase }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Sculpture Gallery",
+  "tag": "section",
+  "class": "sculpture-gallery-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Height"
+    },
+    {
+      "type": "select",
+      "id": "desktop_height",
+      "label": "Desktop Height",
+      "options": [
+        { "value": "60vh", "label": "60vh" },
+        { "value": "80vh", "label": "80vh" },
+        { "value": "100vh", "label": "100vh" }
+      ],
+      "default": "100vh"
+    },
+    {
+      "type": "select",
+      "id": "tablet_height",
+      "label": "Tablet Height",
+      "options": [
+        { "value": "50vh", "label": "50vh" },
+        { "value": "70vh", "label": "70vh" },
+        { "value": "80vh", "label": "80vh" }
+      ],
+      "default": "80vh"
+    },
+    {
+      "type": "select",
+      "id": "mobile_height",
+      "label": "Mobile Height",
+      "options": [
+        { "value": "50vh", "label": "50vh" },
+        { "value": "60vh", "label": "60vh" },
+        { "value": "70vh", "label": "70vh" }
+      ],
+      "default": "70vh"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#FFD700"
+    },
+    {
+      "type": "header",
+      "content": "Text Settings"
+    },
+    {
+      "type": "range",
+      "id": "desktop_font_size",
+      "label": "Desktop Font Size (rem)",
+      "min": 6,
+      "max": 16,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "tablet_font_size",
+      "label": "Tablet Font Size (rem)",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "label": "Mobile Font Size (rem)",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Text Border/Outline"
+    },
+    {
+      "type": "range",
+      "id": "text_stroke_width",
+      "label": "Text Border Width (px)",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 0,
+      "info": "Set to 0 to disable text border"
+    },
+    {
+      "type": "color",
+      "id": "text_stroke_color",
+      "label": "Text Border Color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Text Spacing"
+    },
+    {
+      "type": "range",
+      "id": "desktop_text_spacing",
+      "label": "Desktop Text Spacing (rem)",
+      "min": 0.5,
+      "max": 6,
+      "step": 0.5,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "tablet_text_spacing",
+      "label": "Tablet Text Spacing (rem)",
+      "min": 0.5,
+      "max": 5,
+      "step": 0.5,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "mobile_text_spacing",
+      "label": "Mobile Text Spacing (rem)",
+      "min": 0.5,
+      "max": 4,
+      "step": 0.5,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll Speed (seconds)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "info": "Lower number = faster scroll"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media Type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop Image"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video",
+      "label": "Desktop Video (MP4)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "scroll_text_1",
+      "name": "Back Scroll Text",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text" }
+      ]
+    },
+    {
+      "type": "scroll_text_2",
+      "name": "Front Scroll Text",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sculpture Gallery",
+      "blocks": [
+        { "type": "scroll_text_1", "settings": { "text": "art is in clothes" } },
+        { "type": "scroll_text_1", "settings": { "text": "trust" } },
+        { "type": "scroll_text_2", "settings": { "text": " Your style" } },
+        { "type": "scroll_text_2", "settings": { "text": "defined your life" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -293,7 +293,7 @@
         {
           "type": "hotspot",
           "settings": {
-            "pos_left": 50,
+            "pos_left": 72,
             "pos_top": 78,
             "dot_color": "#ff0000",
             "custom_title": "Produit 1",
@@ -305,7 +305,7 @@
         {
           "type": "hotspot",
           "settings": {
-            "pos_left": 50,
+            "pos_left": 28,
             "pos_top": 40,
             "dot_color": "#ff0000",
             "custom_title": "Produit 2",
@@ -340,23 +340,9 @@
     <div class="hotspots">
       {% if section.blocks.size > 0 %}
         {% for block in section.blocks %}
-          {%- comment -%} Fallback positions si valeurs manquantes {%- endcomment -%}
-          {%- assign auto_left = 50 -%}
-          {%- assign auto_top = 50 -%}
-          {%- case forloop.index -%}
-            {%- when 1 -%}{%- assign auto_left = 28 -%}{%- assign auto_top = 32 -%}
-            {%- when 2 -%}{%- assign auto_left = 72 -%}{%- assign auto_top = 62 -%}
-            {%- when 3 -%}{%- assign auto_left = 38 -%}{%- assign auto_top = 68 -%}
-            {%- when 4 -%}{%- assign auto_left = 62 -%}{%- assign auto_top = 36 -%}
-            {%- else -%}{%- assign auto_left = 50 -%}{%- assign auto_top = 50 -%}
-          {%- endcase -%}
-          {%- assign pos_left = block.settings.pos_left | default: auto_left -%}
-          {%- assign pos_top = block.settings.pos_top | default: auto_top -%}
-
-          {%- if pos_left == 50 and pos_top == 50 -%}
-            {%- assign pos_left = 35 | plus: forloop.index0 | times: 5 | modulo: 30 | plus: 35 -%}
-            {%- assign pos_top = 30 | plus: forloop.index0 | times: 12 | modulo: 40 | plus: 30 -%}
-          {%- endif -%}
+          {%- comment -%} Utiliser directement les valeurs du block {%- endcomment -%}
+          {%- assign pos_left = block.settings.pos_left -%}
+          {%- assign pos_top = block.settings.pos_top -%}
 
           <div class="hotspot-item" style="left: {{ pos_left }}%; top: {{ pos_top }}%;" data-hotspot-id="{{ forloop.index }}" {% if block.settings.product != blank %}data-product-url="{{ all_products[block.settings.product].url }}"{% endif %}>
             <div class="hotspot" style="border-color: {{ block.settings.dot_color }}; background: {{ block.settings.dot_color | color_modify: 'alpha', 0.4 }};">
@@ -437,7 +423,7 @@
           </div>
         {% endfor %}
       {% else %}
-        {%- comment -%} Fallback de démo si aucune block n’est disponible {%- endcomment -%}
+        {%- comment -%} Fallback de démo si aucune block n'est disponible {%- endcomment -%}
         <div class="hotspot-item" style="left: 72%; top: 62%;">
           <div class="hotspot" style="border-color:#ff0000; background: rgba(255,0,0,.2);">
             <span style="background:#ff0000"></span>
@@ -517,7 +503,7 @@
   left: 0;
   width: 100%; 
   height: 100%;
-  pointer-events: auto; /* était none: permet le hover/click */
+  pointer-events: auto;
 }
 
 .hotspot-item {

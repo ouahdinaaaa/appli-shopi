@@ -63,17 +63,30 @@
   .featured-products-{{ section.id }} .products-scroll {
     display:flex; gap:15px; overflow-x:auto; overflow-y:hidden; scroll-behavior:smooth;
     -webkit-overflow-scrolling:touch; padding-bottom:10px;
+
+    /* Masquer la barre et activer scroll tactile/drag */
+    -ms-overflow-style: none;     /* IE/Edge */
+    scrollbar-width: none;        /* Firefox */
+    touch-action: pan-x;          /* priorité au scroll horizontal */
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; /* snap doux sur les cartes */
+    cursor: grab;
   }
+  .featured-products-{{ section.id }} .products-scroll:active { cursor: grabbing; }
+  .featured-products-{{ section.id }} .products-scroll::-webkit-scrollbar { display:none; width:0; height:0; }
+
   .featured-products-{{ section.id }} .product-card {
     background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.08);
     transition:.3s; cursor:pointer; flex:0 0 auto; width:200px; position:relative;
+    scroll-snap-align: start; /* snap par carte */
+    border:2px solid transparent; /* base pour éviter shift */
   }
   @media screen and (min-width:750px){
     .featured-products-{{ section.id }} .product-card { width:fit-content; display:flex; align-items:center; padding:8px; gap:12px; }
   }
   .featured-products-{{ section.id }} .product-card:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(0,0,0,.12); }
   .featured-products-{{ section.id }} .product-card.active {
-    border:2px solid {{ section.settings.button_bg_color }};
+    border-color: {{ section.settings.button_bg_color }};
     box-shadow:0 4px 15px rgba(255,107,53,.3);
   }
   .featured-products-{{ section.id }} .product-image-container { position:relative; aspect-ratio:1; overflow:hidden; }
@@ -176,8 +189,8 @@
 
           {% assign card_title = block.settings.custom_title | default: product.title | default: 'Produit ' | append: forloop.index %}
 
-          <div class="product-card {% if forloop.first %}active{% endif %}"
-               data-index="{{ i }}"
+    <div class="product-card {% if forloop.first %}active{% endif %}"
+      data-index="{{ i }}" data-original-index="{{ i }}"
                data-title="{{ card_title | escape }}"
                data-image="{{ thumb_src }}"
                data-hero-image="{{ hero_src }}"
@@ -214,25 +227,24 @@
 
 <script>
 let currentProductIndex = {};
+let isDragScrolling = {}; // par section
 
-function selectProduct(sectionId, index, el) {
-  const wrap = document.querySelector('.featured-products-' + sectionId);
-  if (!wrap) return;
-  currentProductIndex[sectionId] = index;
-  wrap.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  updateHeroFromCard(sectionId, el);
+function getWrap(sectionId) {
+  return document.querySelector('.featured-products-' + sectionId);
+}
+function getScroller(sectionId) {
+  return document.getElementById('products-scroll-' + sectionId);
+}
+function getCards(sectionId) {
+  const wrap = getWrap(sectionId);
+  return wrap ? [...wrap.querySelectorAll('.product-card')] : [];
 }
 
-function changeProduct(sectionId, dir) {
-  const wrap = document.querySelector('.featured-products-' + sectionId);
-  if (!wrap) return;
-  const cards = [...wrap.querySelectorAll('.product-card')];
-  if (!cards.length) return;
-  let cur = currentProductIndex[sectionId] || 0;
-  cur = dir === 'next' ? (cur + 1) % cards.length : (cur - 1 + cards.length) % cards.length;
-  const target = cards[cur];
-  if (target) selectProduct(sectionId, cur, target);
+function scrollCardIntoView(sectionId, card, instant = false) {
+  const scroller = getScroller(sectionId);
+  if (!scroller || !card) return;
+  const targetLeft = card.offsetLeft - 10; // marge visuelle
+  scroller.scrollTo({ left: targetLeft, behavior: instant ? 'auto' : 'smooth' });
 }
 
 function updateHeroFromCard(sectionId, card) {
@@ -240,26 +252,137 @@ function updateHeroFromCard(sectionId, card) {
   const title = document.getElementById('hero-title-' + sectionId);
   if (!card || !hero) return;
   const img = card.getAttribute('data-hero-image') || card.getAttribute('data-image');
-  const txt = card.getAttribute('data-title');
+  const txt = card.getAttribute('data-title') || '';
   if (img) {
     hero.style.opacity = '.35';
     const tmp = new Image();
     tmp.onload = () => { hero.src = img; hero.style.opacity = '1'; };
     tmp.src = img;
   }
-  if (title && txt) title.textContent = txt;
+  if (title) title.textContent = txt;
 }
 
-// Nouveau: Add to Cart (Shopify AJAX API)
+function selectProduct(sectionId, index, el, instant = false) {
+  // Bloquer la sélection si c'était un drag
+  if (isDragScrolling[sectionId]) return;
+
+  const wrap = getWrap(sectionId);
+  if (!wrap || !el) return;
+
+  currentProductIndex[sectionId] = index;
+  wrap.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  updateHeroFromCard(sectionId, el);
+  scrollCardIntoView(sectionId, el, instant);
+}
+
+function changeProduct(sectionId, dir) {
+  const cards = getCards(sectionId);
+  if (!cards.length) return;
+
+  let cur = currentProductIndex[sectionId];
+  if (typeof cur !== 'number') cur = cards.findIndex(c => c.classList.contains('active'));
+  if (cur < 0) cur = 0;
+
+  const next = dir === 'next' ? (cur + 1) % cards.length : (cur - 1 + cards.length) % cards.length;
+  const target = cards[next];
+  if (target) selectProduct(sectionId, next, target);
+}
+
+function snapToNearest(sectionId) {
+  const scroller = getScroller(sectionId);
+  const cards = getCards(sectionId);
+  if (!scroller || !cards.length) return;
+
+  const scrollLeft = scroller.scrollLeft;
+  // Trouver la carte la plus proche du bord gauche du viewport scroller
+  let nearest = cards[0];
+  let best = Math.abs(cards[0].offsetLeft - 10 - scrollLeft);
+  for (let i = 1; i < cards.length; i++) {
+    const d = Math.abs(cards[i].offsetLeft - 10 - scrollLeft);
+    if (d < best) { best = d; nearest = cards[i]; }
+  }
+  const index = Number(nearest.getAttribute('data-index')) || cards.indexOf(nearest);
+  // Eviter de déclencher le clic sélection pendant un drag; on force instant pour le snap final
+  isDragScrolling[sectionId] = true;
+  scrollCardIntoView(sectionId, nearest, false);
+  setTimeout(() => { isDragScrolling[sectionId] = false; }, 120);
+
+  // Mettre à jour l'active visuellement, mais sans bloquer un prochain clic
+  const wrap = getWrap(sectionId);
+  if (wrap) {
+    wrap.querySelectorAll('.product-card').forEach(c => c.classList.remove('active'));
+    nearest.classList.add('active');
+    currentProductIndex[sectionId] = index;
+    updateHeroFromCard(sectionId, nearest);
+  }
+}
+
+function setupDragScroll(sectionId) {
+  const scroller = getScroller(sectionId);
+  if (!scroller) return;
+
+  let isDown = false, startX = 0, startScroll = 0, moved = false;
+
+  const release = (e) => {
+    if (!isDown) return;
+    isDown = false;
+    if (moved) {
+      isDragScrolling[sectionId] = true;
+      snapToNearest(sectionId);
+      setTimeout(() => { isDragScrolling[sectionId] = false; }, 100);
+    }
+    if (e && e.pointerId && scroller.hasPointerCapture(e.pointerId)) {
+      scroller.releasePointerCapture(e.pointerId);
+    }
+  };
+
+  scroller.addEventListener('pointerdown', (e) => {
+    isDown = true; moved = false;
+    startX = e.clientX; startScroll = scroller.scrollLeft;
+    scroller.setPointerCapture(e.pointerId);
+  });
+  scroller.addEventListener('pointermove', (e) => {
+    if (!isDown) return;
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 3) moved = true;
+    scroller.scrollLeft = startScroll - dx;
+    e.preventDefault();
+  }, { passive: false });
+  scroller.addEventListener('pointerup', release);
+  scroller.addEventListener('pointercancel', release);
+  scroller.addEventListener('pointerleave', release);
+
+  // Molette: vertical -> horizontal
+  scroller.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      scroller.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }
+  }, { passive: false });
+}
+
+// Shopify AJAX add-to-cart
 function addToCart(e, btn) {
-  e.stopPropagation();
   const card = btn.closest('.product-card');
+  // Sélection visuelle même si on clique seulement sur le bouton
+  if (card) {
+    const wrap = card.closest('[class*="featured-products-"]');
+    if (wrap) {
+      const cls = [...wrap.classList].find(c => c.startsWith('featured-products-'));
+      if (cls) {
+        const sectionId = cls.replace('featured-products-','');
+        const idx = Number(card.getAttribute('data-original-index')) || Number(card.getAttribute('data-index')) || 0;
+        selectProduct(sectionId, idx, card, true);
+      }
+    }
+  }
+  e.stopPropagation();
   const variantId = card ? card.getAttribute('data-variant-id') : null;
   if (!variantId) return;
 
   const labelDefault = '{{ section.settings.button_text | default: "Shop Now" }}';
   btn.disabled = true;
-  btn.classList.add('loading');
 
   fetch('/cart/add.js', {
     method: 'POST',
@@ -269,28 +392,130 @@ function addToCart(e, btn) {
   .then(r => r.ok ? r.json() : Promise.reject(r))
   .then(() => {
     btn.textContent = 'Added';
-    setTimeout(() => { btn.textContent = labelDefault; btn.disabled = false; btn.classList.remove('loading'); }, 900);
+    setTimeout(() => { btn.textContent = labelDefault; btn.disabled = false; }, 900);
   })
   .catch(() => {
     btn.textContent = 'Try again';
-    setTimeout(() => { btn.textContent = labelDefault; btn.disabled = false; btn.classList.remove('loading'); }, 1200);
+    setTimeout(() => { btn.textContent = labelDefault; btn.disabled = false; }, 1200);
   });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  selectProduct('{{ section.id }}', 0, document.querySelector('.featured-products-{{ section.id }} .product-card'));
+  const sectionId = '{{ section.id }}';
+  setupInfiniteGrow(sectionId);
+  setupDragScroll(sectionId);
+  // Sélection initiale sur premier original
+  const originals = getCards(sectionId).filter(c => !c.hasAttribute('data-clone'));
+  if (originals[0]) selectProduct(sectionId, Number(originals[0].getAttribute('data-original-index')), originals[0], true);
 });
-</script>
 
+// --- Carrousel infini (extension dynamique) ---
+function setupInfiniteGrow(sectionId) {
+  const scroller = getScroller(sectionId);
+  if (!scroller) return;
+  let originals = [...scroller.querySelectorAll('.product-card:not([data-clone])')];
+  if (!originals.length) return;
+
+  // Calcul largeur d'un set (après layout)
+  const computeSetWidth = () => {
+    // Utiliser position de dernier - premier + largeur dernière
+    const first = originals[0];
+    const last = originals[originals.length - 1];
+    return (last.offsetLeft + last.offsetWidth) - first.offsetLeft;
+  };
+  let setWidth = computeSetWidth();
+
+  // Ajout initial d'un set avant et après pour permettre scroll dès le début
+  const appendSet = () => {
+    originals.forEach(card => {
+      const clone = card.cloneNode(true);
+      clone.setAttribute('data-clone', 'true');
+      scroller.appendChild(clone);
+    });
+  };
+  const prependSet = () => {
+    for (let i = originals.length - 1; i >= 0; i--) {
+      const card = originals[i];
+      const clone = card.cloneNode(true);
+      clone.setAttribute('data-clone', 'true');
+      scroller.insertBefore(clone, scroller.firstChild);
+    }
+    // Ajuster scroll pour conserver la vue
+    scroller.scrollLeft += setWidth;
+  };
+  appendSet();
+  prependSet();
+
+  // Scroll listener: étendre quand on approche des bords
+  scroller.addEventListener('scroll', () => {
+    const x = scroller.scrollLeft;
+    const max = scroller.scrollWidth;
+    const rightEdge = x + scroller.clientWidth;
+
+    // Re-calcul périodique (si taille responsive change)
+    if (Math.random() < 0.01) setWidth = computeSetWidth();
+
+    // Approche extrémité droite -> ajouter un set après
+    if (rightEdge > max - setWidth * 1.2) {
+      appendSet();
+    }
+    // Approche extrémité gauche -> ajouter un set avant
+    if (x < setWidth * 0.8) {
+      prependSet();
+    }
+  });
+
+  // Adapter navigation flèches pour ne jamais forcer retour milieu
+  if (!window.__featuredInfiniteGrowPatch) {
+    const oldChange = changeProduct;
+    changeProduct = function(sectionId, dir) {
+      // Base sur index original
+      const all = getCards(sectionId);
+      const originalsNow = all.filter(c => !c.hasAttribute('data-clone'));
+      if (!originalsNow.length) return oldChange(sectionId, dir);
+      let cur = currentProductIndex[sectionId];
+      if (typeof cur !== 'number') {
+        const active = all.find(c => c.classList.contains('active'));
+        cur = active ? Number(active.getAttribute('data-original-index')) : 0;
+      }
+      const len = originalsNow.length;
+      const targetOriginalIndex = dir === 'next' ? (cur + 1) % len : (cur - 1 + len) % len;
+      // Chercher cartes (originales + clones) correspondant à cet index
+      const candidates = all.filter(c => Number(c.getAttribute('data-original-index')) === targetOriginalIndex);
+      if (!candidates.length) return;
+      // Choisir candidate la plus proche du centre actuel
+      const center = scroller.scrollLeft + scroller.clientWidth / 2;
+      let chosen = candidates[0];
+      let best = Infinity;
+      candidates.forEach(c => {
+        const mid = c.offsetLeft + c.offsetWidth / 2;
+        const dist = Math.abs(mid - center);
+        if (dist < best) { best = dist; chosen = c; }
+      });
+      selectProduct(sectionId, targetOriginalIndex, chosen);
+    };
+    window.__featuredInfiniteGrowPatch = true;
+  }
+
+  // Surcharge selectProduct pour utiliser data-original-index si présent
+  const _baseSelect = selectProduct;
+  selectProduct = function(sectionId, index, el, instant = false) {
+    if (el && el.hasAttribute('data-original-index')) {
+      index = Number(el.getAttribute('data-original-index')) || index;
+    }
+    _baseSelect(sectionId, index, el, instant);
+  };
+}
+</script>
 {% schema %}
 {
   "name": "Featured Products",
   "settings": [
     { "type": "text", "id": "section_title", "label": "Section Title", "default": "New!" },
     { "type": "color", "id": "section_bg_color", "label": "Background color", "default": "#ffffff" },
-    { "type": "range", "id": "section_padding_mobile", "min": 0, "max": 120, "step": 4, "unit": "px", "label": "Padding mobile", "default": 20 },
-    { "type": "range", "id": "section_padding_tablet", "min": 0, "max": 120, "step": 4, "unit": "px", "label": "Padding tablet", "default": 30 },
-    { "type": "range", "id": "section_padding_desktop", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Padding desktop", "default": 40 },
+    { "type": "range", "id": "section_padding_mobile", "min": 0, "max": 120, "step": 2, "unit": "px", "label": "Padding mobile", "default": 20 },
+    { "type": "range", "id": "section_padding_tablet", "min": 0, "max": 120, "step": 2, "unit": "px", "label": "Padding tablet", "default": 30 },
+    { "type": "range", "id": "section_padding_desktop", "min": 0, "max": 160, "step": 2, "unit": "px", "label": "Padding desktop", "default": 40 },
 
     { "type": "color", "id": "title_color", "label": "Title color", "default": "#111111" },
     { "type": "range", "id": "title_size_mobile", "min": 12, "max": 48, "step": 1, "unit": "px", "label": "Title size mobile", "default": 24 },

@@ -1,0 +1,293 @@
+<style>
+/* === SECTION STYLES === */
+  
+.r36s-section2 {
+  /* background: linear-gradient(135deg, #0c001a, #1a0033); */
+  background : linear-gradient(to bottom, #000000, #10001f);
+  padding: 20px 20px;
+  font-family: 'Orbitron', sans-serif;
+  color: #fff;
+}
+
+.r36s-container {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.r36s-box {
+  /* background: linear-gradient(145deg, rgba(50, 10, 90, 0.6), rgba(20, 0, 40, 0.8)); */
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 60px;
+  box-shadow: 0 0 25px rgba(255, 110, 196, 0.1);
+  border: 1px solid rgba(255, 110, 196, 0.15);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+}
+
+.r36s-box:hover {
+  transform: translateY(-4px);
+}
+
+.r36s-title {
+  text-align: center;
+  font-size: 34px;
+  font-weight: bold;
+  margin-bottom: 35px;
+  background: linear-gradient(to right, #ff6ec4, #7873f5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: glowText 3s ease-in-out infinite alternate;
+}
+
+/* === GRID STYLES === */
+.r36s-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.r36s-item {
+  display: flex;
+  align-items: stretch;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.06);
+  background: #120626;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.r36s-item:hover {
+  transform: scale(1.025);
+  box-shadow: 0 0 20px rgba(255, 110, 196, 0.25);
+}
+
+.r36s-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  width: 80px;
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.r36s-content-box {
+  flex: 1;
+  background: linear-gradient(to right, #1e0538, #290c47);
+  padding: 10px 20px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+  min-height: 100%;
+}
+
+.r36s-content-box strong {
+  color: #ffe600;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* COULEURS ICONES */
+.color-yellow { background: linear-gradient(to bottom right, #ffe600, #fda400); color: #1a1a1a; }
+.color-green  { background: linear-gradient(to bottom right, #00c851, #007e33); }
+.color-blue   { background: linear-gradient(to bottom right, #33b5e5, #0099cc); }
+.color-orange { background: linear-gradient(to bottom right, #ff6f00, #ff8f00); }
+.color-purple { background: linear-gradient(to bottom right, #aa66cc, #9933cc); }
+
+/* === STEPS === */
+.r36s-step-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+
+  
+
+.r36s-step {
+  position: relative;
+  background: linear-gradient(to bottom right, #250a41, #350f5c);
+  border-radius: 22px;
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: 0 0 24px rgba(255, 110, 196, 0.15);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  overflow: hidden;
+  border: 1px solid rgba(255, 110, 196, 0.25);
+}
+
+  
+
+.r36s-step:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 40px rgba(255, 110, 196, 0.3);
+}
+
+
+.r36s-step img {
+  max-width: 90%;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+  z-index: 1;
+  position: relative;
+}
+
+  
+
+.r36s-step-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffe600;
+  margin-bottom: 8px;
+  z-index: 1;
+  position: relative;
+  text-shadow: 0 0 6px rgba(255, 230, 0, 0.4);
+}
+
+  
+.r36s-step-text {
+  font-size: 17px;
+  line-height: 1.7;
+  color: #eaeaea;
+  z-index: 1;
+  position: relative;
+  padding: 0 6px;
+}
+  
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+  .r36s-grid, .r36s-step-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+    .r36s-step-title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .r36s-title {
+    font-size: 24px;
+  }
+  .r36s-grid, .r36s-step-grid {
+    grid-template-columns: 1fr;
+  }
+  .r36s-step-title {
+    font-size: 18px;
+  }
+  .r36s-step-text {
+    font-size: 15.5px;
+  }
+  .r36s-item {
+    font-size: 16px;
+  }
+  .r36s-content-box {
+    padding: 10px 14px;
+  }
+}
+
+@keyframes glowText {
+  0% { text-shadow: 0 0 6px rgba(255, 110, 196, 0.2); }
+  100% { text-shadow: 0 0 18px rgba(255, 110, 196, 0.4); }
+}
+
+  .body {
+  background : linear-gradient(to bottom, #000000, #10001f);
+  }
+
+.r36s-step::after {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: -30%;
+  width: 160%;
+  height: 160%;
+  background: radial-gradient(circle, rgba(255, 110, 196, 0.1), transparent 60%);
+  z-index: 0;
+}
+  
+</style>
+
+
+
+<div class="r36s-section2">
+  <div class="r36s-container">
+    <div class="r36s-box neon-box">
+      <h2 class="r36s-title gradient-title">Contenu dans la console Retro Gaming</h2>
+<div class="r36s-grid">
+  <div class="r36s-item">
+    <div class="r36s-icon-box color-yellow">🎮</div>
+    <div class="r36s-content-box">
+      <strong>Console</strong>Plusieurs coloris disponible
+    </div>
+  </div>
+
+  <div class="r36s-item">
+    <div class="r36s-icon-box color-green">🔋</div>
+    <div class="r36s-content-box">
+      <strong>Batterie</strong>Rechargeable pour des heures de fun
+    </div>
+  </div>
+
+  <div class="r36s-item">
+    <div class="r36s-icon-box color-blue">🔌</div>
+    <div class="r36s-content-box">
+      <strong>Câble USB-C</strong>Adaptateur secteur
+    </div>
+  </div>
+
+  <div class="r36s-item">
+    <div class="r36s-icon-box color-purple">💾</div>
+    <div class="r36s-content-box">
+      <strong>Carte SD</strong>+15 000 jeux inclus
+    </div>
+  </div>
+
+  <div class="r36s-item">
+    <div class="r36s-icon-box color-orange">⚙️</div>
+    <div class="r36s-content-box">
+      <strong>Manuel</strong>D’utilisation multilingue
+    </div>
+  </div>
+</div>
+
+    </div>
+
+
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "Contenu + Étapes R36S",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "step1_image",
+      "label": "Image étape 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "step2_image",
+      "label": "Image étape 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "step3_image",
+      "label": "Image étape 3"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contenu + Étapes R36S",
+      "category": "Produits"
+    }
+  ]
+}
+{% endschema %}

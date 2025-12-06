@@ -1,0 +1,727 @@
+<section class="carousel-banner" style="background-color: {{ section.settings.background_color }};">
+  {% if section.settings.banner_title != blank or section.settings.banner_subtitle != blank %}
+  <div class="carousel-header">
+    {% if section.settings.banner_title != blank %}
+      <h2 class="banner-title">{{ section.settings.banner_title }}</h2>
+    {% endif %}
+    {% if section.settings.banner_subtitle != blank %}
+      <p class="banner-subtitle">{{ section.settings.banner_subtitle }}</p>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="carousel">
+    <div class="list">
+      {% for block in section.blocks %}
+        {% assign product = all_products[block.settings.product] %}
+        <div class="item">
+          {% if block.settings.product_image != blank %}
+            <img src="{{ block.settings.product_image | img_url: '600x600' }}" alt="">
+          {% elsif product.featured_image %}
+            <img src="{{ product.featured_image | img_url: '600x600' }}" alt="{{ product.title }}">
+          {% endif %}
+
+          <div class="introduce">
+            <div class="title">{{ block.settings.intro_title | default: product.title }}</div>
+            <div class="topic">{{ block.settings.intro_topic | default: product.vendor }}</div>
+            <div class="des">{{ block.settings.intro_desc | default: product.description | truncate: 150 }}</div>
+            <button class="seeMore">VOIR PLUS ↗</button>
+          </div>
+
+          <div class="detail">
+            <div class="title">{{ product.title }}</div>
+            <div class="des">{{ product.description | truncate: 200 }}</div>
+            <div class="price">{{ product.price | money }}</div>
+            <div class="checkout">
+              {% if product != blank %}
+                <form method="post" action="/cart/add">
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  <button type="submit" style="background-color: {{ section.settings.button_color }};">AJOUTER AU PANIER</button>
+                </form>
+                <a href="{{ product.url }}"><button style="border-color: {{ section.settings.button_color }}; color: {{ section.settings.button_color }};">VOIR PRODUIT</button></a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="arrows">
+      <button id="prev" style="border-color: {{ section.settings.button_color }}; color: {{ section.settings.button_color }};"><</button>
+      <button id="next" style="border-color: {{ section.settings.button_color }}; color: {{ section.settings.button_color }};">></button>
+      <button id="back" style="border-color: {{ section.settings.button_color }}; color: {{ section.settings.button_color }};">Retour ↗</button>
+    </div>
+  </div>
+</section>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+.carousel-banner {
+  font-family: 'Poppins', sans-serif;
+  padding: 2rem 0;
+  overflow: hidden;
+}
+
+.carousel-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
+.carousel-header .banner-title {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.carousel-header .banner-subtitle {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: #666;
+  margin: 0;
+}
+
+:root {
+  --item1-transform: translateX(-100%) translateY(-5%) scale(1.5);
+  --item1-filter: blur(30px);
+  --item1-zIndex: 11;
+  --item1-opacity: 0;
+
+  --item2-transform: translateX(0);
+  --item2-filter: blur(0px);
+  --item2-zIndex: 10;
+  --item2-opacity: 1;
+
+  --item3-transform: translate(50%, 10%) scale(0.8);
+  --item3-filter: blur(10px);
+  --item3-zIndex: 9;
+  --item3-opacity: 1;
+
+  --item4-transform: translate(90%, 20%) scale(0.5);
+  --item4-filter: blur(30px);
+  --item4-zIndex: 8;
+  --item4-opacity: 1;
+  
+  --item5-transform: translate(120%, 30%) scale(0.3);
+  --item5-filter: blur(40px);
+  --item5-zIndex: 7;
+  --item5-opacity: 0;
+}
+
+.carousel {
+  position: relative;
+  height: clamp(500px, 60vh, 650px);
+  overflow: hidden;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.carousel .list {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.carousel .list .item {
+  position: absolute;
+  left: 0;
+  width: 70%;
+  height: 100%;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+}
+
+.carousel .list .item:nth-child(n + 6) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.carousel .list .item:nth-child(1) {
+  transform: var(--item1-transform);
+  filter: var(--item1-filter);
+  z-index: var(--item1-zIndex);
+  opacity: var(--item1-opacity);
+  pointer-events: none;
+}
+
+.carousel .list .item:nth-child(2) {
+  transform: var(--item2-transform);
+  filter: var(--item2-filter);
+  z-index: var(--item2-zIndex);
+  opacity: var(--item2-opacity);
+}
+
+.carousel .list .item:nth-child(3) {
+  transform: var(--item3-transform);
+  filter: var(--item3-filter);
+  z-index: var(--item3-zIndex);
+  opacity: var(--item3-opacity);
+}
+
+.carousel .list .item:nth-child(4) {
+  transform: var(--item4-transform);
+  filter: var(--item4-filter);
+  z-index: var(--item4-zIndex);
+  opacity: var(--item4-opacity);
+}
+
+.carousel .list .item:nth-child(5) {
+  transform: var(--item5-transform);
+  filter: var(--item5-filter);
+  z-index: var(--item5-zIndex);
+  opacity: var(--item5-opacity);
+  pointer-events: none;
+}
+
+.carousel .list .item img {
+  width: 50%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 15px;
+  transition: all 1.5s ease;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.carousel .list .item .introduce {
+  opacity: 0;
+  pointer-events: none;
+  width: 400px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  padding-right: 2rem;
+}
+
+.carousel .list .item:nth-child(2) .introduce {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.5s ease;
+}
+
+.carousel .list .item .introduce .title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.carousel .list .item .introduce .topic {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+.carousel .list .item .introduce .des {
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.carousel .list .item .introduce .seeMore {
+  font-family: 'Poppins', sans-serif;
+  padding: 0.8rem 0;
+  border: none;
+  border-bottom: 2px solid #333;
+  background-color: transparent;
+  font-weight: 600;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel .list .item .introduce .seeMore:hover {
+  background-color: rgba(0,0,0,0.05);
+  padding: 0.8rem 1rem;
+}
+
+/* Detail View */
+.carousel .list .item .detail {
+  opacity: 0;
+  pointer-events: none;
+  width: 100%;
+  padding: 2rem;
+  transition: all 0.5s ease;
+}
+
+.carousel.showDetail .list .item:nth-child(3),
+.carousel.showDetail .list .item:nth-child(4) {
+  transform: translateX(150%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.carousel.showDetail .list .item:nth-child(2) {
+  width: 90%;
+  transform: translateX(0);
+}
+
+.carousel.showDetail .list .item:nth-child(2) .introduce {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.carousel.showDetail .list .item:nth-child(2) img {
+  width: clamp(250px, 40%, 400px);
+  right: 50%;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail {
+  opacity: 1;
+  pointer-events: auto;
+  width: 50%;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: right;
+  padding: 2rem;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .des {
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .price {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .checkout {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .checkout button {
+  font-family: 'Poppins', sans-serif;
+  padding: 0.8rem 1.5rem;
+  border: 2px solid #333;
+  border-radius: 5px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .checkout button[type="submit"] {
+  background-color: #333;
+  color: white;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .checkout button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .checkout a button {
+  background-color: transparent;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .checkout a button:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+/* Animations */
+.carousel .list .item:nth-child(2) .introduce .title,
+.carousel .list .item:nth-child(2) .introduce .topic,
+.carousel .list .item:nth-child(2) .introduce .des,
+.carousel .list .item:nth-child(2) .introduce .seeMore {
+  opacity: 0;
+  animation: showContent 0.6s 0.5s ease-out forwards;
+}
+
+.carousel .list .item:nth-child(2) .introduce .topic {
+  animation-delay: 0.7s;
+}
+
+.carousel .list .item:nth-child(2) .introduce .des {
+  animation-delay: 0.9s;
+}
+
+.carousel .list .item:nth-child(2) .introduce .seeMore {
+  animation-delay: 1.1s;
+}
+
+@keyframes showContent {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+    filter: blur(10px);
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .title,
+.carousel.showDetail .list .item:nth-child(2) .detail .des,
+.carousel.showDetail .list .item:nth-child(2) .detail .price,
+.carousel.showDetail .list .item:nth-child(2) .detail .checkout {
+  opacity: 0;
+  animation: showContent 0.6s 0.5s ease-out forwards;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .des {
+  animation-delay: 0.7s;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .price {
+  animation-delay: 0.9s;
+}
+
+.carousel.showDetail .list .item:nth-child(2) .detail .checkout {
+  animation-delay: 1.1s;
+}
+
+/* Navigation */
+.arrows {
+  position: absolute;
+  bottom: 2rem;
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.arrows button {
+  pointer-events: auto;
+}
+
+#prev,
+#next {
+  width: clamp(40px, 8vw, 50px);
+  height: clamp(40px, 8vw, 50px);
+  border-radius: 50%;
+  font-family: 'Poppins', sans-serif;
+  border: 2px solid #333;
+  background-color: rgba(255,255,255,0.9);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+#prev:hover,
+#next:hover {
+  background-color: #333;
+  color: white;
+  transform: scale(1.1);
+}
+
+#back {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border: none;
+  border-bottom: 2px solid #333;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  background-color: transparent;
+  padding: 0.8rem 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+}
+
+#back:hover {
+  background-color: rgba(0,0,0,0.05);
+  padding: 0.8rem 1rem;
+}
+
+.carousel.showDetail #back {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.carousel.showDetail #prev,
+.carousel.showDetail #next {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .carousel-banner {
+    padding: 1rem 0;
+  }
+  
+  .carousel {
+    height: clamp(450px, 70vh, 550px);
+  }
+  
+  .carousel .list .item {
+    width: 85vw;
+    flex-direction: column;
+    text-align: center;
+    display: flex;
+    align-items: center;
+  }
+  
+  .carousel .list .item img {
+    width: clamp(200px, 60vw, 280px);
+    margin: 0 auto 1rem auto;
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+  }
+  
+  .carousel .list .item .introduce {
+    width: 100%;
+    padding: 0 1rem;
+    position: relative;
+    top: auto;
+    transform: none;
+    left: auto;
+  }
+  
+  .carousel.showDetail .list .item:nth-child(2) {
+    flex-direction: row;
+    align-items: center;
+    width: 95%;
+  }
+  
+  .carousel.showDetail .list .item:nth-child(2) img {
+    width: clamp(150px, 35vw, 200px);
+    margin: 0;
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+  }
+  
+  .carousel.showDetail .list .item:nth-child(2) .detail {
+    width: clamp(200px, 60vw, 300px);
+    padding: 1rem;
+    text-align: left;
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+  }
+  
+  .carousel.showDetail .list .item:nth-child(2) .detail .checkout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .arrows {
+    bottom: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .carousel .list .item .introduce .topic {
+    font-size: 2.5rem;
+  }
+  
+  .carousel.showDetail .list .item:nth-child(2) {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .carousel.showDetail .list .item:nth-child(2) .detail {
+    width: 100%;
+    text-align: center;
+    margin: 0;
+  }
+}
+
+/* Animation transitions */
+.carousel.next .item:nth-child(1) { animation: transformFromPosition2 0.5s ease-in-out forwards; }
+.carousel.next .item:nth-child(2) { animation: transformFromPosition3 0.7s ease-in-out forwards; }
+.carousel.next .item:nth-child(3) { animation: transformFromPosition4 0.9s ease-in-out forwards; }
+.carousel.next .item:nth-child(4) { animation: transformFromPosition5 1.1s ease-in-out forwards; }
+
+.carousel.prev .list .item:nth-child(5) { animation: transformFromPosition4 0.5s ease-in-out forwards; }
+.carousel.prev .list .item:nth-child(4) { animation: transformFromPosition3 0.7s ease-in-out forwards; }
+.carousel.prev .list .item:nth-child(3) { animation: transformFromPosition2 0.9s ease-in-out forwards; }
+.carousel.prev .list .item:nth-child(2) { animation: transformFromPosition1 1.1s ease-in-out forwards; }
+
+@keyframes transformFromPosition1 { from { transform: var(--item1-transform); filter: var(--item1-filter); opacity: var(--item1-opacity); } }
+@keyframes transformFromPosition2 { from { transform: var(--item2-transform); filter: var(--item2-filter); opacity: var(--item2-opacity); } }
+@keyframes transformFromPosition3 { from { transform: var(--item3-transform); filter: var(--item3-filter); opacity: var(--item3-opacity); } }
+@keyframes transformFromPosition4 { from { transform: var(--item4-transform); filter: var(--item4-filter); opacity: var(--item4-opacity); } }
+@keyframes transformFromPosition5 { from { transform: var(--item5-transform); filter: var(--item5-filter); opacity: var(--item5-opacity); } }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const nextButton = document.getElementById('next');
+  const prevButton = document.getElementById('prev');
+  const carousel = document.querySelector('.carousel');
+  const listHTML = document.querySelector('.carousel .list');
+  const seeMoreButtons = document.querySelectorAll('.seeMore');
+  const backButton = document.getElementById('back');
+
+  let unAcceptClick;
+
+  const showSlider = (type) => {
+    nextButton.style.pointerEvents = 'none';
+    prevButton.style.pointerEvents = 'none';
+
+    carousel.classList.remove('next', 'prev');
+    const items = document.querySelectorAll('.carousel .list .item');
+    
+    if(type === 'next') {
+      listHTML.appendChild(items[0]);
+      carousel.classList.add('next');
+    } else {
+      listHTML.prepend(items[items.length - 1]);
+      carousel.classList.add('prev');
+    }
+    
+    clearTimeout(unAcceptClick);
+    unAcceptClick = setTimeout(() => {
+      nextButton.style.pointerEvents = 'auto';
+      prevButton.style.pointerEvents = 'auto';
+    }, 1500);
+  };
+
+  if (nextButton) {
+    nextButton.addEventListener('click', () => showSlider('next'));
+  }
+  
+  if (prevButton) {
+    prevButton.addEventListener('click', () => showSlider('prev'));
+  }
+
+  seeMoreButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      carousel.classList.remove('next', 'prev');
+      carousel.classList.add('showDetail');
+    });
+  });
+
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      carousel.classList.remove('showDetail');
+    });
+  }
+
+  // Touch support for mobile
+  let startX = 0;
+  let endX = 0;
+
+  carousel.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+  });
+
+  carousel.addEventListener('touchend', (e) => {
+    endX = e.changedTouches[0].clientX;
+    const threshold = 50;
+    
+    if (startX - endX > threshold) {
+      showSlider('next');
+    } else if (endX - startX > threshold) {
+      showSlider('prev');
+    }
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Carrousel Produits",
+  "class": "section-carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "banner_title",
+      "label": "Titre principal",
+      "default": "Nos Produits"
+    },
+    {
+      "type": "text",
+      "id": "banner_subtitle",
+      "label": "Sous-titre",
+      "default": "Découvrez notre sélection"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Couleur des boutons",
+      "default": "#333333"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_slide",
+      "name": "Slide produit",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Produit Shopify"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "Image personnalisée (optionnel)"
+        },
+        {
+          "type": "text",
+          "id": "intro_title",
+          "label": "Titre personnalisé (optionnel)"
+        },
+        {
+          "type": "text",
+          "id": "intro_topic",
+          "label": "Topic personnalisé (optionnel)"
+        },
+        {
+          "type": "textarea",
+          "id": "intro_desc",
+          "label": "Description personnalisée (optionnel)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Carrousel Produits",
+      "category": "Produits"
+    }
+  ],
+  "max_blocks": 10
+}
+{% endschema %}

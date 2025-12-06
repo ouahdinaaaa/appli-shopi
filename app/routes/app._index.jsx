@@ -20,14 +20,6 @@ let categoriesCache = null;
 let cacheTime = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Catégories statiques pour le carrousel (optionnel)
-const categories = [
-  { name: "Bannières", slug: "bannieres", image: "/images/banner.jpg" },
-  { name: "Sliders", slug: "sliders", image: "/images/slider.jpg" },
-  { name: "Before/After", slug: "before-after", image: "/images/beforeafter.jpg" },
-  { name: "Comparatifs", slug: "comparatifs", image: "/images/comparatif.jpg" },
-];
-
 // 🔍 Barre de recherche et filtres DYNAMIQUES
 function SearchAndFilters({ onSearch, onFilter, selectedCategories, availableCategories = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -279,6 +271,34 @@ function DemoModal({ section, isOpen, onClose }) {
     return res;
   };
 
+  // ✅ NOUVELLE FONCTION: Extraction universelle des arrays par défaut
+  const extractArray = (varName, liquidCode) => {
+    // Pattern 1: assign VAR = "val1,val2,val3" | split: ","
+    const splitRegex = new RegExp(`\\{%-?\\s*assign\\s+${varName}\\s*=\\s*["']([^"']+)["']\\s*\\|\\s*split:\\s*["']([^"']+)["']\\s*-?%\\}`, 'i');
+    const splitMatch = liquidCode.match(splitRegex);
+    if (splitMatch && splitMatch[1]) {
+      const sep = splitMatch[2] || ',';
+      return splitMatch[1].split(sep).map(s => s.trim()).filter(Boolean);
+    }
+
+    // Pattern 2: default_VAR_1, default_VAR_2, default_VAR_3... (assigns individuels)
+    const individualRegex = new RegExp(`\\{%-?\\s*assign\\s+${varName}_(\\d+)\\s*=\\s*["']([^"']+)["']\\s*-?%\\}`, 'gi');
+    const matches = [...liquidCode.matchAll(individualRegex)];
+    if (matches.length > 0) {
+      const indexed = {};
+      matches.forEach(m => {
+        const idx = parseInt(m[1], 10);
+        indexed[idx] = m[2];
+      });
+      // Retourner dans l'ordre des index
+      return Object.keys(indexed)
+        .sort((a, b) => parseInt(a) - parseInt(b))
+        .map(k => indexed[k]);
+    }
+
+    return [];
+  };
+
   // Conversion Liquid → HTML
   const liquidToHtml = (liquidCode) => {
     const { settings, blocks, presetCount } = parseSchema(liquidCode);
@@ -287,34 +307,61 @@ function DemoModal({ section, isOpen, onClose }) {
 
     let html = liquidCode;
 
-    // 1) Extraire les arrays par défaut
-    const defaultImagesMatch = liquidCode.match(/\{%-?\s*assign\s+default_images\s*=\s*["']([^"']+)["']\s*\|\s*split:\s*["']([^"']+)["']\s*-?%\}/);
-    let defaultImages = [];
-    if (defaultImagesMatch && defaultImagesMatch[1]) {
-      const sep = defaultImagesMatch[2] || ',';
-      defaultImages = defaultImagesMatch[1].split(sep).map(s => s.trim());
-    }
+    // ✅ EXTRACTION UNIVERSELLE de tous les arrays possibles
+    const defaultImages = extractArray('default_images', liquidCode);
+    const defaultTitles = extractArray('default_titles', liquidCode);
+    const defaultPrices = extractArray('default_prices', liquidCode);
+    const defaultCompare = extractArray('default_compare', liquidCode);
+    const defaultBeforeImages = extractArray('default_before_images', liquidCode);
+    const defaultAfterImages = extractArray('default_after_images', liquidCode);
 
-    const beforeImagesMatch = liquidCode.match(/\{%-?\s*assign\s+default_before_images\s*=\s*["']([^"']+)["']\s*\|\s*split:\s*["']([^"']+)["']\s*-?%\}/);
-    let defaultBeforeImages = [];
-    if (beforeImagesMatch && beforeImagesMatch[1]) {
-      const sep = beforeImagesMatch[2] || ',';
-      defaultBeforeImages = beforeImagesMatch[1].split(sep).map(s => s.trim());
-    }
+    // ✅ NOUVEAU: Extraction de default_image (variable simple, pas array)
+    const defaultImageMatch = liquidCode.match(/\{%-?\s*assign\s+default_image\s*=\s*["']([^"']+)["']\s*-?%\}/);
+    const defaultImage = defaultImageMatch ? defaultImageMatch[1] : '';
 
-    const afterImagesMatch = liquidCode.match(/\{%-?\s*assign\s+default_after_images\s*=\s*["']([^"']+)["']\s*\|\s*split:\s*["']([^"']+)["']\s*-?%\}/);
-    let defaultAfterImages = [];
-    if (afterImagesMatch && afterImagesMatch[1]) {
-      const sep = afterImagesMatch[2] || ',';
-      defaultAfterImages = afterImagesMatch[1].split(sep).map(s => s.trim());
-    }
+    console.log('📊 Arrays détectés:', {
+      images: defaultImages.length,
+      titles: defaultTitles.length,
+      prices: defaultPrices.length,
+      compare: defaultCompare.length,
+      before: defaultBeforeImages.length,
+      after: defaultAfterImages.length,
+      defaultImage: defaultImage ? 'oui' : 'non'
+    });
 
-    // 2) Nettoyage: retirer schema, assigns et commentaires Liquid
+    // 2) Nettoyage: retirer les assigns GLOBAUX détectés (mais pas ceux dans la boucle)
     html = html.replace(/\{%\s*schema\s*%\}[\s\S]*?\{%\s*endschema\s*%\}/g, '');
-    html = html.replace(/\{%-?\s*assign\s+default_images.*?%}/g, '');
-    html = html.replace(/\{%-?\s*assign\s+default_before_images.*?%}/g, '');
-    html = html.replace(/\{%-?\s*assign\s+default_after_images.*?%}/g, '');
-    // NEW: supprimer entièrement les commentaires Liquid (évite le texte "Image vignette...")
+    // ✅ Ne supprimer que les assigns AVANT la boucle for (en début de fichier)
+    const forStartMatch = html.match(/\{%-?\s*for\s+block\s+in\s+section\.blocks/);
+    if (forStartMatch) {
+      const beforeLoop = html.substring(0, forStartMatch.index);
+      const afterLoop = html.substring(forStartMatch.index);
+      
+      const cleanedBefore = beforeLoop
+        .replace(/\{%-?\s*assign\s+default_images.*?%}/g, '')
+        .replace(/\{%-?\s*assign\s+default_titles.*?%}/g, '')
+        .replace(/\{%-?\s*assign\s+default_prices.*?%}/g, '')
+        .replace(/\{%-?\s*assign\s+default_product_titles.*?%}/g, '')
+        .replace(/\{%-?\s*assign\s+default_product_prices.*?%}/g, '')
+        .replace(/\{%-?\s*assign\s+default_compare.*?%}/g, '')
+        .replace(/\{%-?\s*assign\s+default_before_images.*?%}/g, '')
+        .replace(/\{%-?\s*assign\s+default_after_images.*?%}/g, '')
+        .replace(/\{%-?\s*assign\s+default_before_\d+.*?%}/g, '')
+        .replace(/\{%-?\s*assign\s+default_after_\d+.*?%}/g, '');
+      
+      html = cleanedBefore + afterLoop;
+    } else {
+      // Pas de boucle, on nettoie tout comme avant
+      html = html.replace(/\{%-?\s*assign\s+default_images.*?%}/g, '');
+      html = html.replace(/\{%-?\s*assign\s+default_titles.*?%}/g, '');
+      html = html.replace(/\{%-?\s*assign\s+default_prices.*?%}/g, '');
+      html = html.replace(/\{%-?\s*assign\s+default_compare.*?%}/g, '');
+      html = html.replace(/\{%-?\s*assign\s+default_before_images.*?%}/g, '');
+      html = html.replace(/\{%-?\s*assign\s+default_after_images.*?%}/g, '');
+      html = html.replace(/\{%-?\s*assign\s+default_before_\d+.*?%}/g, '');
+      html = html.replace(/\{%-?\s*assign\s+default_after_\d+.*?%}/g, '');
+    }
+    
     html = html.replace(/\{%-?\s*comment\s*-?%\}[\s\S]*?\{%-?\s*endcomment\s*-?%\}/g, '');
     html = html.replace(/\{%\s*comment\s*%\}[\s\S]*?\{%\s*endcomment\s*%\}/g, '');
 
@@ -412,22 +459,21 @@ function DemoModal({ section, isOpen, onClose }) {
           forloop: { index: index + 1, index0: index }
         };
 
-        // Local vars pour ce block
         const localVars = {};
 
-        // Helper lecture ref (corrige ReferenceError: localVars is not defined)
         const readRef = (path) => {
           if (Object.prototype.hasOwnProperty.call(localVars, path)) return localVars[path];
           return getValueFromPath(path, ctx);
         };
 
-        // ✅ NEW: supporter "case idx" (card-diago) en mappant idx = forloop.index
+        // ✅ Support "case idx" et "assign index = forloop.index0"
         current = current.replace(/\{%-?\s*assign\s+idx\s*=\s*forloop\.index\s*-?%\}/g, '');
-        // Maintenant on traite le case comme si c'était "case forloop.index"
+        current = current.replace(/\{%-?\s*assign\s+index\s*=\s*forloop\.index0\s*-?%\}/g, '');
+        localVars.index = String(index);
+        localVars.idx = String(index + 1);
         
-        // case/when (remplace le when sélectionné par son contenu)
+        // case/when
         current = current.replace(/\{%-?\s*case\s+(forloop\.index|idx|[\w.]+)\s*-?%\}([\s\S]*?)\{%-?\s*endcase\s*-?%\}/g, (match, caseExpr, caseBody) => {
-          // Si c'est "idx", on l'évalue comme forloop.index
           const caseKey = (caseExpr === 'idx') ? 'forloop.index' : caseExpr;
           const caseVal = getValueFromPath(caseKey, ctx);
           
@@ -453,6 +499,7 @@ function DemoModal({ section, isOpen, onClose }) {
         current = current.replace(/\{%-?\s*assign\s+([\w-]+)\s*=\s*(.*?)\s*-?%\}/g, (m, name, expr) => {
           const e = expr.trim();
 
+          // Modulo pour cycler dans les arrays
           if (/forloop\.index0\s*\|\s*modulo:\s*default_images\.size/.test(e)) {
             localVars[name] = String(defaultImages.length ? (index % defaultImages.length) : 0);
             return '';
@@ -469,8 +516,14 @@ function DemoModal({ section, isOpen, onClose }) {
           const mm = e.match(/forloop\.index0\s*\|\s*modulo:\s*(\d+)/);
           if (mm) { localVars[name] = String(index % parseInt(mm[1], 10)); return ''; }
 
+          // Index direct dans les arrays
           if (/\bdefault_images\[\s*forloop\.index0\s*\]/.test(e)) {
             localVars[name] = defaultImages[index % defaultImages.length] || '';
+            return '';
+          }
+          if (/\bdefault_images\[\s*index\s*\]/.test(e)) {
+            const i = parseInt(localVars.index ?? index, 10) || 0;
+            localVars[name] = defaultImages[i % defaultImages.length] || '';
             return '';
           }
           if (/\bdefault_before_images\[\s*image_index\s*\]/.test(e)) {
@@ -491,12 +544,43 @@ function DemoModal({ section, isOpen, onClose }) {
             localVars[name] = defaultAfterImages[index % defaultAfterImages.length] || '';
             return '';
           }
-
           if (/\bdefault_images\[\s*image_index\s*\]/.test(e)) {
             const i = parseInt(localVars.image_index ?? index, 10) || 0;
             localVars[name] = defaultImages[i % defaultImages.length] || '';
             return '';
           }
+
+          // ✅ STREET-WEAR: Support assign default_image = default_images[image_index]
+          if (name === 'default_image' && /\bdefault_images\[/.test(e)) {
+            const imgIdxMatch = e.match(/default_images\[\s*(\w+)\s*\]/);
+            if (imgIdxMatch) {
+              const idxVar = imgIdxMatch[1];
+              const i = parseInt(localVars[idxVar] ?? index, 10) || 0;
+              localVars[name] = defaultImages[i % defaultImages.length] || '';
+              return '';
+            }
+          }
+
+          // ✅ NOUVEAU: Support {{ default_titles[index] }}, {{ default_prices[index] }}, etc.
+          if (/\bdefault_titles\[\s*(\w+)\s*\]/.test(e)) {
+            const idxMatch = e.match(/default_titles\[\s*(\w+)\s*\]/);
+            const idx = idxMatch[1] === 'forloop.index0' ? index : parseInt(localVars[idxMatch[1]] ?? index, 10);
+            localVars[name] = defaultTitles[idx % defaultTitles.length] || '';
+            return '';
+          }
+          if (/\bdefault_prices\[\s*(\w+)\s*\]/.test(e)) {
+            const idxMatch = e.match(/default_prices\[\s*(\w+)\s*\]/);
+            const idx = idxMatch[1] === 'forloop.index0' ? index : parseInt(localVars[idxMatch[1]] ?? index, 10);
+            localVars[name] = defaultPrices[idx % defaultPrices.length] || '';
+            return '';
+          }
+          if (/\bdefault_compare\[\s*(\w+)\s*\]/.test(e)) {
+            const idxMatch = e.match(/default_compare\[\s*(\w+)\s*\]/);
+            const idx = idxMatch[1] === 'forloop.index0' ? index : parseInt(localVars[idxMatch[1]] ?? index, 10);
+            localVars[name] = defaultCompare[idx % defaultCompare.length] || '';
+            return '';
+          }
+
           const dm = e.match(/default_images\[(\d+)\]/);
           if (dm) {
             localVars[name] = defaultImages[parseInt(dm[1], 10)] || '';
@@ -508,6 +592,40 @@ function DemoModal({ section, isOpen, onClose }) {
 
           const q = e.match(/^['"]([^'"]+)['"]$/);
           if (q) { localVars[name] = q[1]; return ''; }
+
+          // ✅ HOTSPOT: Nombres littéraux (assign auto_left = 28)
+          const numLiteral = e.match(/^(\d+)$/);
+          if (numLiteral) {
+            localVars[name] = numLiteral[1];
+            return '';
+          }
+
+          // ✅ HOTSPOT FIX: Gérer le filtre | default: variable
+          const defaultPipe = e.match(/^([\w.]+)\s*\|\s*default:\s*(\w+)$/);
+          if (defaultPipe) {
+            const mainVar = defaultPipe[1];
+            const fallbackVar = defaultPipe[2];
+            
+            // Essayer d'abord la variable principale depuis block.settings
+            const mainVal = readRef(mainVar);
+            
+            // ✅ FIX: Ne pas utiliser le fallback si la valeur principale est définie (même si c'est 50)
+            // On utilise le fallback SEULEMENT si la valeur est undefined/null/vide
+            if (mainVal !== undefined && mainVal !== null && String(mainVal).trim() !== '') {
+              localVars[name] = String(mainVal);
+              return '';
+            }
+            
+            // Sinon utiliser le fallback
+            if (Object.prototype.hasOwnProperty.call(localVars, fallbackVar)) {
+              localVars[name] = localVars[fallbackVar];
+              return '';
+            }
+            
+            // Si le fallback n'existe pas non plus, vide
+            localVars[name] = '';
+            return '';
+          }
 
           const varRef = e.split('|')[0].trim();
           const refLocal = readRef(varRef);
@@ -536,7 +654,7 @@ function DemoModal({ section, isOpen, onClose }) {
           localVars.default_image = caseDefaults.image[slideNo] || '';
         }
 
-        // NEW: Fallbacks produits UNIQUEMENT si c’est un layout product-grid détectable dans le fichier
+        // Fallbacks produits (inchangé)
         const isProductSection = /featured-products-|class="product-card"|id="products-scroll-/.test(liquidCode);
         if (isProductSection) {
           const idx = defaultBeforeImages.length ? (index % defaultBeforeImages.length) : 0;
@@ -552,23 +670,76 @@ function DemoModal({ section, isOpen, onClose }) {
           }
         }
 
-        // If/elsif/else
+        // If/elsif/else (inchangé)
         current = resolveIfChains(current, ctx, localVars);
 
-        // default_images indexés
+        // ✅ NOUVEAU: Remplacer {{ default_titles[index] }}, {{ default_prices[index] }}, etc. DIRECTEMENT
+        current = current.replace(/\{\{\s*default_titles\[\s*(\w+)\s*\]\s*(?:\|\s*strip)?\s*\}\}/g, (m, idxVar) => {
+          const idx = idxVar === 'index' ? ctx.forloop.index0 : 
+                      idxVar === 'forloop.index0' ? ctx.forloop.index0 :
+                      parseInt(localVars[idxVar] ?? ctx.forloop.index0, 10);
+          return defaultTitles[idx % defaultTitles.length] || '';
+        });
+
+        current = current.replace(/\{\{\s*default_prices\[\s*(\w+)\s*\]\s*(?:\|\s*append:\s*["']([^"']+)["'])?\s*\}\}/g, (m, idxVar, suffix) => {
+          const idx = idxVar === 'index' ? ctx.forloop.index0 : 
+                      idxVar === 'forloop.index0' ? ctx.forloop.index0 :
+                      parseInt(localVars[idxVar] ?? ctx.forloop.index0, 10);
+          const price = defaultPrices[idx % defaultPrices.length] || '';
+          return suffix ? price + suffix : price;
+        });
+
+        current = current.replace(/\{\{\s*default_compare\[\s*(\w+)\s*\]\s*(?:\|\s*append:\s*["']([^"']+)["'])?\s*\}\}/g, (m, idxVar, suffix) => {
+          const idx = idxVar === 'index' ? ctx.forloop.index0 : 
+                      idxVar === 'forloop.index0' ? ctx.forloop.index0 :
+                      parseInt(localVars[idxVar] ?? ctx.forloop.index0, 10);
+          const compare = defaultCompare[idx % defaultCompare.length] || '';
+          return suffix ? compare + suffix : compare;
+        });
+
+        // default_images indexés (inchangé)
         if (defaultImages.length > 0) {
           const imgUrl = defaultImages[index % defaultImages.length] || '';
           current = current
             .replace(/\{\{\s*default_images\[\s*forloop\.index0\s*\]\s*\}\}/g, imgUrl)
             .replace(/\{\{\s*default_images\[\s*forloop\.index\s*\]\s*\}\}/g, defaultImages[(index + 1) % defaultImages.length] || '')
-            .replace(/\{\{\s*default_images\[\s*image_index\s*\]\s*\}\}/g, imgUrl);
+            .replace(/\{\{\s*default_images\[\s*image_index\s*\]\s*\}\}/g, imgUrl)
+            .replace(/\{\{\s*default_images\[\s*index\s*\]\s*(?:\|\s*strip)?\s*\}\}/g, imgUrl);
         }
 
-        // Variables dans le bloc (incluant thumb_src/hero_src)
+        // Variables dans le bloc
         current = current.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (m, expr) => {
+          // ✅ HOTSPOT: Gérer le filtre | default: (avec valeur numérique ou variable)
+          const defaultMatch = expr.match(/^([\w.]+)\s*\|\s*default:\s*(.+)$/);
+          if (defaultMatch) {
+            const mainVarPath = defaultMatch[1].trim();
+            const fallbackExpr = defaultMatch[2].trim();
+            
+            // Essayer d'abord la variable principale
+            let mainVal;
+            if (Object.prototype.hasOwnProperty.call(localVars, mainVarPath)) {
+              mainVal = localVars[mainVarPath];
+            } else if (mainVarPath.startsWith('block.') || mainVarPath.startsWith('section.')) {
+              mainVal = getValueFromPath(mainVarPath, ctx);
+            }
+            
+            if (mainVal !== undefined && mainVal !== null && String(mainVal) !== '') {
+              return String(mainVal);
+            }
+            
+            // Sinon utiliser le fallback
+            // Le fallback peut être un nombre (50) ou une variable (auto_left)
+            if (/^\d+$/.test(fallbackExpr)) {
+              return fallbackExpr;
+            } else if (Object.prototype.hasOwnProperty.call(localVars, fallbackExpr)) {
+              return localVars[fallbackExpr];
+            } else {
+              return fallbackExpr; // Retourner tel quel si c'est autre chose
+            }
+          }
+          
           const varExpr = expr.split('|')[0].trim();
 
-          // NEW: hero_initial → after[0] puis before[0]
           if (varExpr === 'hero_initial') {
             return (defaultAfterImages[0] || defaultBeforeImages[0] || '');
           }
@@ -583,7 +754,6 @@ function DemoModal({ section, isOpen, onClose }) {
             return fallback;
           }
 
-          // ✅ NEW: Support forloop.index dans les variables (pour hotspot tooltips + classes dynamiques)
           if (varExpr === 'forloop.index') return String(ctx.forloop.index);
           if (varExpr === 'forloop.index0') return String(ctx.forloop.index0);
 
@@ -601,6 +771,96 @@ function DemoModal({ section, isOpen, onClose }) {
       html = html.replace(fullMatch, blocksHtml);
     }
 
+    // ✅ NOUVEAU: Gérer les boucles for i in (1..n) (pour street-wear.liquid et autres)
+    const rangeForRegex = /\{%-?\s*for\s+(\w+)\s+in\s+\((\d+)\.\.(\d+)\)\s*-?%\}([\s\S]*?)\{%-?\s*endfor\s*-?%\}/g;
+    html = html.replace(rangeForRegex, (fullMatch, loopVar, start, end, loopContent) => {
+      const startNum = parseInt(start, 10);
+      const endNum = parseInt(end, 10);
+      let rangeHtml = '';
+
+      for (let i = startNum; i <= endNum; i++) {
+        let current = loopContent;
+        const index = i - startNum; // index0 pour modulo
+        
+        const ctx = {
+          section: { settings },
+          block: { settings: {} },
+          forloop: { index: i, index0: index }
+        };
+        
+        const localVars = {};
+        
+        // Traiter les assigns dans cette boucle
+        current = current.replace(/\{%-?\s*assign\s+([\w-]+)\s*=\s*(.*?)\s*-?%\}/g, (m, name, expr) => {
+          const e = expr.trim();
+          
+          // Modulo pour cycler dans les arrays
+          if (/forloop\.index0\s*\|\s*modulo:\s*default_images\.size/.test(e)) {
+            localVars[name] = String(defaultImages.length ? (index % defaultImages.length) : 0);
+            return '';
+          }
+          if (/forloop\.index0\s*\|\s*modulo:\s*default_product_titles\.size/.test(e)) {
+            const defaultProductTitles = extractArray('default_product_titles', loopContent);
+            localVars[name] = String(defaultProductTitles.length ? (index % defaultProductTitles.length) : 0);
+            return '';
+          }
+          if (/forloop\.index0\s*\|\s*modulo:\s*default_product_prices\.size/.test(e)) {
+            const defaultProductPrices = extractArray('default_product_prices', loopContent);
+            localVars[name] = String(defaultProductPrices.length ? (index % defaultProductPrices.length) : 0);
+            return '';
+          }
+          
+          // Assign à partir d'un array indexé
+          if (name === 'default_image' && /\bdefault_images\[/.test(e)) {
+            const imgIdxMatch = e.match(/default_images\[\s*(\w+)\s*\]/);
+            if (imgIdxMatch) {
+              const idxVar = imgIdxMatch[1];
+              const i = parseInt(localVars[idxVar] ?? index, 10) || 0;
+              localVars[name] = defaultImages[i % defaultImages.length] || '';
+              return '';
+            }
+          }
+          
+          // Literals
+          const q = e.match(/^['"]([^'"]+)['"]$/);
+          if (q) { localVars[name] = q[1]; return ''; }
+          
+          return '';
+        });
+        
+        // Remplacer les variables
+        current = current.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (m, expr) => {
+          const varExpr = expr.split('|')[0].trim();
+          
+          if (Object.prototype.hasOwnProperty.call(localVars, varExpr)) return localVars[varExpr];
+          
+          // Arrays indexés avec les variables locales
+          const titleMatch = varExpr.match(/default_product_titles\[\s*(\w+)\s*\]/);
+          if (titleMatch) {
+            const defaultProductTitles = extractArray('default_product_titles', loopContent);
+            const idx = parseInt(localVars[titleMatch[1]] ?? index, 10);
+            return defaultProductTitles[idx % defaultProductTitles.length] || '';
+          }
+          
+          const priceMatch = varExpr.match(/default_product_prices\[\s*(\w+)\s*\]/);
+          if (priceMatch) {
+            const defaultProductPrices = extractArray('default_product_prices', loopContent);
+            const idx = parseInt(localVars[priceMatch[1]] ?? index, 10);
+            return defaultProductPrices[idx % defaultProductPrices.length] || '';
+          }
+          
+          if (varExpr === 'forloop.index') return String(i);
+          if (varExpr === 'forloop.index0') return String(index);
+          
+          return '';
+        });
+        
+        rangeHtml += current;
+      }
+      
+      return rangeHtml;
+    });
+
     // ✅ Remplacer hero_initial globalement à partir des arrays du fichier .liquid
     const heroFirst = (defaultAfterImages[0] || defaultBeforeImages[0] || '');
     if (heroFirst) {
@@ -617,6 +877,9 @@ function DemoModal({ section, isOpen, onClose }) {
 
       const dm = varExpr.match(/^default_images\[(\d+)\]$/);
       if (dm) return defaultImages[parseInt(dm[1], 10)] || '';
+
+      // ✅ NOUVEAU: Gérer {{ default_image }}
+      if (varExpr === 'default_image') return defaultImage || '';
 
       const v = getValueFromPath(varExpr, { section: { settings } });
       return (v !== undefined && v !== null) ? String(v) : '';
@@ -652,9 +915,9 @@ function DemoModal({ section, isOpen, onClose }) {
              
              /* ✅ Hotspots: activer les interactions */
              .hotspot-section { position: relative !important; width: 100% !important; overflow: visible !important; }
-             .hotspot-section .wrapper { position: relative !important; display: inline-block !important; width: 100% !important; max-width: 100% !important; }
+             .hotspot-section .wrapper { position: relative !important; display: block !important; width: 100% !important; max-width: 100% !important; margin: 0 auto !important; }
              .hotspot-section .hotspot-image { width: 100% !important; max-height: 70vh !important; object-fit: contain !important; display: block !important; margin: 0 auto !important; }
-             .hotspot-section .hotspots { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; pointer-events: auto !important; }
+             .hotspot-section .hotspots { position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100% !important; height: 100% !important; pointer-events: auto !important; }
              .hotspot-section .hotspot-item { position: absolute !important; transform: translate(-50%, -50%) !important; z-index: 1 !important; pointer-events: auto !important; }
              .hotspot-section .hotspot { width: 32px !important; height: 32px !important; border: 3px solid #fff !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; transition: transform .2s ease-out !important; position: relative !important; box-shadow: 0 2px 8px rgba(0,0,0,0.25)!important; }
              .hotspot-section .hotspot span { width: 10px !important; height: 10px !important; border-radius: 50% !important; display: block !important; }
@@ -677,12 +940,116 @@ function DemoModal({ section, isOpen, onClose }) {
       setTimeout(() => {
         try {
           const isHotspot = /hotspot-section/.test(processedHtml);
+          const parsed = parseSchema(section.liquidCode);
+          const blocks = Array.isArray(parsed?.blocks) ? parsed.blocks : [];
 
-          // 🔄 Toujours parser le schema
-            const { blocks } = parseSchema(section.liquidCode);
+          const variantsForKey = (key) => {
+            const normalized = key.replace(/-/g, '_');
+            const camel = normalized.replace(/_([a-zA-Z0-9])/g, (_, c) => c.toUpperCase());
+            return [...new Set([key, normalized, camel])];
+          };
+
+          const blockAt = (idx) => blocks[idx] || {};
+
+          const readSetting = (obj, key) => {
+            if (!obj) return undefined;
+            const candidates = variantsForKey(key);
+            for (const candidate of candidates) {
+              if (Object.prototype.hasOwnProperty.call(obj, candidate)) return obj[candidate];
+            }
+            if (obj.settings) {
+              for (const candidate of candidates) {
+                if (Object.prototype.hasOwnProperty.call(obj.settings, candidate)) return obj.settings[candidate];
+              }
+            }
+            return undefined;
+          };
+
+          const ensurePercent = (value) => {
+            if (value === undefined || value === null) return null;
+            if (typeof value === 'number' && Number.isFinite(value)) return `${value}%`;
+            const str = String(value).trim();
+            if (!str) return null;
+            if (str.endsWith('%') || /calc\(/i.test(str)) return str;
+            const numeric = Number(str.replace(',', '.'));
+            if (!Number.isNaN(numeric)) return `${numeric}%`;
+            return str;
+          };
+
+          const extractInlinePosition = (item) => {
+            const inline = item.getAttribute('style') || '';
+            const leftMatch = inline.match(/left:\s*([^;]+)/);
+            const topMatch = inline.match(/top:\s*([^;]+)/);
+            return {
+              left: leftMatch ? leftMatch[1].trim() : null,
+              top: topMatch ? topMatch[1].trim() : null,
+            };
+          };
+
+          const applyBaseStyles = (item) => {
+            item.style.setProperty('position', 'absolute', 'important');
+            item.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
+            item.style.setProperty('z-index', '10', 'important');
+            item.style.removeProperty('opacity');
+          };
+
+          const applyBlockPosition = (item, idx) => {
+            const inlinePos = extractInlinePosition(item);
+            const block = blockAt(idx);
+            const leftCandidate =
+              readSetting(block, 'pos_left') ??
+              readSetting(block, 'left') ??
+              readSetting(block, 'pos_x') ??
+              inlinePos.left;
+            const topCandidate =
+              readSetting(block, 'pos_top') ??
+              readSetting(block, 'top') ??
+              readSetting(block, 'pos_y') ??
+              inlinePos.top;
+            const leftValue = ensurePercent(leftCandidate ?? '50%');
+            const topValue = ensurePercent(topCandidate ?? '50%');
+            if (leftValue) item.style.setProperty('left', leftValue, 'important');
+            if (topValue) item.style.setProperty('top', topValue, 'important');
+            applyBaseStyles(item);
+          };
+
+          const syncTooltip = (item, idx) => {
+            const tooltip = item.querySelector('.tooltip');
+            if (!tooltip || tooltip.dataset.enriched) return;
+
+            const block = blockAt(idx);
+            const title =
+              readSetting(block, 'hotspot_title') ||
+              readSetting(block, 'title') ||
+              readSetting(block, 'custom_title') ||
+              '';
+            const description =
+              readSetting(block, 'hotspot_description') ||
+              readSetting(block, 'description') ||
+              readSetting(block, 'custom_desc') ||
+              '';
+
+            if (!title && !description) return;
+
+            let html = '';
+            if (title) html += `<div style="font-weight:600;margin-bottom:6px;font-size:14px;">${title}</div>`;
+            if (description) html += `<div style="font-size:13px;line-height:1.45;color:rgba(0,0,0,.7);">${description}</div>`;
+            tooltip.innerHTML = html;
+            tooltip.dataset.enriched = '1';
+          };
+
+          const enhanceContainer = (doc) => {
+            const container = doc.querySelector('.hotspots');
+            if (!container) return;
+            container.style.setProperty('position', 'absolute', 'important');
+            container.style.setProperty('top', '0', 'important');
+            container.style.setProperty('left', '0', 'important');
+            container.style.setProperty('width', '100%', 'important');
+            container.style.setProperty('height', '100%', 'important');
+            container.style.setProperty('pointer-events', 'auto', 'important');
+          };
 
           if (!isHotspot) {
-            // ===== Comportement existant (autres sections) =====
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = processedHtml;
 
@@ -698,7 +1065,10 @@ function DemoModal({ section, isOpen, onClose }) {
                 const topMatch = rules.match(/top:\s*([^;]+);?/);
                 const leftMatch = rules.match(/left:\s*([^;]+);?/);
                 if (topMatch && leftMatch) {
-                  cssPositionsByNum[num] = { top: topMatch[1].trim(), left: leftMatch[1].trim() };
+                  cssPositionsByNum[num] = {
+                    top: topMatch[1].trim(),
+                    left: leftMatch[1].trim(),
+                  };
                 }
               }
             }
@@ -708,87 +1078,49 @@ function DemoModal({ section, isOpen, onClose }) {
               const classAttr = item.getAttribute('class') || '';
               const numMatch = classAttr.match(/hotspot-(\d+)/);
               const num = numMatch ? parseInt(numMatch[1], 10) : null;
-              const inline = item.getAttribute('style') || '';
-              const inlineLeft = (inline.match(/left:\s*([^;]+)/) || [])[1];
-              const inlineTop = (inline.match(/top:\s*([^;]+)/) || [])[1];
-              const pos = {
-                left: inlineLeft?.trim() || (num && cssPositionsByNum[num]?.left) || '50%',
-                top: inlineTop?.trim() || (num && cssPositionsByNum[num]?.top) || '50%',
+              const inline = extractInlinePosition(item);
+              return {
+                num,
+                pos: {
+                  left: inline.left || (num && cssPositionsByNum[num]?.left) || '50%',
+                  top: inline.top || (num && cssPositionsByNum[num]?.top) || '50%',
+                },
               };
-              const tooltip = item.querySelector('.tooltip');
-              const tooltipContent = tooltip ? tooltip.innerHTML : '';
-              return { num, pos, tooltipContent };
             });
 
             const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
             const iframeItems = Array.from(iframeDoc.querySelectorAll('.hotspot-item'));
+
             iframeItems.forEach((item, idx) => {
               const classAttr = item.getAttribute('class') || '';
               const numMatch = classAttr.match(/hotspot-(\d+)/);
               const num = numMatch ? parseInt(numMatch[1], 10) : null;
-              let data = null;
-              if (num) data = sourceHotspots.find(h => h.num === num) || null;
-              if (!data) data = sourceHotspots[idx] || { pos: { left: '50%', top: '50%' }, tooltipContent: '' };
+              const data =
+                (num && sourceHotspots.find((h) => h.num === num)) ||
+                sourceHotspots[idx] ||
+                { pos: { left: '50%', top: '50%' } };
 
-              item.style.setProperty('position', 'absolute', 'important');
-              item.style.setProperty('left', data.pos.left, 'important');
-              item.style.setProperty('top', data.pos.top, 'important');
-              item.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
-              item.style.setProperty('z-index', '10', 'important');
-              item.style.removeProperty('opacity');
+              const leftValue = ensurePercent(data.pos.left);
+              const topValue = ensurePercent(data.pos.top);
+              if (leftValue) item.style.setProperty('left', leftValue, 'important');
+              if (topValue) item.style.setProperty('top', topValue, 'important');
+              applyBaseStyles(item);
 
-              const tooltip = item.querySelector('.tooltip');
-              if (tooltip && !tooltip.dataset.enriched) {
-                const b = blocks[(num ? num - 1 : idx)] || {};
-                const title = b.hotspot_title || b.title || b.custom_title || '';
-                const description = b.hotspot_description || b.description || b.custom_desc || '';
-                if (title || description) {
-                  let html = '';
-                  if (title) html += `<div style="font-weight:600;margin-bottom:6px;font-size:14px;">${title}</div>`;
-                  if (description) html += `<div style="font-size:13px;line-height:1.45;color:rgba(0,0,0,.7);">${description}</div>`;
-                  tooltip.innerHTML = html;
-                  tooltip.dataset.enriched = '1';
-                }
-              }
+              const blockIndex = num ? num - 1 : idx;
+              syncTooltip(item, blockIndex);
             });
 
-            const hotspotsContainer = iframeDoc.querySelector('.hotspots');
-            if (hotspotsContainer) {
-              hotspotsContainer.style.setProperty('position', 'absolute', 'important');
-              hotspotsContainer.style.setProperty('top', '0', 'important');
-              hotspotsContainer.style.setProperty('left', '0', 'important');
-              hotspotsContainer.style.setProperty('width', '100%', 'important');
-              hotspotsContainer.style.setProperty('height', '100%', 'important');
-              hotspotsContainer.style.setProperty('pointer-events', 'auto', 'important');
-            }
+            enhanceContainer(iframeDoc);
           } else {
-            // ===== MODE HOTSPOT SIMPLIFIÉ =====
             const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
             const iframeItems = Array.from(iframeDoc.querySelectorAll('.hotspot-item'));
-            iframeItems.forEach((item, idx) => {
-              // Ne pas écraser les positions inline générées
-              item.style.setProperty('position', 'absolute', 'important');
-              item.style.setProperty('transform', 'translate(-50%,-50%)', 'important');
-              item.style.setProperty('z-index', '10', 'important');
 
-              const tooltip = item.querySelector('.tooltip');
-              if (tooltip && !tooltip.dataset.enriched) {
-                const b = blocks[idx] || {};
-                const title = b.hotspot_title || b.title || b.custom_title || '';
-                const description = b.hotspot_description || b.description || b.custom_desc || '';
-                if (title || description) {
-                  let html = '';
-                  if (title) html += `<div style="font-weight:600;margin-bottom:6px;font-size:14px;">${title}</div>`;
-                  if (description) html += `<div style="font-size:13px;line-height:1.45;color:rgba(0,0,0,.7);">${description}</div>`;
-                  tooltip.innerHTML = html;
-                  tooltip.dataset.enriched = '1';
-                }
-              }
+            iframeItems.forEach((item, idx) => {
+              applyBlockPosition(item, idx);
+              syncTooltip(item, idx);
             });
-            const hotspotsContainer = iframeDoc.querySelector('.hotspots');
-            if (hotspotsContainer) {
-              hotspotsContainer.style.setProperty('pointer-events', 'auto', 'important');
-            }
+
+            enhanceContainer(iframeDoc);
           }
 
           console.log('✅ Hotspots mis à jour (mode hotspot:', isHotspot, ')');
@@ -989,42 +1321,6 @@ function SlideCart({ cart, onClose, removeFromCart }) {
           Procéder au paiement
         </Button>
       )}
-    </div>
-  );
-}
-
-// 🌈 Catégories en carrousel
-function CategoryCarousel({ categories, navigate }) {
-  const carouselRef = useRef(null);
-  const scroll = (dir) => {
-    carouselRef.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
-  };
-
-  const routes = {
-    bannieres: "/app/bannieres",
-    sliders: "/app/sliders",
-    "before-after": "/app/before-after",
-    comparatifs: "/app/comparatifs",
-  };
-
-  return (
-    <div style={{ position: "relative", marginBottom: 40 }}>
-      <Button plain onClick={() => scroll(-1)} style={{ position: "absolute", left: 0, top: "40%", zIndex: 10 }}>◀</Button>
-      <div ref={carouselRef} style={{ display: "flex", overflowX: "auto", gap: 24, padding: "1rem 2rem", scrollBehavior: "smooth" }}>
-        {categories.map(cat => (
-          <div
-            key={cat.slug}
-            onClick={() => navigate(routes[cat.slug])}
-            style={{ flex: "0 0 140px", cursor: "pointer", textAlign: "center", borderRadius: 16, boxShadow: "0 4px 12px rgba(0,0,0,0.1)", background: "#fff", padding: "1rem", transition: "transform 0.2s ease" }}
-            onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
-            onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
-          >
-            <img src={cat.image} alt={cat.name} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover", marginBottom: 8 }} />
-            <Text variant="bodyMd">{cat.name}</Text>
-          </div>
-        ))}
-      </div>
-      <Button plain onClick={() => scroll(1)} style={{ position: "absolute", right: 0, top: "40%", zIndex: 10 }}>▶</Button>
     </div>
   );
 }
@@ -1378,12 +1674,6 @@ export default function Index() {
           </div>
         </div>
       </Card>
-
-      {/* Catégories */}
-      <Text variant="headingXl" as="h2" fontWeight="bold" style={{ margin: "40px 0 16px", textAlign: "center" }}>
-        Catégories populaires
-      </Text>
-      <CategoryCarousel categories={categories} navigate={navigate} />
 
       {/* Informations sur les catégories trouvées */}
       {availableCategories.length > 0 && (

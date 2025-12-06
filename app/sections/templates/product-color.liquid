@@ -1,0 +1,761 @@
+{% comment %}
+Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohérent
+{% endcomment %}
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,900;1,900&display=swap');
+
+.product-showcase-section {
+  padding: 80px 0 100px;
+  background: {{ section.settings.background_color }};
+  {% if section.settings.background_image %}
+    background-image: url('{{ section.settings.background_image | img_url: 'master' }}');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+  {% endif %}
+  overflow: hidden;
+}
+
+.product-showcase-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.product-showcase-grid {
+  display: grid;
+  gap: 40px 25px;
+  grid-template-columns: repeat(1, 1fr); /* Mobile: 1 par ligne */
+  justify-items: center;
+}
+
+@media (min-width: 600px) {
+  .product-showcase-grid {
+    grid-template-columns: repeat(2, 1fr); /* Petite tablette: 2 par ligne */
+    gap: 35px 30px;
+  }
+}
+
+@media (min-width: 900px) {
+  .product-showcase-grid {
+    grid-template-columns: repeat(3, 1fr); /* Tablette: 3 par ligne */
+    gap: 40px 35px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .product-showcase-grid {
+    grid-template-columns: repeat(4, 1fr); /* Desktop: 4 par ligne */
+    gap: 50px 40px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .product-showcase-grid {
+    grid-template-columns: repeat(5, 1fr); /* Large desktop: 5 par ligne */
+    gap: 60px 45px;
+  }
+}
+
+.product-showcase-card {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  height: 320px; /* Augmenté pour accommoder les tailles */
+  margin: 0 auto;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-showcase-card:hover {
+  transform: translateY(-8px);
+}
+
+.product-thumbs {
+  position: absolute;
+  top: 50%;
+  left: -5px;
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+.product-thumbs ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.product-thumbs li {
+  width: 55px;
+  height: 55px;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: {{ section.settings.card_background_color }};
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  border-left: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.8;
+}
+
+.product-thumbs li:hover {
+  transform: scale(1.1) translateX(3px);
+  opacity: 1;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+.product-thumbs li img {
+  width: 70%;
+  height: auto;
+  transition: all 0.4s ease;
+  border-radius: 8px;
+}
+
+.product-thumbs li:hover img {
+  transform: rotate(-15deg) scale(1.05);
+}
+
+.product-main-box {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: calc(100% - 20px);
+  height: 100%;
+  background: {{ section.settings.card_background_color }};
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  border-left: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 24px;
+  backdrop-filter: blur(15px);
+  padding: 20px 18px 20px;
+  padding-left: 50px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Style pour les cartes sans thumbnails - image centrée */
+.product-showcase-card:not(.has-thumbnails) .product-main-box {
+  width: 100%;
+  padding-left: 18px;
+}
+
+.product-showcase-card:not(.has-thumbnails) .product-main-image {
+  width: 80%;
+  max-height: 160px;
+}
+
+.product-showcase-card:hover .product-main-box {
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+}
+
+.product-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+
+.product-header {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.product-title {
+  color: #fff;
+  letter-spacing: 0.5px;
+  font-size: 1em;
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.product-image-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.product-main-image {
+  width: 70%;
+  height: auto;
+  max-height: 140px;
+  object-fit: contain;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.product-main-image:hover {
+  transform: scale(1.15) rotate(-8deg) translateX(5px);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.product-info-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.product-price {
+  color: #fff;
+  font-size: 1.1em;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0;
+}
+
+.product-sizes-wrapper {
+  width: 100%;
+  text-align: center;
+}
+
+.product-sizes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-sizes-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8em;
+  letter-spacing: 0.5px;
+  margin-right: 6px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.product-sizes li {
+  width: 26px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1e6b7b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.75em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(5px);
+}
+
+.product-sizes li:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: #1e6b7b;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(30, 107, 123, 0.4);
+}
+
+.product-sizes li.selected {
+  background: linear-gradient(135deg, #1e6b7b 0%, #2c8aa6 100%);
+  color: #fff;
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 4px 10px rgba(30, 107, 123, 0.4);
+}
+
+.product-btn {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  display: inline-block;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 18px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  font-weight: 600;
+  color: #1e6b7b;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8em;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  width: auto;
+  min-width: 120px;
+}
+
+.product-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(135deg, #1e6b7b 0%, #2c8aa6 100%);
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+/* Responsive amélioré */
+@media (max-width: 599px) {
+  .product-showcase-section {
+    padding: 60px 0 80px;
+  }
+  
+  .product-showcase-container {
+    padding: 0 16px;
+  }
+  
+  .product-showcase-card {
+    height: 290px;
+    max-width: 280px;
+  }
+  
+  .product-main-box {
+    padding: 18px 15px 18px;
+    padding-left: 45px;
+    border-radius: 20px;
+  }
+  
+  .product-thumbs {
+    left: -8px;
+  }
+  
+  .product-thumbs li {
+    width: 48px;
+    height: 48px;
+    margin: 5px 0;
+    border-radius: 14px;
+  }
+  
+  .product-title {
+    font-size: 0.9em;
+  }
+  
+  .product-main-image {
+    width: 60%;
+    max-height: 110px;
+  }
+  
+  .product-price {
+    font-size: 1em;
+  }
+  
+  .product-sizes-label {
+    font-size: 0.7em;
+    margin-right: 4px;
+  }
+  
+  .product-sizes li {
+    width: 22px;
+    height: 22px;
+    font-size: 0.7em;
+  }
+  
+  .product-btn {
+    padding: 7px 14px;
+    font-size: 0.7em;
+    border-radius: 16px;
+    min-width: 100px;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  .product-showcase-card {
+    height: 310px;
+    max-width: 300px;
+  }
+  
+  .product-main-box {
+    padding: 20px 16px 20px;
+    padding-left: 48px;
+  }
+}
+
+/* Animation d'entrée plus fluide */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.product-showcase-card.animate-in {
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* États actifs améliorés */
+.product-thumbs li.active {
+  transform: scale(1.15) translateX(5px);
+  opacity: 1;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+</style>
+
+<div class="product-showcase-section">
+  <div class="product-showcase-container">
+    <div class="product-showcase-grid">
+      {% for block in section.blocks %}
+        {% assign product = all_products[block.settings.product_handle] %}
+        {% if product %}
+          <div class="product-showcase-card" {{ block.shopify_attributes }} data-block-id="{{ block.id }}">
+            
+            <!-- Thumbnails des couleurs -->
+            {% comment %} Calculer le nombre d'images disponibles {% endcomment %}
+            {% assign total_images = 1 %} {% comment %} Image principale {% endcomment %}
+            
+            {% if block.settings.color_metafield and product.metafields[block.settings.color_metafield] %}
+              {% assign color_images = product.metafields[block.settings.color_metafield] | split: ',' %}
+              {% assign total_images = total_images | plus: color_images.size %}
+            {% elsif product.metafields.custom.color_variants %}
+              {% assign color_images = product.metafields.custom.color_variants | split: ',' %}
+              {% assign total_images = total_images | plus: color_images.size %}
+            {% else %}
+              {% assign total_images = product.images.size %}
+            {% endif %}
+            
+            {% comment %} Afficher les thumbnails seulement s'il y a plus d'une image {% endcomment %}
+            {% if show_thumbnails %}
+              <div class="product-thumbs">
+                <ul>
+                  {% comment %} Image principale {% endcomment %}
+                  <li class="thumb-item active" onclick="changeProductImage('{{ product.featured_image | img_url: '500x500' }}', '{{ block.id }}', this)">
+                    <img src="{{ product.featured_image | img_url: '200x200' }}" alt="{{ product.title }}">
+                  </li>
+                  
+                  {% comment %} Images des variantes de couleur {% endcomment %}
+                  {% if block.settings.color_metafield and product.metafields[block.settings.color_metafield] %}
+                    {% assign color_images = product.metafields[block.settings.color_metafield] | split: ',' %}
+                    {% for color_image in color_images limit: 2 %}
+                      {% assign clean_url = color_image | strip %}
+                      <li class="thumb-item" onclick="changeProductImage('{{ clean_url }}', '{{ block.id }}', this)">
+                        <img src="{{ clean_url }}" alt="Couleur variante">
+                      </li>
+                    {% endfor %}
+                  {% elsif product.metafields.custom.color_variants %}
+                    {% assign color_images = product.metafields.custom.color_variants | split: ',' %}
+                    {% for color_image in color_images limit: 2 %}
+                      {% assign clean_url = color_image | strip %}
+                      <li class="thumb-item" onclick="changeProductImage('{{ clean_url }}', '{{ block.id }}', this)">
+                        <img src="{{ clean_url }}" alt="Couleur variante">
+                      </li>
+                    {% endfor %}
+                  {% else %}
+                    {% comment %} Si pas de metafield, utiliser les images du produit {% endcomment %}
+                    {% for image in product.images limit: 3 offset: 1 %}
+                      <li class="thumb-item" onclick="changeProductImage('{{ image | img_url: '500x500' }}', '{{ block.id }}', this)">
+                        <img src="{{ image | img_url: '200x200' }}" alt="{{ product.title }}">
+                      </li>
+                    {% endfor %}
+                  {% endif %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <!-- Boîte principale du produit -->
+            <div class="product-main-box">
+              <div class="product-content-wrapper">
+                
+                <!-- En-tête du produit -->
+                <div class="product-header">
+                  <h3 class="product-title">
+                    {% if block.settings.custom_title != blank %}
+                      {{ block.settings.custom_title | truncate: 25 }}
+                    {% else %}
+                      {{ product.title | truncate: 25 }}
+                    {% endif %}
+                  </h3>
+                </div>
+
+                <!-- Image du produit -->
+                <div class="product-image-container">
+                  <img src="{{ product.featured_image | img_url: '500x500' }}" 
+                       alt="{{ product.title }}" 
+                       class="product-main-image" 
+                       id="main-image-{{ block.id }}">
+                </div>
+
+                <!-- Informations produit -->
+                <div class="product-info-section">
+                  <div class="product-price">
+                    {{ product.price | money }}
+                  </div>
+
+                  <!-- Tailles disponibles intégrées dans l'encadré -->
+                  {% assign has_sizes = false %}
+                  {% assign sizes_to_display = '' %}
+                  
+                  {% comment %} Vérifier le champ meta personnalisé d'abord {% endcomment %}
+                  {% if block.settings.size_metafield and product.metafields[block.settings.size_metafield] %}
+                    {% assign sizes_to_display = product.metafields[block.settings.size_metafield] %}
+                    {% assign has_sizes = true %}
+                  {% elsif product.metafields.custom.available_sizes %}
+                    {% assign sizes_to_display = product.metafields.custom.available_sizes %}
+                    {% assign has_sizes = true %}
+                  {% endif %}
+                  
+                  {% comment %} Vérifier qu'il y a plus d'une taille {% endcomment %}
+                  {% if has_sizes %}
+                    {% assign sizes = sizes_to_display | split: ',' %}
+                    {% if sizes.size > 1 %}
+                      <div class="product-sizes-wrapper">
+                        <ul class="product-sizes">
+                          <span class="product-sizes-label">{{ block.settings.size_label | default: 'Taille:' }}</span>
+                          {% for size in sizes %}
+                            <li class="size-item" onclick="selectSize('{{ size | strip }}', '{{ block.id }}', this)">{{ size | strip }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    {% endif %}
+                  {% elsif block.settings.show_default_sizes %}
+                    {% assign default_sizes = block.settings.default_sizes | split: ',' %}
+                    {% if default_sizes.size > 1 %}
+                      <div class="product-sizes-wrapper">
+                        <ul class="product-sizes">
+                          <span class="product-sizes-label">{{ block.settings.size_label | default: 'Taille:' }}</span>
+                          {% for size in default_sizes %}
+                            <li class="size-item" onclick="selectSize('{{ size | strip }}', '{{ block.id }}', this)">{{ size | strip }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                </div>
+
+                <!-- Bouton d'ajout au panier -->
+                <form action="/cart/add" method="post" enctype="multipart/form-data" id="product-form-{{ block.id }}">
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="product-btn">{{ block.settings.button_text | default: 'Ajouter au panier' }}</button>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+function changeProductImage(imageUrl, blockId, thumbElement) {
+  const mainImage = document.getElementById('main-image-' + blockId);
+  if (mainImage) {
+    mainImage.style.opacity = '0.7';
+    setTimeout(() => {
+      mainImage.src = imageUrl;
+      mainImage.style.opacity = '1';
+    }, 150);
+  }
+  
+  // Gérer l'état actif des thumbnails
+  const card = thumbElement.closest('.product-showcase-card');
+  const thumbItems = card.querySelectorAll('.thumb-item');
+  thumbItems.forEach(item => item.classList.remove('active'));
+  thumbElement.classList.add('active');
+}
+
+function selectSize(size, blockId, sizeElement) {
+  // Retirer la sélection précédente
+  const card = sizeElement.closest('.product-showcase-card');
+  if (card) {
+    const sizeItems = card.querySelectorAll('.size-item');
+    sizeItems.forEach(item => {
+      item.classList.remove('selected');
+    });
+    
+    // Marquer la taille sélectionnée
+    sizeElement.classList.add('selected');
+    
+    // Optionnel: Stocker la taille sélectionnée pour le formulaire
+    const form = card.querySelector('form');
+    if (form) {
+      let sizeInput = form.querySelector('input[name="properties[Taille]"]');
+      if (!sizeInput) {
+        sizeInput = document.createElement('input');
+        sizeInput.type = 'hidden';
+        sizeInput.name = 'properties[Taille]';
+        form.appendChild(sizeInput);
+      }
+      sizeInput.value = size;
+    }
+  }
+  
+  console.log('Taille sélectionnée:', size, 'pour le produit:', blockId);
+}
+
+// Animation au scroll améliorée
+document.addEventListener('DOMContentLoaded', function() {
+  const cards = document.querySelectorAll('.product-showcase-card');
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('animate-in');
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, index * 100); // Décalage pour effet cascade
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '50px'
+  });
+  
+  cards.forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(40px)';
+    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    observer.observe(card);
+  });
+});
+
+// Gestion du hover sur les cartes
+document.addEventListener('DOMContentLoaded', function() {
+  const cards = document.querySelectorAll('.product-showcase-card');
+  
+  cards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.zIndex = '10';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.zIndex = '1';
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Vitrine Produits Showcase",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de fond de la section",
+      "default": "#1a1a2e"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Image de fond (optionnel)"
+    },
+    {
+      "type": "color",
+      "id": "card_background_color",
+      "label": "Couleur de fond des cartes",
+      "default": "rgba(255, 255, 255, 0.15)",
+      "info": "Utilisez une couleur avec transparence pour l'effet glassmorphism"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Titre de la section (optionnel)",
+      "default": "Nos Produits Vedettes"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Produit",
+      "type": "product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product_handle",
+          "label": "Sélectionner un produit"
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Titre personnalisé (optionnel)",
+          "info": "Laissez vide pour utiliser le titre du produit"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Texte du bouton",
+          "default": "Ajouter au panier"
+        },
+        {
+          "type": "header",
+          "content": "Configuration des Tailles"
+        },
+        {
+          "type": "text",
+          "id": "size_metafield",
+          "label": "Champ Meta Tailles (optionnel)",
+          "info": "Format: namespace.key (ex: custom.available_sizes). Laissez vide pour utiliser custom.available_sizes par défaut",
+          "placeholder": "custom.available_sizes"
+        },
+        {
+          "type": "text",
+          "id": "size_label",
+          "label": "Libellé des tailles",
+          "default": "Taille:",
+          "info": "Le texte affiché avant les tailles"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_default_sizes",
+          "label": "Afficher des tailles par défaut si aucun metafield",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "default_sizes",
+          "label": "Tailles par défaut",
+          "default": "S,M,L,XL",
+          "info": "Tailles séparées par des virgules si aucun metafield n'est trouvé"
+        },
+        {
+          "type": "header",
+          "content": "Configuration des Couleurs"
+        },
+        {
+          "type": "text",
+          "id": "color_metafield",
+          "label": "Champ Meta Couleurs (optionnel)",
+          "info": "Format: namespace.key (ex: custom.color_variants). Laissez vide pour utiliser custom.color_variants par défaut",
+          "placeholder": "custom.color_variants"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Vitrine Produits",
+      "blocks": [
+        {
+          "type": "product"
+        },
+        {
+          "type": "product"
+        },
+        {
+          "type": "product"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
