@@ -3,7 +3,7 @@
   #infinite-scroll-{{ section.id }} {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: {{ section.settings.section_height_desktop }}px;
     overflow: hidden;
     background-color: {{ section.settings.background_color }};
   }
@@ -67,6 +67,10 @@
   {% endfor %}
 
   @media screen and (max-width: 768px) {
+    #infinite-scroll-{{ section.id }} {
+      height: {{ section.settings.section_height_mobile }}px;
+    }
+    
     #infinite-scroll-{{ section.id }} .scroll div {
       font-size: {{ section.settings.font_size_mobile }}px;
     }
@@ -287,6 +291,26 @@
     },
     {
       "type": "range",
+      "id": "section_height_desktop",
+      "min": 300,
+      "max": 2000,
+      "step": 50,
+      "unit": "px",
+      "label": "Hauteur de la section (Desktop)",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "min": 200,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Hauteur de la section (Mobile)",
+      "default": 600
+    },
+    {
+      "type": "range",
       "id": "font_size_desktop",
       "min": 20,
       "max": 200,
@@ -437,9 +461,9 @@
         {
           "type": "scroll_band",
           "settings": {
-            "word_1": "Shop",
+            "word_1": "SHOP",
             "word_1_style": "solid",
-            "word_2": "Now •",
+            "word_2": "NOW •",
             "word_2_style": "outline",
             "rotation": 30,
             "translate_y": 200,
@@ -452,9 +476,9 @@
         {
           "type": "scroll_band",
           "settings": {
-            "word_1": "Shop",
+            "word_1": "SHOP",
             "word_1_style": "solid",
-            "word_2": "Now •",
+            "word_2": "NOW •",
             "word_2_style": "outline",
             "rotation": -25,
             "translate_y": 120,
@@ -467,9 +491,9 @@
         {
           "type": "scroll_band",
           "settings": {
-            "word_1": "Shop",
+            "word_1": "SHOP",
             "word_1_style": "solid",
-            "word_2": "Now •",
+            "word_2": "NOW •",
             "word_2_style": "outline",
             "rotation": 25,
             "translate_y": 300,
@@ -482,9 +506,9 @@
         {
           "type": "scroll_band",
           "settings": {
-            "word_1": "Shop",
+            "word_1": "SHOP",
             "word_1_style": "solid",
-            "word_2": "Now •",
+            "word_2": "NOW •",
             "word_2_style": "outline",
             "rotation": -2,
             "translate_y": -150,
@@ -497,9 +521,9 @@
         {
           "type": "scroll_band",
           "settings": {
-            "word_1": "Shop",
+            "word_1": "SHOP",
             "word_1_style": "solid",
-            "word_2": "Now •",
+            "word_2": "NOW •",
             "word_2_style": "outline",
             "rotation": 5,
             "translate_y": 250,

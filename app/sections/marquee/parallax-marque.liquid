@@ -1,0 +1,241 @@
+{% comment %} Liquid Section - Marquee Parallax {% endcomment %}
+
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+  
+  #marquee-section-{{ section.id }} {
+    background-color: #000;
+    width: 100%;
+    font-family: "Pacifico", cursive;
+    overflow-x: hidden;
+    min-height: {{ section.settings.section_height_mobile }}vh;
+  }
+  
+  @media (min-width: 768px) {
+    #marquee-section-{{ section.id }} {
+      min-height: {{ section.settings.section_height_desktop }}vh;
+    }
+  }
+  
+  #marquee-section-{{ section.id }} .cover {
+    width: 100vw;
+    margin-bottom: 12vw;
+    display: flex;
+  }
+  
+  #marquee-section-{{ section.id }} .cover:first-child {
+    margin-top: 25vh;
+  }
+  
+  #marquee-section-{{ section.id }} .cover:last-child {
+    margin-bottom: 25vh;
+  }
+  
+  #marquee-section-{{ section.id }} p {
+    display: flex;
+    padding: 4vh 0;
+    font-size: {{ section.settings.font_size_mobile }}px;
+    white-space: nowrap;
+  }
+  
+  @media (min-width: 768px) {
+    #marquee-section-{{ section.id }} p {
+      font-size: {{ section.settings.font_size_desktop }}px;
+    }
+  }
+</style>
+
+<div id="marquee-section-{{ section.id }}">
+  {% for block in section.blocks %}
+    <div class="cover" 
+         style="background-color: {{ block.settings.background_color }}; 
+                transform: rotate({{ block.settings.rotation }}deg);
+                {% if block.settings.align_right %}justify-content: flex-end;{% endif %}"
+         data-block-id="{{ block.id }}">
+      <p class="marquee-text" data-text="{{ block.settings.text }}"></p>
+    </div>
+  {% endfor %}
+</div>
+
+<script>
+(function() {
+  const section = document.querySelector('#marquee-section-{{ section.id }}');
+  const covers = section.querySelectorAll('.cover');
+  const counters = [];
+  
+  // Initialize texts for each marquee
+  covers.forEach((cover, index) => {
+    const pTag = cover.querySelector('.marquee-text');
+    const text = pTag.getAttribute('data-text');
+    const textArr = text.split(' ').filter(word => word.trim() !== '');
+    
+    counters[index] = 0;
+    
+    // Duplicate array and populate text
+    const doubledArray = [...textArr, ...textArr];
+    let textContent = '';
+    doubledArray.forEach(word => {
+      textContent += `${word}\u00A0\u00A0\u00A0\u00A0`;
+    });
+    pTag.innerText = textContent;
+  });
+  
+  function marqueeText(count, element, direction) {
+    if (count > element.scrollWidth / 2) {
+      element.style.transform = `translate3d(0, 0, 0)`;
+      count = 0;
+    }
+    element.style.transform = `translate3d(${direction * count}px, 0, 0)`;
+    return count;
+  }
+  
+  function animate() {
+    covers.forEach((cover, index) => {
+      const pTag = cover.querySelector('.marquee-text');
+      const direction = index % 2 === 0 ? -1 : 1;
+      counters[index]++;
+      counters[index] = marqueeText(counters[index], pTag, direction);
+    });
+    window.requestAnimationFrame(animate);
+  }
+  
+  function scrollHandler() {
+    counters.forEach((_, index) => {
+      counters[index] += 15;
+    });
+  }
+  
+  window.addEventListener('scroll', scrollHandler);
+  animate();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Marquee Parallax",
+  "settings": [
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "vh",
+      "label": "Section Min Height (Desktop)",
+      "default": 0,
+      "info": "Minimum height of the section. Set to 0 for auto height."
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "vh",
+      "label": "Section Min Height (Mobile)",
+      "default": 0,
+      "info": "Minimum height of the section. Set to 0 for auto height."
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "min": 20,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Font Size (Desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Font Size (Mobile)",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "marquee_band",
+      "name": "Marquee Band",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Shopi-Addict Shopify Expert E-commerce Pro",
+          "info": "Separate words with spaces"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background Color",
+          "default": "#ff3796"
+        },
+        {
+          "type": "range",
+          "id": "rotation",
+          "min": -5,
+          "max": 5,
+          "step": 1,
+          "unit": "deg",
+          "label": "Rotation",
+          "default": -2
+        },
+        {
+          "type": "checkbox",
+          "id": "align_right",
+          "label": "Align Right",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquee Parallax",
+      "blocks": [
+        {
+          "type": "marquee_band",
+          "settings": {
+            "text": "Shopi-Addict Shopify Master E-commerce Expert Design Pro Shopi-Addict",
+            "background_color": "#ff3796",
+            "rotation": -2,
+            "align_right": false
+          }
+        },
+        {
+          "type": "marquee_band",
+          "settings": {
+            "text": "Shopi-Addict Development Coding Theme Customization Liquid Expert",
+            "background_color": "#ecfe04",
+            "rotation": 2,
+            "align_right": true
+          }
+        },
+        {
+          "type": "marquee_band",
+          "settings": {
+            "text": "Shopi-Addict Creative Solutions Modern Design Responsive Sites",
+            "background_color": "#5800ff",
+            "rotation": -2,
+            "align_right": false
+          }
+        },
+        {
+          "type": "marquee_band",
+          "settings": {
+            "text": "Shopi-Addict Professional Quality Premium Service Top Results",
+            "background_color": "#33ff33",
+            "rotation": 2,
+            "align_right": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

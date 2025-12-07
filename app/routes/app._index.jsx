@@ -20,6 +20,161 @@ let categoriesCache = null;
 let cacheTime = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
+// ...existing code...
+
+export default function Index() {
+  const { sections = [], categories = [] } = useLoaderData();
+  const navigate = useNavigate();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [cart, setCart] = useState([]);
+  const [showCart, setShowCart] = useState(false);
+  const [demoSection, setDemoSection] = useState(null);
+  const [showDemo, setShowDemo] = useState(false);
+
+  const filteredSections = sections.filter((section) => {
+    const matchSearch =
+      section.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      section.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchCategory =
+      selectedCategories.length === 0 || selectedCategories.includes(section.category);
+    return matchSearch && matchCategory;
+  });
+
+  const addToCart = (section) => {
+    if (!cart.find((item) => item.id === section.id)) {
+      setCart((current) => [...current, section]);
+    }
+  };
+
+  const removeFromCart = (id) => {
+    setCart((current) => current.filter((item) => item.id !== id));
+  };
+
+  return (
+    <Page
+      title="📦 Catalogue de Sections Shopify"
+      primaryAction={{
+        content: `🛒 Panier (${cart.length})`,
+        onAction: () => setShowCart(true),
+      }}
+    >
+      <div style={{ marginBottom: 24 }}>
+        <SearchAndFilters
+          onSearch={setSearchTerm}
+          onFilter={setSelectedCategories}
+          selectedCategories={selectedCategories}
+          availableCategories={categories}
+        />
+      </div>
+
+      {filteredSections.length === 0 ? (
+        <Card sectioned>
+          <div style={{ textAlign: 'center', padding: 40 }}>
+            <Text color="subdued">Aucune section trouvée pour ces critères.</Text>
+          </div>
+        </Card>
+      ) : (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: 20,
+          }}
+        >
+          {filteredSections.map((section) => (
+            <Card key={section.id}>
+              <div
+                style={{
+                  height: 200,
+                  overflow: 'hidden',
+                  background: '#f3f4f6',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <img
+                  src={section.image}
+                  alt={section.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.parentElement.innerHTML = `
+                      <div style="padding:20px;text-align:center;color:#666;">
+                        <div style="font-size:48px;margin-bottom:10px;">📄</div>
+                        <div>${section.name}</div>
+                      </div>`;
+                  }}
+                />
+              </div>
+
+              <div style={{ padding: 16 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 12,
+                  }}
+                >
+                  <Text variant="headingMd" as="h3">
+                    {section.name}
+                  </Text>
+                  <Badge tone="info">{section.category || 'Sans catégorie'}</Badge>
+                </div>
+
+                <Text color="subdued" style={{ marginBottom: 16 }}>
+                  {section.description}
+                </Text>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginTop: 16,
+                  }}
+                >
+                  <Text variant="headingMd" fontWeight="bold">
+                    {section.price} €
+                  </Text>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <Button onClick={() => { setDemoSection(section); setShowDemo(true); }}>
+                      👁️ Démo
+                    </Button>
+                    <Button primary onClick={() => addToCart(section)}>
+                      + Panier
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {showCart && (
+        <>
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0,0,0,0.5)',
+              zIndex: 999,
+            }}
+            onClick={() => setShowCart(false)}
+          />
+          <SlideCart cart={cart} onClose={() => setShowCart(false)} removeFromCart={removeFromCart} />
+        </>
+      )}
+
+      <DemoModal section={demoSection} isOpen={showDemo} onClose={() => setShowDemo(false)} />
+    </Page>
+  );
+}
+
 // 🔍 Barre de recherche et filtres DYNAMIQUES
 function SearchAndFilters({ onSearch, onFilter, selectedCategories, availableCategories = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -272,13 +427,23 @@ function DemoModal({ section, isOpen, onClose }) {
   };
 
   // ✅ NOUVELLE FONCTION: Extraction universelle des arrays par défaut
-  const extractArray = (varName, liquidCode) => {
-    // Pattern 1: assign VAR = "val1,val2,val3" | split: ","
+  const extractArray = (varName, liquidCode, captureVars = {}) => {
     const splitRegex = new RegExp(`\\{%-?\\s*assign\\s+${varName}\\s*=\\s*["']([^"']+)["']\\s*\\|\\s*split:\\s*["']([^"']+)["']\\s*-?%\\}`, 'i');
     const splitMatch = liquidCode.match(splitRegex);
     if (splitMatch && splitMatch[1]) {
       const sep = splitMatch[2] || ',';
       return splitMatch[1].split(sep).map(s => s.trim()).filter(Boolean);
+    }
+
+    const captureSplitRegex = new RegExp(`\\{%-?\\s*assign\\s+${varName}\\s*=\\s*(\\w+)\\s*\\|\\s*split:\\s*["']([^'"]+)["']\\s*-?%\\}`, 'i');
+    const captureSplitMatch = liquidCode.match(captureSplitRegex);
+    if (captureSplitMatch) {
+      const source = captureSplitMatch[1];
+      const sep = captureSplitMatch[2] || ',';
+      const raw = captureVars[source];
+      if (typeof raw === 'string') {
+        return raw.split(sep).map(s => s.trim()).filter(Boolean);
+      }
     }
 
     // Pattern 2: default_VAR_1, default_VAR_2, default_VAR_3... (assigns individuels)
@@ -304,16 +469,24 @@ function DemoModal({ section, isOpen, onClose }) {
     const { settings, blocks, presetCount } = parseSchema(liquidCode);
     const caseDefaults = extractCaseDefaults(liquidCode);
     const globalBeforeAfter = extractGlobalBeforeAfter(liquidCode);
-
+ 
+    const captureVars = {};
+    const captureRegex = /\{%-?\s*capture\s+([\w-]+)\s*-?%\}([\s\S]*?)\{%-?\s*endcapture\s*-?%\}/g;
     let html = liquidCode;
-
+    html = html.replace(captureRegex, (match, name, content) => {
+      captureVars[name] = content.trim();
+      return '';
+    });
+ 
     // ✅ EXTRACTION UNIVERSELLE de tous les arrays possibles
-    const defaultImages = extractArray('default_images', liquidCode);
-    const defaultTitles = extractArray('default_titles', liquidCode);
-    const defaultPrices = extractArray('default_prices', liquidCode);
-    const defaultCompare = extractArray('default_compare', liquidCode);
-    const defaultBeforeImages = extractArray('default_before_images', liquidCode);
-    const defaultAfterImages = extractArray('default_after_images', liquidCode);
+    const defaultImages = extractArray('default_images', liquidCode, captureVars);
+    const defaultTitles = extractArray('default_titles', liquidCode, captureVars);
+    const defaultPrices = extractArray('default_prices', liquidCode, captureVars);
+    const defaultCompare = extractArray('default_compare', liquidCode, captureVars);
+    const defaultBeforeImages = extractArray('default_before_images', liquidCode, captureVars);
+    const defaultAfterImages = extractArray('default_after_images', liquidCode, captureVars);
+    const defaultTexts = extractArray('default_texts', liquidCode, captureVars);
+    const defaultIcons = extractArray('default_icons', liquidCode, captureVars);
 
     // ✅ NOUVEAU: Extraction de default_image (variable simple, pas array)
     const defaultImageMatch = liquidCode.match(/\{%-?\s*assign\s+default_image\s*=\s*["']([^"']+)["']\s*-?%\}/);
@@ -365,7 +538,7 @@ function DemoModal({ section, isOpen, onClose }) {
     html = html.replace(/\{%-?\s*comment\s*-?%\}[\s\S]*?\{%-?\s*endcomment\s*-?%\}/g, '');
     html = html.replace(/\{%\s*comment\s*%\}[\s\S]*?\{%\s*endcomment\s*%\}/g, '');
 
-    // Helpers d'évaluation (isBlank, evalSingle, evalLogical, resolveIfChains déjà définis)
+    // Helpers d'évaluation
     const isBlank = (v) => v === undefined || v === null || (typeof v === 'string' && v.trim() === '');
     
     const evalSingle = (cond, ctx, localVars = {}) => {
@@ -381,7 +554,6 @@ function DemoModal({ section, isOpen, onClose }) {
 
       const rhs = right.replace(/^['"]|['"]$/g, '');
 
-      // NEW: comparateurs numériques
       const numOps = new Set(['>', '<', '>=', '<=']);
       if (numOps.has(op)) {
         const lv = Number(value);
@@ -405,9 +577,26 @@ function DemoModal({ section, isOpen, onClose }) {
     };
     
     const evalLogical = (cond, ctx, localVars = {}) => {
-      // support minimal: "A and B" chaîné
       const parts = String(cond || '').split(/\s+and\s+/i);
       return parts.every(p => evalSingle(p, ctx, localVars));
+    };
+
+    // ✅ DÉPLACER ICI: resolveArrayIndex AVANT son utilisation
+    const resolveArrayIndex = (token, ctx, localVars, fallbackIndex) => {
+      if (!token) return fallbackIndex;
+      if (token === 'forloop.index0') return fallbackIndex;
+      if (token === 'forloop.index') return fallbackIndex + 1;
+      if (Object.prototype.hasOwnProperty.call(localVars, token)) {
+        const val = parseInt(localVars[token], 10);
+        if (!Number.isNaN(val)) return val;
+      }
+      const ctxVal = getValueFromPath(token, ctx);
+      if (ctxVal !== undefined && ctxVal !== null) {
+        const val = parseInt(ctxVal, 10);
+        if (!Number.isNaN(val)) return val;
+      }
+      const literal = parseInt(token, 10);
+      return Number.isNaN(literal) ? fallbackIndex : literal;
     };
     
     const resolveIfChains = (src, ctx, localVars = {}) => {
@@ -583,6 +772,20 @@ function DemoModal({ section, isOpen, onClose }) {
             return '';
           }
 
+          if (/\bdefault_texts\[\s*(\w+)\s*\]/.test(e)) {
+            const idxMatch = e.match(/default_texts\[\s*(\w+)\s*\]/);
+            const resolvedIdx = resolveArrayIndex(idxMatch[1], ctx, localVars, index);
+            localVars[name] = defaultTexts.length ? defaultTexts[((resolvedIdx % defaultTexts.length) + defaultTexts.length) % defaultTexts.length] : '';
+            return '';
+          }
+
+          if (/\bdefault_icons\[\s*(\w+)\s*\]/.test(e)) {
+            const idxMatch = e.match(/default_icons\[\s*(\w+)\s*\]/);
+            const resolvedIdx = resolveArrayIndex(idxMatch[1], ctx, localVars, index);
+            localVars[name] = defaultIcons.length ? defaultIcons[((resolvedIdx % defaultIcons.length) + defaultIcons.length) % defaultIcons.length] : '';
+            return '';
+          }
+
           const dm = e.match(/default_images\[(\d+)\]/);
           if (dm) {
             localVars[name] = defaultImages[parseInt(dm[1], 10)] || '';
@@ -595,36 +798,35 @@ function DemoModal({ section, isOpen, onClose }) {
           const q = e.match(/^['"]([^'"]+)['"]$/);
           if (q) { localVars[name] = q[1]; return ''; }
 
-          // ✅ HOTSPOT: Nombres littéraux (assign auto_left = 28)
           const numLiteral = e.match(/^(\d+)$/);
           if (numLiteral) {
             localVars[name] = numLiteral[1];
             return '';
           }
 
-          // ✅ HOTSPOT FIX: Gérer le filtre | default: variable
+          const boolLiteral = e.match(/^(true|false)$/i);
+          if (boolLiteral) {
+            localVars[name] = boolLiteral[1].toLowerCase() === 'true';
+            return '';
+          }
+
           const defaultPipe = e.match(/^([\w.]+)\s*\|\s*default:\s*(\w+)$/);
           if (defaultPipe) {
             const mainVar = defaultPipe[1];
             const fallbackVar = defaultPipe[2];
             
-            // Essayer d'abord la variable principale depuis block.settings
             const mainVal = readRef(mainVar);
             
-            // ✅ FIX: Ne pas utiliser le fallback si la valeur principale est définie (même si c'est 50)
-            // On utilise le fallback SEULEMENT si la valeur est undefined/null/vide
             if (mainVal !== undefined && mainVal !== null && String(mainVal).trim() !== '') {
               localVars[name] = String(mainVal);
               return '';
             }
             
-            // Sinon utiliser le fallback
             if (Object.prototype.hasOwnProperty.call(localVars, fallbackVar)) {
               localVars[name] = localVars[fallbackVar];
               return '';
             }
             
-            // Si le fallback n'existe pas non plus, vide
             localVars[name] = '';
             return '';
           }
@@ -697,6 +899,16 @@ function DemoModal({ section, isOpen, onClose }) {
                       parseInt(localVars[idxVar] ?? ctx.forloop.index0, 10);
           const compare = defaultCompare[idx % defaultCompare.length] || '';
           return suffix ? compare + suffix : compare;
+        });
+
+        current = current.replace(/\{\{\s*default_texts\[\s*(\w+)\s*\]\s*\}\}/g, (m, idxVar) => {
+          const idx = resolveArrayIndex(idxVar, ctx, localVars, ctx.forloop.index0);
+          return defaultTexts.length ? defaultTexts[((idx % defaultTexts.length) + defaultTexts.length) % defaultTexts.length] : '';
+        });
+
+        current = current.replace(/\{\{\s*default_icons\[\s*(\w+)\s*\]\s*\}\}/g, (m, idxVar) => {
+          const idx = resolveArrayIndex(idxVar, ctx, localVars, ctx.forloop.index0);
+          return defaultIcons.length ? defaultIcons[((idx % defaultIcons.length) + defaultIcons.length) % defaultIcons.length] : '';
         });
 
         // default_images indexés (inchangé)
@@ -1599,158 +1811,4 @@ function generatePreviewFromLiquid(liquidCode, schema, category) {
     <p style="color: #999;">Catégorie: <strong>${category || 'Non définie'}</strong></p>
     <p style="color: #999;">Aperçu de la section Liquid</p>
   </div>`;
-}
-
-// Composant principal
-export default function Index() {
-  const navigate = useNavigate();
-  const { sections = [], categories: availableCategories = [] } = useLoaderData();
-  const [cart, setCart] = useState([]);
-  const [showCart, setShowCart] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDemo, setSelectedDemo] = useState(null);
-  const [showDemo, setShowDemo] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("cart");
-    setCart(saved ? JSON.parse(saved) : []);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
-
-  const addToCart = (section) => {
-    if (!cart.find((i) => i.id === section.id)) setCart([...cart, section]);
-  };
-
-  const removeFromCart = (id) => setCart(cart.filter((i) => i.id !== id));
-
-  // Filtrage des sections par recherche + catégories
-  const filteredSections = sections.filter(section => {
-    const matchesSearch = section.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         section.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(section.category);
-    return matchesSearch && matchesCategory;
-  });
-
-  const handleDemo = (section) => {
-    setSelectedDemo(section);
-    setShowDemo(true);
-  };
-
-  return (
-    <Page fullWidth>
-      <TitleBar title="Section Addict" />
-
-      {/* Header panier */}
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-        <Button onClick={() => setShowCart(true)}>
-          Panier <Badge status="info">{cart.length}</Badge>
-        </Button>
-      </div>
-
-      {showCart && (
-        <div
-          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 999 }}
-          onClick={() => setShowCart(false)}
-        >
-          <SlideCart cart={cart} onClose={() => setShowCart(false)} removeFromCart={removeFromCart} />
-        </div>
-      )}
-
-      {/* Bannière accueil */}
-      <Card sectioned>
-        <div style={{ background: "linear-gradient(135deg, #4f46e5, #ec4899)", color: "#fff", borderRadius: 16, padding: "4rem 2rem", textAlign: "center" }}>
-          <Text variant="heading2xl" as="h1" fontWeight="bold" style={{ marginBottom: 16 }}>
-            Créez une boutique Shopify unique
-          </Text>
-          <p style={{ fontSize: 18, marginBottom: 24 }}>
-            Découvrez des sections prêtes à l'emploi pour booster votre design : bannières, sliders, comparatifs et plus encore.
-          </p>
-          <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
-            <Button primary size="large" onClick={() => document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })}>
-              Explorer le catalogue
-            </Button>
-          </div>
-        </div>
-      </Card>
-
-      {/* Informations sur les catégories trouvées */}
-      {availableCategories.length > 0 && (
-        <Card sectioned>
-          <Text variant="headingMd" style={{ marginBottom: 8 }}>
-            📁 Catégories détectées ({availableCategories.length})
-          </Text>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {availableCategories.map(category => (
-              <Badge key={category} status="info">{category}</Badge>
-            ))}
-          </div>
-        </Card>
-      )}
-
-      {/* Barre de recherche et filtres avec catégories dynamiques */}
-      <SearchAndFilters 
-        onSearch={setSearchTerm} 
-        onFilter={setSelectedCategories} 
-        selectedCategories={selectedCategories}
-        availableCategories={availableCategories}
-      />
-
-      {/* Catalogue */}
-      <div id="catalog" style={{ marginTop: 48 }}>
-        <Text variant="headingXl" as="h2" fontWeight="bold" style={{ marginBottom: 24, textAlign: "center" }}>
-          Catalogue des sections ({filteredSections.length})
-        </Text>
-
-        {sections.length === 0 ? (
-          <Card sectioned>
-            <div style={{ textAlign: "center", padding: 40 }}>
-              <Text variant="headingMd" color="subdued">
-                Aucune section trouvée dans le dossier sections/
-              </Text>
-              <Text color="subdued" style={{ marginTop: 8 }}>
-                Créez des fichiers .liquid dans des sous-dossiers de sections/ pour les voir apparaître ici.
-              </Text>
-            </div>
-          </Card>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: 24 }}>
-            {filteredSections.map(section => (
-              <Card key={section.id} sectioned>
-                <div style={{ textAlign: "center" }}>
-                  <img
-                    src={section.image}
-                    alt={section.name}
-                    style={{ width: "100%", height: 180, objectFit: "cover", borderRadius: 12, marginBottom: 12 }}
-                    onError={(e) => { e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100%25' height='100%25' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999'%3ESection%3C/text%3E"; }}
-                  />
-                  <Badge status="info" size="small" style={{ marginBottom: 8 }}>{section.category}</Badge>
-                  <Text variant="headingMd">{section.name}</Text>
-                  <Text color="subdued">{section.description}</Text>
-                  <Text style={{ fontWeight: "bold", margin: "8px 0" }}>{section.price} €</Text>
-
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <Button onClick={() => addToCart(section)} fullWidth>Ajouter au panier</Button>
-                    <Button outline onClick={() => handleDemo(section)} fullWidth>Démo</Button>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {filteredSections.length === 0 && sections.length > 0 && (
-          <div style={{ textAlign: "center", padding: 40 }}>
-            <Text variant="headingMd" color="subdued">Aucune section ne correspond à vos critères de recherche</Text>
-          </div>
-        )}
-      </div>
-
-      {/* Modal de démonstration */}
-      <DemoModal section={selectedDemo} isOpen={showDemo} onClose={() => setShowDemo(false)} />
-    </Page>
-  );
 }

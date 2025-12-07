@@ -1,0 +1,296 @@
+{% comment %}
+  Section: Animated Text Effects with Scroll
+  Author: Custom Section
+{% endcomment %}
+
+<div class="text-effects-section-{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="text-effects-container">
+    {% for block in section.blocks %}
+      <h1 class="text-effect-item" data-block-id="{{ block.id }}">
+        {{ block.settings.text }}
+        <span>
+          {% if block.settings.hover_text != blank %}
+            {% if block.settings.hover_link != blank %}
+              <a href="{{ block.settings.hover_link }}" target="_blank">{{ block.settings.hover_text }}</a>
+            {% else %}
+              {{ block.settings.hover_text }}
+            {% endif %}
+          {% endif %}
+        </span>
+      </h1>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .text-effects-section-{{ section.id }} {
+    margin: 0;
+    padding: 0;
+    background-color: {{ section.settings.background_color }};
+    padding: 5% 10%;
+  }
+  
+  .text-effects-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: {{ section.settings.section_height_desktop }}vh;
+  }
+  
+  .text-effects-section-{{ section.id }} .text-effect-item {
+    font-size: {{ section.settings.text_size_desktop }}vw;
+    letter-spacing: -.01em;
+    line-height: 100%;
+    margin: 0;
+    width: 100%;
+    color: {{ section.settings.text_color | color_modify: 'alpha', 0.2 }};
+    background: linear-gradient(to right, {{ section.settings.text_color }}, {{ section.settings.text_color }}) no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-size: 0%;
+    transition: background-size cubic-bezier(.1,.5,.5,1) 0.5s;
+    border-bottom: 1px solid {{ section.settings.border_color }};
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 600;
+  }
+  
+  .text-effects-section-{{ section.id }} .text-effect-item span {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: {{ section.settings.hover_bg_color }};
+    color: {{ section.settings.hover_text_color }};
+    clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%);
+    transform-origin: center;
+    transition: all cubic-bezier(.1,.5,.5,1) 0.4s;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .text-effects-section-{{ section.id }} .text-effect-item:hover > span {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  }
+  
+  .text-effects-section-{{ section.id }} a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .text-effects-container {
+      min-height: {{ section.settings.section_height_mobile }}vh;
+    }
+    
+    .text-effects-section-{{ section.id }} .text-effect-item {
+      font-size: {{ section.settings.text_size_mobile }}vw;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    // Load GSAP if not already loaded
+    if (typeof gsap === 'undefined') {
+      const gsapScript = document.createElement('script');
+      gsapScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
+      document.head.appendChild(gsapScript);
+      
+      const scrollTriggerScript = document.createElement('script');
+      scrollTriggerScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js';
+      document.head.appendChild(scrollTriggerScript);
+      
+      scrollTriggerScript.onload = function() {
+        initTextEffects{{ section.id | replace: '-', '' }}();
+      };
+    } else {
+      initTextEffects{{ section.id | replace: '-', '' }}();
+    }
+    
+    function initTextEffects{{ section.id | replace: '-', '' }}() {
+      if (typeof gsap !== 'undefined' && gsap.registerPlugin) {
+        gsap.registerPlugin(ScrollTrigger);
+        
+        const textElements = document.querySelectorAll('.text-effects-section-{{ section.id }} .text-effect-item');
+        
+        textElements.forEach(text => {
+          gsap.to(text, {
+            backgroundSize: '100%',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: text,
+              start: 'center 80%',
+              end: 'center 20%',
+              scrub: true,
+            },
+          });
+        });
+      }
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Text Effects Scroll",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#0D0D0D"
+    },
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "min": 30,
+      "max": 300,
+      "step": 10,
+      "unit": "vh",
+      "label": "Section Height (Desktop)",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "min": 30,
+      "max": 300,
+      "step": 10,
+      "unit": "vh",
+      "label": "Section Height (Mobile)",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Text Settings"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "min": 4,
+      "max": 15,
+      "step": 0.5,
+      "unit": "vw",
+      "label": "Text Size (Desktop)",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "min": 6,
+      "max": 20,
+      "step": 0.5,
+      "unit": "vw",
+      "label": "Text Size (Mobile)",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#b6b6b6"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#2F2B28"
+    },
+    {
+      "type": "header",
+      "content": "Hover Settings"
+    },
+    {
+      "type": "color",
+      "id": "hover_bg_color",
+      "label": "Hover Background Color",
+      "default": "#4246ce"
+    },
+    {
+      "type": "color",
+      "id": "hover_text_color",
+      "label": "Hover Text Color",
+      "default": "#0D0D0D"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text_line",
+      "name": "Text Line",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "HOVER ON ME"
+        },
+        {
+          "type": "text",
+          "id": "hover_text",
+          "label": "Hover Text",
+          "default": "AMAZING EFFECT"
+        },
+        {
+          "type": "url",
+          "id": "hover_link",
+          "label": "Hover Link (optional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text Effects Scroll",
+      "blocks": [
+        {
+          "type": "text_line",
+          "settings": {
+            "text": "TEXT EFFECT",
+            "hover_text": "WOAH"
+          }
+        },
+        {
+          "type": "text_line",
+          "settings": {
+            "text": "GSAP",
+            "hover_text": "AND CLIPPING"
+          }
+        },
+        {
+          "type": "text_line",
+          "settings": {
+            "text": "CRAZYYY",
+            "hover_text": "CRAZYYY"
+          }
+        },
+        {
+          "type": "text_line",
+          "settings": {
+            "text": "HOVER ON ME",
+            "hover_text": "SOURCE",
+            "hover_link": "https://stacksorted.com/text-effects/minh-pham"
+          }
+        },
+        {
+          "type": "text_line",
+          "settings": {
+            "text": "LIKE THIS?",
+            "hover_text": "LET'S CONNECT",
+            "hover_link": "https://twitter.com/juxtopposed"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

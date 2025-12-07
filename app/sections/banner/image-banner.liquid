@@ -35,7 +35,7 @@
       "type": "range",
       "id": "padding_section",
       "label": "Marge intérieure (padding)",
-      "default": 40,
+      "default": 0,
       "min": 0,
       "max": 100,
       "step": 5,
@@ -51,11 +51,14 @@
 {% endschema %}
 
 <div class="banniere-console" style="background-color: {{ section.settings.background_color }}; padding: {{ section.settings.padding_section }}px;">
-  {% if section.settings.banniere_image %}
-    <div class="banniere-image" style="text-align: center;">
-      <img src="{{ section.settings.banniere_image | image_url: width: 1400 }}" alt="Image bannière" style="width: 100%; height: auto;">
-    </div>
-  {% endif %}
+  {% assign chosen_image = section.settings.banniere_image %}
+  <div class="banniere-image" style="text-align: center;">
+    {% if chosen_image != blank %}
+      <img src="{{ chosen_image | image_url: width: 1400 }}" alt="Image bannière" style="width: 100%; height: auto;">
+    {% else %}
+      <img src="https://images.pexels.com/photos/6994186/pexels-photo-6994186.jpeg" alt="Image bannière par défaut" style="width: 100%; height: auto;">
+    {% endif %}
+  </div>
 
   <!-- <div class="banniere-texte" style="text-align: center; color: {{ section.settings.text_color }}; margin-top: 20px;">
     <h2 style="margin-bottom: 10px;">{{ section.settings.titre }}</h2>

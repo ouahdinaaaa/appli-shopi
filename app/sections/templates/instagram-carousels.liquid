@@ -5,6 +5,10 @@
 
 {{ 'section-instagram-carousel.css' | asset_url | stylesheet_tag }}
 
+{% assign default_images = "https://images.pexels.com/photos/1055691/pexels-photo-1055691.jpeg|https://images.pexels.com/photos/35036456/pexels-photo-35036456.jpeg|https://images.pexels.com/photos/35076103/pexels-photo-35076103.jpeg|https://images.pexels.com/photos/35028850/pexels-photo-35028850.jpeg|https://images.pexels.com/photos/35018081/pexels-photo-35018081.jpeg" | split: "|" %}
+{% assign default_likes = "12.3K|8.9K|15.1K|22.4K|18.6K" | split: "|" %}
+{% assign default_comments = "245|182|386|529|441" | split: "|" %}
+
 <div class="instagram-carousel-section" style="background-color: {{ section.settings.bg_color }};">
   <div class="page-width">
     {% if section.settings.title != blank %}
@@ -25,6 +29,13 @@
       <div class="carousel-container">
         <div class="carousel-track" style="gap: {{ section.settings.card_spacing }}px;">
           {% for block in section.blocks %}
+            {% assign idx = forloop.index0 %}
+            {% if default_images.size > 0 %}
+              {% assign idx = idx | modulo: default_images.size %}
+            {% endif %}
+            {% assign fallback_image = default_images[idx] %}
+            {% assign fallback_likes = default_likes[idx] %}
+            {% assign fallback_comments = default_comments[idx] %}
             <div class="carousel-card" 
                  data-desktop-width="{{ section.settings.card_width_desktop }}"
                  data-desktop-height="{{ section.settings.card_height_desktop }}"
@@ -39,9 +50,11 @@
                       loading="lazy"
                     >
                   {% else %}
-                    <div class="placeholder-image">
-                      {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
-                    </div>
+                    <img 
+                      src="{{ fallback_image }}"
+                      alt="{{ fallback_likes }} likes"
+                      loading="lazy"
+                    >
                   {% endif %}
                 </div>
 
@@ -50,22 +63,28 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                     </svg>
-                    <span>{{ block.settings.likes_count }}</span>
+                    <span>{{ block.settings.likes_count | default: fallback_likes }}</span>
                   </div>
 
                   <div class="stat-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
                     </svg>
-                    <span>{{ block.settings.comments_count }}</span>
+                    <span>{{ block.settings.comments_count | default: fallback_comments }}</span>
                   </div>
                 </div>
               </a>
             </div>
           {% endfor %}
           
-          <!-- Clone des cartes pour l'effet infini -->
           {% for block in section.blocks %}
+            {% assign idx = forloop.index0 %}
+            {% if default_images.size > 0 %}
+              {% assign idx = idx | modulo: default_images.size %}
+            {% endif %}
+            {% assign fallback_image = default_images[idx] %}
+            {% assign fallback_likes = default_likes[idx] %}
+            {% assign fallback_comments = default_comments[idx] %}
             <div class="carousel-card carousel-card-clone" 
                  data-desktop-width="{{ section.settings.card_width_desktop }}"
                  data-desktop-height="{{ section.settings.card_height_desktop }}"
@@ -80,9 +99,11 @@
                       loading="lazy"
                     >
                   {% else %}
-                    <div class="placeholder-image">
-                      {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
-                    </div>
+                    <img 
+                      src="{{ fallback_image }}"
+                      alt="{{ fallback_likes }} likes"
+                      loading="lazy"
+                    >
                   {% endif %}
                 </div>
 
@@ -91,14 +112,14 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                     </svg>
-                    <span>{{ block.settings.likes_count }}</span>
+                    <span>{{ block.settings.likes_count | default: fallback_likes }}</span>
                   </div>
 
                   <div class="stat-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
                     </svg>
-                    <span>{{ block.settings.comments_count }}</span>
+                    <span>{{ block.settings.comments_count | default: fallback_comments }}</span>
                   </div>
                 </div>
               </a>
@@ -295,126 +316,119 @@
     
     if (!carouselContainer || !carouselTrack || allCards.length === 0) return;
 
-    const isMobile = window.innerWidth <= 768;
-    const cardWidth = isMobile 
-      ? parseInt(originalCards[0].dataset.mobileWidth)
-      : parseInt(originalCards[0].dataset.desktopWidth);
-    const gap = isMobile 
-      ? parseInt('{{ section.settings.card_spacing_mobile }}')
-      : parseInt('{{ section.settings.card_spacing }}');
-    const originalCardsCount = originalCards.length;
-    
+    const getStepSize = () => {
+      const mobile = window.innerWidth <= 768;
+      const refCard = originalCards[0];
+      const width = mobile ? parseInt(refCard.dataset.mobileWidth) : parseInt(refCard.dataset.desktopWidth);
+      const spacing = mobile ? parseInt('{{ section.settings.card_spacing_mobile }}') : parseInt('{{ section.settings.card_spacing }}');
+      return { width, spacing, step: width + spacing, mobile };
+    };
+
+    let { step, mobile } = getStepSize();
     let currentIndex = 0;
     let isDragging = false;
     let startPos = 0;
     let currentTranslate = 0;
     let prevTranslate = 0;
-    let animationID = 0;
 
-    // Fonction pour mettre à jour la position
-    function updateCarousel(smooth = true) {
-      if (smooth) {
-        carouselTrack.style.transition = 'transform 0.3s ease';
-      } else {
-        carouselTrack.style.transition = 'none';
-      }
-      
-      const offset = -(currentIndex * (cardWidth + gap));
-      carouselTrack.style.transform = `translateX(${offset}px)`;
+    const originalCount = originalCards.length;
+
+    const applyTransform = (offset, smooth = true) => {
+      carouselTrack.style.transition = smooth ? 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)' : 'none';
+      carouselTrack.style.transform = `translate3d(${offset}px, 0, 0)`;
+    };
+
+    const updateCarousel = (smooth = true) => {
+      const offset = -(currentIndex * step);
       currentTranslate = offset;
       prevTranslate = offset;
-    }
+      applyTransform(offset, smooth);
+    };
 
-    // Gestion de l'infini
-    function handleInfiniteScroll() {
-      const totalWidth = originalCardsCount * (cardWidth + gap);
-      
-      if (currentIndex >= originalCardsCount) {
-        currentIndex = 0;
-        updateCarousel(false);
-        setTimeout(() => {
-          carouselTrack.style.transition = 'transform 0.3s ease';
-        }, 50);
-      } else if (currentIndex < 0) {
-        currentIndex = originalCardsCount - 1;
-        updateCarousel(false);
-        setTimeout(() => {
-          carouselTrack.style.transition = 'transform 0.3s ease';
-        }, 50);
+    const normalizeIndex = (target) => {
+      let result = target;
+      if (result >= originalCount) {
+        result = result % originalCount;
+      } else if (result < 0) {
+        result = (result % originalCount + originalCount) % originalCount;
       }
-    }
+      return result;
+    };
 
-    // Navigation buttons
-    prevBtn.addEventListener('click', () => {
-      currentIndex--;
+    const handleInfiniteScroll = () => {
+      if (currentIndex >= originalCount || currentIndex < 0) {
+        currentIndex = normalizeIndex(currentIndex);
+        applyTransform(-(currentIndex * step), false);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            carouselTrack.style.transition = 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)';
+          });
+        });
+      }
+    };
+
+    prevBtn?.addEventListener('click', () => {
+      currentIndex -= 1;
       updateCarousel();
-      setTimeout(handleInfiniteScroll, 300);
+      setTimeout(handleInfiniteScroll, 420);
     });
 
-    nextBtn.addEventListener('click', () => {
-      currentIndex++;
+    nextBtn?.addEventListener('click', () => {
+      currentIndex += 1;
       updateCarousel();
-      setTimeout(handleInfiniteScroll, 300);
+      setTimeout(handleInfiniteScroll, 420);
     });
 
-    // Touch/Mouse drag
-    carouselContainer.addEventListener('mousedown', dragStart);
-    carouselContainer.addEventListener('touchstart', dragStart);
-    carouselContainer.addEventListener('mouseup', dragEnd);
-    carouselContainer.addEventListener('touchend', dragEnd);
-    carouselContainer.addEventListener('mouseleave', dragEnd);
-    carouselContainer.addEventListener('mousemove', drag);
-    carouselContainer.addEventListener('touchmove', drag);
-
-    function dragStart(e) {
+    const dragStart = (e) => {
       isDragging = true;
       startPos = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
       carouselTrack.style.transition = 'none';
-      cancelAnimationFrame(animationID);
-    }
+    };
 
-    function drag(e) {
+    const dragMove = (e) => {
       if (!isDragging) return;
-      e.preventDefault();
-      
       const currentPosition = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
       const diff = currentPosition - startPos;
       currentTranslate = prevTranslate + diff;
-      carouselTrack.style.transform = `translateX(${currentTranslate}px)`;
-    }
+      carouselTrack.style.transform = `translate3d(${currentTranslate}px, 0, 0)`;
+    };
 
-    function dragEnd() {
+    const dragEnd = () => {
       if (!isDragging) return;
       isDragging = false;
-      
-      const movedBy = currentTranslate - prevTranslate;
-      
-      if (movedBy < -50) {
-        currentIndex++;
-      } else if (movedBy > 50) {
-        currentIndex--;
-      }
-      
-      carouselTrack.style.transition = 'transform 0.3s ease';
-      updateCarousel();
-      setTimeout(handleInfiniteScroll, 300);
-    }
 
-    // Responsive resize - recalculer sans recharger
+      const movedBy = currentTranslate - prevTranslate;
+      if (movedBy < -step / 3) {
+        currentIndex += 1;
+      } else if (movedBy > step / 3) {
+        currentIndex -= 1;
+      }
+
+      updateCarousel();
+      setTimeout(handleInfiniteScroll, 420);
+    };
+
+    carouselContainer.addEventListener('mousedown', dragStart);
+    carouselContainer.addEventListener('touchstart', dragStart, { passive: true });
+    carouselContainer.addEventListener('mousemove', dragMove);
+    carouselContainer.addEventListener('touchmove', dragMove, { passive: false });
+    carouselContainer.addEventListener('mouseup', dragEnd);
+    carouselContainer.addEventListener('touchend', dragEnd);
+    carouselContainer.addEventListener('mouseleave', dragEnd);
+
     let resizeTimer;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
-        const newIsMobile = window.innerWidth <= 768;
-        const newCardWidth = newIsMobile 
-          ? parseInt(originalCards[0].dataset.mobileWidth)
-          : parseInt(originalCards[0].dataset.desktopWidth);
-        
-        // Réinitialiser la position
-        currentIndex = 0;
+        const metrics = getStepSize();
+        step = metrics.step;
+        mobile = metrics.mobile;
+        currentIndex = normalizeIndex(currentIndex);
         updateCarousel(false);
-      }, 250);
+      }, 200);
     });
+
+    updateCarousel(false);
   });
 </script>
 

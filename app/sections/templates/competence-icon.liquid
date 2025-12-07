@@ -1,6 +1,9 @@
 {% comment %} Section for 7 key competencies with icons {% endcomment %}
 
 <section class="competence-icons-section" style="text-align: center; padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px 0; background-color: {{ section.settings.background_color }}">
+    {% assign default_texts = "Language|Autonomie|Math|Intelligence|Sciences|Concentration|Observation" | split: "|" %}
+    {% capture icons_string %}data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='20' fill='%232d7dd2'/><path d='M28%2032h64c4%200%208%204%208%208v28c0%204-4%208-8%208H56l-16%2016V76H28c-4%200-8-4-8-8V40c0-4%204-8%208-8z' fill='%23ffffff'/><circle cx='45' cy='54' r='6' fill='%232d7dd2'/><circle cx='60' cy='54' r='6' fill='%232d7dd2'/><circle cx='75' cy='54' r='6' fill='%232d7dd2'/></svg>|data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='20' fill='%23ff9f1c'/><path d='M38%2030h16c4%200%208%204%208%208v16h6V38c0-4%204-8%208-8h10c4%200%208%204%208%208v42c0%2016-12%2028-28%2028H52c-12%200-22-8-26-20l-6-20c-2-6%202-12%208-14s12%202%2014%208l2%206V38c0-4%204-8%208-8z' fill='%23ffffff'/></svg>|data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='20' fill='%2305668d'/><text x='50%25' y='60%25' font-family='Poppins' font-size='64' text-anchor='middle' fill='%23ffffff'>π</text></svg>|data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='20' fill='%236a4c93'/><path d='M60%2024c-18%200-32%2014-32%2032%200%2011%206%2021%2016%2028v12h32v-12c10-7%2016-17%2016-28%200-18-14-32-32-32zm-12%2084h24v8H48z' fill='%23ffffff'/><rect x='50' y='96' width='20' height='8' fill='%23c9a9ff' opacity='0.5'/></svg>|data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='20' fill='%232a9d8f'/><circle cx='60' cy='60' r='14' fill='%23ffffff'/><path d='M60%2014c-12%200-24%2010-30%2026s-6%2032%200%2048%2030%2026%2042%200%206-32%200-48-18-26-30-26zm0%2010c8%200%2016%206%2022%2016s8%2022%200%2032-14%2016-22%2016-16-6-22-16-8-22%200-32%2014-16%2022-16z' fill='none' stroke='%23ffffff' stroke-width='6'/></svg>|data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='20' fill='%23e63946'/><circle cx='60' cy='60' r='32' fill='none' stroke='%23ffffff' stroke-width='6'/><circle cx='60' cy='60' r='18' fill='none' stroke='%23ffffff' stroke-width='6' opacity='0.8'/><circle cx='60' cy='60' r='6' fill='%23ffffff'/></svg>|data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' rx='20' fill='%23264653'/><path d='M60%2032c-24%200-44%2018-52%2028%208%2010%2028%2028%2052%2028s44-18%2052-28c-8-10-28-28-52-28zm0%2044c-9%200-16-7-16-16s7-16%2016-16%2016%207%2016%2016-7%2016-16%2016z' fill='%23ffffff'/><circle cx='60' cy='60' r='8' fill='%23264653'/></svg>{% endcapture %}
+    {% assign default_icons = icons_string | split: "|" %}
     <h2 style="color: {{ section.settings.title_color }}; font-size: {{ section.settings.title_font_size }}px; margin-bottom: {{ section.settings.title_margin_bottom }}px; font-weight: {{ section.settings.title_bold }};">
 
     {{ section.settings.title }}
@@ -8,15 +11,20 @@
 
   <div class="competence-icons-wrapper" style="display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 100%; padding: 0 5%; gap: {{ section.settings.icon_gap }}px;">
     {% for block in section.blocks %}
+        {% assign idx = forloop.index0 %}
+        {% assign fallback_text = default_texts[idx] %}
+        {% assign display_text = block.settings.text | default: fallback_text %}
+        {% assign fallback_icon = default_icons[idx] %}
         <div class="competence-icon-block" style="text-align: center; margin-right: {{ block.settings.margin_right }}px; margin-left: {{ block.settings.icon_margin_left }}px; flex: 1; min-width: 100px;">
-
         <div class="competence-icon" style="width: {{ block.settings.icon_size }}px; height: {{ block.settings.icon_size }}px; margin: 0 auto;">
           {% if block.settings.icon != blank %}
-            <img src="{{ block.settings.icon | image_url }}" alt="" style="width: 100%; height: 100%; object-fit: contain;">
+            <img src="{{ block.settings.icon | image_url }}" alt="{{ display_text }}" style="width: 100%; height: 100%; object-fit: contain;">
+          {% else %}
+            <img src="{{ fallback_icon }}" alt="{{ display_text }}" style="width: 100%; height: 100%; object-fit: contain;">
           {% endif %}
         </div>
         <p style="margin-top: {{ block.settings.text_margin_top }}px; color: {{ block.settings.text_color }}; font-size: {{ block.settings.text_size }}px; font-weight: {{ block.settings.text_bold }};">
-          {{ block.settings.text }}
+          {{ display_text }}
         </p>
       </div>
     {% endfor %}
@@ -159,7 +167,7 @@
             { "value": "normal", "label": "Normal" },
             { "value": "bold", "label": "Gras" }
           ],
-          "default": "normal"
+          "default": "bold"
         },
         {
           "type": "range",
@@ -186,13 +194,13 @@
     {
       "name": "Compétences clés",
       "blocks": [
-        { "type": "icon_block" },
-        { "type": "icon_block" },
-        { "type": "icon_block" },
-        { "type": "icon_block" },
-        { "type": "icon_block" },
-        { "type": "icon_block" },
-        { "type": "icon_block" }
+        { "type": "icon_block", "settings": { "text": "Language" } },
+        { "type": "icon_block", "settings": { "text": "Autonomie" } },
+        { "type": "icon_block", "settings": { "text": "Math" } },
+        { "type": "icon_block", "settings": { "text": "Intelligence" } },
+        { "type": "icon_block", "settings": { "text": "Sciences" } },
+        { "type": "icon_block", "settings": { "text": "Concentration" } },
+        { "type": "icon_block", "settings": { "text": "Observation" } }
       ]
     }
   ]
