@@ -1,3 +1,7 @@
+{% assign default_titles = "Sacs à main|Robes|Pulls|Pantalons|Chaussures" | split: "|" %}
+{% assign default_images = "https://images.pexels.com/photos/18645325/pexels-photo-18645325.jpeg|https://images.pexels.com/photos/19908472/pexels-photo-19908472.jpeg|https://images.pexels.com/photos/9167934/pexels-photo-9167934.jpeg|https://images.pexels.com/photos/3266700/pexels-photo-3266700.jpeg|https://images.pexels.com/photos/5559993/pexels-photo-5559993.jpeg" | split: "|" %}
+{% assign defaults_count = default_titles.size %}
+{% assign has_blocks = section.blocks.size %}
 <!-- sections/shop-by-category.liquid -->
 <div class="shop-by-category-section">
   <div class="container">
@@ -6,34 +10,55 @@
     {% endif %}
     
     <div class="categories-grid">
-      {% for block in section.blocks %}
-        <div class="category-item" {{ block.shopify_attributes }}>
-          <a href="{{ block.settings.category_url | default: '#' }}" class="category-link">
-            <div class="category-circle">
-              {% if block.settings.category_image != blank %}
-                <img src="{{ block.settings.category_image | image_url: width: 200 }}" 
-                     alt="{{ block.settings.category_title }}"
-                     loading="lazy">
-              {% else %}
-                <div class="placeholder-image"></div>
-              {% endif %}
-              
-              {% if block.settings.category_icon != blank %}
+      {% if has_blocks > 0 %}
+        {% for block in section.blocks %}
+          {% assign idx = forloop.index0 | modulo: defaults_count %}
+          {% assign fallback_title = default_titles[idx] %}
+          {% assign fallback_image = default_images[idx] %}
+          {% assign display_title = block.settings.category_title | default: fallback_title %}
+          {% if block.settings.category_image != blank %}
+            {% assign main_image_url = block.settings.category_image | image_url: width: 400 %}
+          {% else %}
+            {% assign main_image_url = fallback_image %}
+          {% endif %}
+          {% if block.settings.category_icon_image != blank %}
+            {% assign icon_image_url = block.settings.category_icon_image | image_url: width: 120 %}
+          {% else %}
+            {% assign icon_image_url = main_image_url %}
+          {% endif %}
+          <div class="category-item" {{ block.shopify_attributes }}>
+            <a href="{{ block.settings.category_url | default: '#' }}" class="category-link">
+              <div class="category-circle">
+                <img src="{{ main_image_url }}" alt="{{ display_title }}" loading="lazy">
                 <div class="category-icon">
-                  {{ block.settings.category_icon }}
+                  <img src="{{ icon_image_url }}" alt="{{ display_title }} icon" loading="lazy">
                 </div>
-              {% endif %}
-            </div>
-            
-            {% if block.settings.category_title != blank %}
-              <p class="category-title 
-                 {% if block.settings.title_bold %}font-bold{% endif %}">
-                {{ block.settings.category_title }}
+              </div>
+              <p class="category-title {% if block.settings.title_bold %}font-bold{% endif %}">
+                {{ display_title }}
               </p>
-            {% endif %}
-          </a>
-        </div>
-      {% endfor %}
+            </a>
+          </div>
+        {% endfor %}
+      {% else %}
+        {% for fallback_title in default_titles %}
+          {% assign idx = forloop.index0 %}
+          {% assign fallback_image = default_images[idx] %}
+          <div class="category-item">
+            <a href="#" class="category-link">
+              <div class="category-circle">
+                <img src="{{ fallback_image }}" alt="{{ fallback_title }}" loading="lazy">
+                <div class="category-icon">
+                  <img src="{{ fallback_image }}" alt="{{ fallback_title }} icon" loading="lazy">
+                </div>
+              </div>
+              <p class="category-title font-bold">
+                {{ fallback_title }}
+              </p>
+            </a>
+          </div>
+        {% endfor %}
+      {% endif %}
     </div>
   </div>
 </div>
@@ -148,6 +173,12 @@
   font-size: {{ section.settings.icon_font_size_desktop }}px;
   color: {{ section.settings.icon_color }};
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.category-icon svg,
+.category-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .category-title {
@@ -672,6 +703,11 @@
           "id": "category_icon",
           "label": "Category Icon (HTML/SVG)",
           "info": "Enter SVG code or HTML for the icon. Example: <svg>...</svg> or use font icons like: <i class='fas fa-jacket'></i>"
+        },
+        {
+          "type": "image_picker",
+          "id": "category_icon_image",
+          "label": "Icône (petite image)"
         }
       ]
     }
@@ -683,7 +719,7 @@
         {
           "type": "category_item",
           "settings": {
-            "category_title": "Jackets",
+            "category_title": "Bag",
             "category_icon": "<svg width='16' height='16' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2C8.69 2 6 4.69 6 8v2H5c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-9c0-.55-.45-1-1-1h-1V8c0-3.31-2.69-6-6-6zM8 8c0-2.21 1.79-4 4-4s4 1.79 4 4v2H8V8z'/></svg>"
           }
         },
@@ -697,21 +733,21 @@
         {
           "type": "category_item",
           "settings": {
-            "category_title": "Outerwear",
+            "category_title": "Blazer",
             "category_icon": "<svg width='16' height='16' viewBox='0 0 24 24' fill='currentColor'><path d='M12 2L8 6v2h8V6l-4-4zm-6 8v10h12V10H6z'/></svg>"
           }
         },
         {
           "type": "category_item",
           "settings": {
-            "category_title": "Bottoms",
+            "category_title": "Jewerly",
             "category_icon": "<svg width='16' height='16' viewBox='0 0 24 24' fill='currentColor'><path d='M8 2v7L6 22h4l1-8h2l1 8h4L16 9V2H8z'/></svg>"
           }
         },
         {
           "type": "category_item",
           "settings": {
-            "category_title": "Tops",
+            "category_title": "Child",
             "category_icon": "<svg width='16' height='16' viewBox='0 0 24 24' fill='currentColor'><path d='M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zM4 22v-2h16v2H4zm0-4h16v-2H4v2zm12-8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5z'/></svg>"
           }
         }

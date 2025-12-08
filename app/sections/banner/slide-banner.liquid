@@ -101,37 +101,37 @@
       "type": "color",
       "id": "background_color",
       "label": "Background Color",
-      "default": "#ffffff"
+      "default": "#000000"
     },
     {
       "type": "color",
       "id": "text_color",
       "label": "Text Color",
-      "default": "#000000"
+      "default": "#ffffff"
     },
     {
       "type": "color",
       "id": "button_color",
       "label": "Button Background",
-      "default": "#000000"
+      "default": "#ffffff"
     },
     {
       "type": "color",
       "id": "button_text_color",
       "label": "Button Text Color",
-      "default": "#ffffff"
+      "default": "#000000"
     },
     {
       "type": "color",
       "id": "rating_text_color",
       "label": "Rating Text Color",
-      "default": "#666666"
+      "default": "#ffffff"
     },
     {
       "type": "color",
       "id": "wave_color",
       "label": "Wave Color",
-      "default": "#f0f0f0"
+      "default": "#0E0E0E"
     },
 
     // SPACING
@@ -193,7 +193,7 @@
       "step": 10,
       "unit": "px",
       "label": "Image max width (tablet)",
-      "default": 400
+      "default": 510
     },
     {
       "type": "range",
@@ -214,6 +214,46 @@
       "unit": "px",
       "label": "Image padding",
       "default": 20
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "image_scale_desktop",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "label": "Image scale (desktop)",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "image_scale_tablet",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "label": "Image scale (tablet)",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "image_scale_mobile",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "label": "Image scale (mobile)",
+      "default": 100
     },
 
     // FONT SIZES & ALIGNMENTS
@@ -446,6 +486,11 @@
       ],
       "default": "left"
     }
+  ],
+  "presets": [
+    {
+      "name": "Banner Slide"
+    }
   ]
 }
 {% endschema %}
@@ -498,6 +543,9 @@
     padding: {{ section.settings.image_padding }}px 0;
     transition: all 0.3s ease;
     display: block;
+    border-radius: {{ section.settings.image_border_radius }}px;
+    transform: scale({{ section.settings.image_scale_mobile | default: 100 | times: 0.01 }});
+    transform-origin: center center;
   }
 
   .banner-content {
@@ -508,6 +556,7 @@
     align-items: center;
     gap: 20px;
     flex-wrap: nowrap;
+    z-index : 1000;
   }
 
   .banner-desktop-flex {
@@ -608,6 +657,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    z-index: 1;
   }
 
   .banner-wave {
@@ -616,7 +667,8 @@
     left: 0;
     width: 100%;
     height: auto;
-    z-index: -1;
+    z-index: 2;
+    pointer-events: none;
   }
 
   .banner-wave--desktop {
@@ -654,6 +706,7 @@
     }
     .banner-image {
       max-width: {{ section.settings.image_max_width_desktop }}px;
+      transform: scale({{ section.settings.image_scale_desktop | default: 100 | times: 0.01 }});
     }
     .rating-container {
       justify-content: {{ section.settings.rating_alignment }};
@@ -682,6 +735,7 @@
     }
     .banner-image {
       max-width: {{ section.settings.image_max_width_tablet }}px;
+      transform: scale({{ section.settings.image_scale_tablet | default: 100 | times: 0.01 }});
     }
     .rating-container {
       justify-content: {{ section.settings.rating_alignment }};
@@ -711,6 +765,7 @@
     .banner-image {
       max-width: {{ section.settings.image_max_width_mobile }}px;
       margin: 0 auto;
+      transform: scale({{ section.settings.image_scale_mobile | default: 100 | times: 0.01 }});
     }
     .rating-container {
       justify-content: {{ section.settings.rating_alignment }};
@@ -719,6 +774,13 @@
   
 </style>
 
+{% assign fallback_banner_image = "https://images.pexels.com/photos/30255824/pexels-photo-30255824.jpeg" %}
+{% if section.settings.image != blank %}
+  {% assign banner_image_url = section.settings.image | img_url: '1200x' %}
+{% else %}
+  {% assign banner_image_url = fallback_banner_image %}
+{% endif %}
+{% assign banner_image_alt = section.settings.image_alt | default: "Banner Image" %}
 <header class="banner-{{ section.id }}" role="banner">
   <!-- Wave -->
   <svg class="banner-wave banner-wave--mobile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 150" preserveAspectRatio="none">
@@ -756,7 +818,6 @@
           </span>
         </div>
       {% endif %}
-
       {% if section.settings.button_text != blank %}
         <a class="banner-cta" 
            href="{{ section.settings.button_link | default: '#' }}" 
@@ -766,13 +827,11 @@
       {% endif %}
     </div>
 
-    {% if section.settings.image != blank %}
-      <div class="banner-image-wrapper">
-        <img class="banner-image"
-             src="{{ section.settings.image | img_url: '1200x' }}"
-             alt="{{ section.settings.image_alt | escape }}"
-             loading="lazy">
-      </div>
-    {% endif %}
+    <div class="banner-image-wrapper">
+      <img class="banner-image"
+           src="{{ banner_image_url }}"
+           alt="{{ banner_image_alt | escape }}"
+           loading="lazy">
+    </div>
   </div>
 </header>

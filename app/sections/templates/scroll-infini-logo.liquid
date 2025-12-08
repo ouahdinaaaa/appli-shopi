@@ -112,22 +112,49 @@
 }
 {% endschema %}
 
-<div class="logo-slider" style="background-color: {{ section.settings.background_color }};">
+{% assign default_logos_string = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'><rect width='240' height='120' fill='%23000000'/><text x='50%25' y='58%25' text-anchor='middle' font-family='Helvetica Neue, Arial, sans-serif' font-size='54' fill='%23ffffff' letter-spacing='8'>ELLE</text></svg>|data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'><rect width='240' height='120' fill='%23000000'/><text x='50%25' y='56%25' text-anchor='middle' font-family='Georgia, serif' font-size='40' fill='%23ffffff'>Les Echos</text></svg>|data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'><rect width='240' height='120' fill='%23000000'/><text x='50%25' y='52%25' text-anchor='middle' font-family='Times New Roman, serif' font-size='38' fill='%23ffffff'>Le Monde</text><path d='M60 80h120' stroke='%23ffffff' stroke-width='3'/></svg>|data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 120'><rect width='240' height='120' fill='%23000000'/><text x='50%25' y='62%25' text-anchor='middle' font-family='Didot, serif' font-size='48' fill='%23ffffff' letter-spacing='6'>VOGUE</text></svg>|data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 260 120'><rect width='260' height='120' fill='%23000000'/><text x='50%25' y='52%25' text-anchor='middle' font-family='Futura, sans-serif' font-size='32' fill='%23ffffff' letter-spacing='4'>COSMOPOLITAN</text><text x='50%25' y='86%25' text-anchor='middle' font-family='Futura, sans-serif' font-size='26' fill='%23ffffff' letter-spacing='3'>L'OFFICIEL</text></svg>" %}
+{% assign default_logos = default_logos_string | split: "|" %}
+
+{% assign has_blocks = section.blocks | size %}
+
+<div class="logo-slider" style="background-color: {{ section.settings.background_color | default: '#000000' }};">
   <div class="slide-track">
-    {% for block in section.blocks %}
-      {% if block.settings.logo_image %}
+    {% if has_blocks > 0 %}
+      {% assign total_defaults = default_logos | size %}
+      {% for block in section.blocks %}
+        {% assign idx = forloop.index0 | modulo: total_defaults %}
+        {% assign fallback_logo = default_logos[idx] %}
         <div class="slide">
-          <img src="{{ block.settings.logo_image | image_url }}" alt="logo" />
+          {% if block.settings.logo_image != blank %}
+            <img src="{{ block.settings.logo_image | image_url: width: 800 }}" alt="logo">
+          {% else %}
+            <img src="{{ fallback_logo }}" alt="logo">
+          {% endif %}
         </div>
-      {% endif %}
-    {% endfor %}
-    {% for block in section.blocks %}
-      {% if block.settings.logo_image %}
+      {% endfor %}
+      {% for block in section.blocks %}
+        {% assign idx = forloop.index0 | modulo: total_defaults %}
+        {% assign fallback_logo = default_logos[idx] %}
         <div class="slide">
-          <img src="{{ block.settings.logo_image | image_url }}" alt="logo" />
+          {% if block.settings.logo_image != blank %}
+            <img src="{{ block.settings.logo_image | image_url: width: 800 }}" alt="logo">
+          {% else %}
+            <img src="{{ fallback_logo }}" alt="logo">
+          {% endif %}
         </div>
-      {% endif %}
-    {% endfor %}
+      {% endfor %}
+    {% else %}
+      {% for logo in default_logos %}
+        <div class="slide">
+          <img src="{{ logo }}" alt="logo">
+        </div>
+      {% endfor %}
+      {% for logo in default_logos %}
+        <div class="slide">
+          <img src="{{ logo }}" alt="logo">
+        </div>
+      {% endfor %}
+    {% endif %}
   </div>
 </div>
 
@@ -147,11 +174,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #000000;
 }
 
-/* Images responsive */
 .logo-slider .slide img {
   height: auto;
+  display: block;
 }
 
 /* Desktop */
@@ -193,7 +221,6 @@
   }
 }
 
-/* Animations */
 @keyframes scroll-desktop {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
