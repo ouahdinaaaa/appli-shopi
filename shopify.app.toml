@@ -1,6 +1,6 @@
 client_id = "fc65f31c5c9fdd475c8076b2518122da"
 name = "Section-addict"
-application_url = "https://candles-genesis-accommodations-mattress.trycloudflare.com"
+application_url = "https://float-telecom-ssl-house.trycloudflare.com"
 embedded = true
 
 [webhooks]
@@ -18,7 +18,7 @@ uri = "/webhooks/app/scopes_update"
 scopes = "read_themes,write_products,write_themes"
 
 [auth]
-redirect_urls = ["https://candles-genesis-accommodations-mattress.trycloudflare.com/auth"]
+redirect_urls = ["https://float-telecom-ssl-house.trycloudflare.com/auth"]
 
 [pos]
 embedded = true

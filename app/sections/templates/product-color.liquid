@@ -15,6 +15,11 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
     background-position: center;
   {% endif %}
   overflow: hidden;
+  --product-btn-bg: {{ section.settings.button_background_color }};
+  --product-btn-hover-bg: {{ section.settings.button_hover_background_color }};
+  --product-btn-text-color: {{ section.settings.button_text_color }};
+  --product-card-text-color: {{ section.settings.card_text_color }};
+  --product-image-radius: {{ section.settings.image_border_radius | default: 12 }}px;
 }
 
 .product-showcase-container {
@@ -26,34 +31,34 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
 .product-showcase-grid {
   display: grid;
   gap: 40px 25px;
-  grid-template-columns: repeat(1, 1fr); /* Mobile: 1 par ligne */
+  grid-template-columns: repeat(1, 1fr);
   justify-items: center;
 }
 
 @media (min-width: 600px) {
   .product-showcase-grid {
-    grid-template-columns: repeat(2, 1fr); /* Petite tablette: 2 par ligne */
+    grid-template-columns: repeat(2, 1fr);
     gap: 35px 30px;
   }
 }
 
 @media (min-width: 900px) {
   .product-showcase-grid {
-    grid-template-columns: repeat(3, 1fr); /* Tablette: 3 par ligne */
+    grid-template-columns: repeat(3, 1fr);
     gap: 40px 35px;
   }
 }
 
 @media (min-width: 1200px) {
   .product-showcase-grid {
-    grid-template-columns: repeat(4, 1fr); /* Desktop: 4 par ligne */
+    grid-template-columns: repeat(4, 1fr);
     gap: 50px 40px;
   }
 }
 
 @media (min-width: 1600px) {
   .product-showcase-grid {
-    grid-template-columns: repeat(5, 1fr); /* Large desktop: 5 par ligne */
+    grid-template-columns: repeat(5, 1fr);
     gap: 60px 45px;
   }
 }
@@ -62,7 +67,7 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
   position: relative;
   width: 100%;
   max-width: 320px;
-  height: 320px; /* Augmenté pour accommoder les tailles */
+  height: 320px;
   margin: 0 auto;
   font-family: 'Poppins', sans-serif;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -115,7 +120,7 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
   width: 70%;
   height: auto;
   transition: all 0.4s ease;
-  border-radius: 8px;
+  border-radius: var(--product-image-radius, 12px);
 }
 
 .product-thumbs li:hover img {
@@ -142,9 +147,9 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
   flex-direction: column;
   justify-content: space-between;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--product-card-text-color, #fff);
 }
 
-/* Style pour les cartes sans thumbnails - image centrée */
 .product-showcase-card:not(.has-thumbnails) .product-main-box {
   width: 100%;
   padding-left: 18px;
@@ -175,7 +180,7 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
 }
 
 .product-title {
-  color: #fff;
+  color: var(--product-card-text-color, #fff);
   letter-spacing: 0.5px;
   font-size: 1em;
   font-weight: 600;
@@ -198,12 +203,12 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
   height: auto;
   max-height: 140px;
   object-fit: contain;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  border-radius: var(--product-image-radius, 12px);
 }
 
 .product-main-image:hover {
-  transform: scale(1.15) rotate(-8deg) translateX(5px);
   filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
 }
 
@@ -217,11 +222,80 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
 }
 
 .product-price {
-  color: #fff;
+  color: var(--product-card-text-color, #fff);
   font-size: 1.1em;
   font-weight: 700;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   margin: 0;
+}
+
+.product-colors {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.product-colors-label {
+  color: var(--product-card-text-color, #fff);
+  font-size: 0.8em;
+  opacity: 0.9;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+}
+
+.color-swatch-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.color-swatch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #1e6b7b;
+  font-size: 0.75em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.color-swatch:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 107, 123, 0.35);
+}
+
+.color-swatch.selected {
+  background: linear-gradient(135deg, #1e6b7b 0%, #2c8aa6 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(30, 107, 123, 0.5);
+}
+
+.color-swatch-bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(30, 107, 123, 0.9);
+}
+
+.color-swatch.selected .color-swatch-bullet {
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.color-swatch-label {
+  white-space: nowrap;
 }
 
 .product-sizes-wrapper {
@@ -241,7 +315,8 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
 }
 
 .product-sizes-label {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--product-card-text-color, #fff);
+  opacity: 0.9;
   font-size: 0.8em;
   letter-spacing: 0.5px;
   margin-right: 6px;
@@ -281,14 +356,14 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
 }
 
 .product-btn {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  background: var(--product-btn-bg, #fff);
   display: inline-block;
   text-decoration: none;
   padding: 8px 18px;
   border-radius: 18px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
   font-weight: 600;
-  color: #1e6b7b;
+  color: var(--product-btn-text-color, #1e6b7b);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   cursor: pointer;
@@ -303,67 +378,66 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
 .product-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  background: linear-gradient(135deg, #1e6b7b 0%, #2c8aa6 100%);
-  color: #fff;
+  background: var(--product-btn-hover-bg, #1e6b7b);
+  color: var(--product-btn-text-color, #1e6b7b);
   letter-spacing: 1px;
 }
 
-/* Responsive amélioré */
 @media (max-width: 599px) {
   .product-showcase-section {
     padding: 60px 0 80px;
   }
-  
+
   .product-showcase-container {
     padding: 0 16px;
   }
-  
+
   .product-showcase-card {
     height: 290px;
     max-width: 280px;
   }
-  
+
   .product-main-box {
     padding: 18px 15px 18px;
     padding-left: 45px;
     border-radius: 20px;
   }
-  
+
   .product-thumbs {
     left: -8px;
   }
-  
+
   .product-thumbs li {
     width: 48px;
     height: 48px;
     margin: 5px 0;
     border-radius: 14px;
   }
-  
+
   .product-title {
     font-size: 0.9em;
   }
-  
+
   .product-main-image {
     width: 60%;
     max-height: 110px;
   }
-  
+
   .product-price {
     font-size: 1em;
   }
-  
+
   .product-sizes-label {
     font-size: 0.7em;
     margin-right: 4px;
   }
-  
+
   .product-sizes li {
     width: 22px;
     height: 22px;
     font-size: 0.7em;
   }
-  
+
   .product-btn {
     padding: 7px 14px;
     font-size: 0.7em;
@@ -377,14 +451,13 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
     height: 310px;
     max-width: 300px;
   }
-  
+
   .product-main-box {
     padding: 20px 16px 20px;
     padding-left: 48px;
   }
 }
 
-/* Animation d'entrée plus fluide */
 @keyframes slideInUp {
   from {
     opacity: 0;
@@ -400,14 +473,27 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
   animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* États actifs améliorés */
 .product-thumbs li.active {
   transform: scale(1.15) translateX(5px);
   opacity: 1;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
   border: 2px solid rgba(255, 255, 255, 0.6);
 }
+
+.product-showcase-card.image-animation-shift .product-main-image:hover {
+  transform: translateX(6px) rotate(-4deg) scale(1.05);
+}
+
+.product-showcase-card.image-animation-lift .product-main-image:hover {
+  transform: translateY(-6px) scale(1.08);
+}
+
+.product-showcase-card.image-animation-none .product-main-image:hover {
+  transform: none;
+}
 </style>
+
+{% assign default_images = "https://images.pexels.com/photos/27596491/pexels-photo-27596491.jpeg|https://images.pexels.com/photos/27598915/pexels-photo-27598915.jpeg|https://images.pexels.com/photos/27596493/pexels-photo-27596493.jpeg" | split: '|' %}
 
 <div class="product-showcase-section">
   <div class="product-showcase-container">
@@ -415,65 +501,112 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
       {% for block in section.blocks %}
         {% assign product = all_products[block.settings.product_handle] %}
         {% if product %}
-          <div class="product-showcase-card" {{ block.shopify_attributes }} data-block-id="{{ block.id }}">
-            
-            <!-- Thumbnails des couleurs -->
-            {% comment %} Calculer le nombre d'images disponibles {% endcomment %}
-            {% assign total_images = 1 %} {% comment %} Image principale {% endcomment %}
-            
-            {% if block.settings.color_metafield and product.metafields[block.settings.color_metafield] %}
-              {% assign color_images = product.metafields[block.settings.color_metafield] | split: ',' %}
-              {% assign total_images = total_images | plus: color_images.size %}
-            {% elsif product.metafields.custom.color_variants %}
-              {% assign color_images = product.metafields.custom.color_variants | split: ',' %}
-              {% assign total_images = total_images | plus: color_images.size %}
-            {% else %}
-              {% assign total_images = product.images.size %}
+          {% assign fallback_index = forloop.index0 | modulo: default_images.size %}
+          {% assign fallback_image_url = default_images[fallback_index] | strip %}
+          {% assign use_default_images = false %}
+          {% assign main_image_alt = product.title %}
+          {% if product.featured_image %}
+            {% assign main_image_large = product.featured_image | img_url: '500x500' %}
+            {% assign main_image_small = product.featured_image | img_url: '200x200' %}
+            {% assign main_image_alt = product.featured_image.alt | default: product.title %}
+          {% else %}
+            {% assign main_image_large = fallback_image_url %}
+            {% assign main_image_small = fallback_image_url %}
+            {% assign main_image_alt = product.title | default: 'Image de produit' %}
+            {% assign use_default_images = true %}
+          {% endif %}
+
+          {% assign color_images_raw = '' %}
+          {% if block.settings.color_metafield != blank %}
+            {% assign color_metafield_parts = block.settings.color_metafield | split: '.' %}
+            {% if color_metafield_parts.size == 2 %}
+              {% assign color_namespace = color_metafield_parts[0] %}
+              {% assign color_key = color_metafield_parts[1] %}
+              {% if product.metafields[color_namespace] and product.metafields[color_namespace][color_key] != blank %}
+                {% assign color_images_raw = product.metafields[color_namespace][color_key] %}
+              {% endif %}
             {% endif %}
-            
-            {% comment %} Afficher les thumbnails seulement s'il y a plus d'une image {% endcomment %}
+          {% elsif product.metafields.custom.color_variants %}
+            {% assign color_images_raw = product.metafields.custom.color_variants %}
+          {% endif %}
+
+          {% assign color_images = '' %}
+          {% if color_images_raw != blank %}
+            {% assign color_images_temp = color_images_raw | split: ',' %}
+            {% for color_image in color_images_temp %}
+              {% assign color_image_trimmed = color_image | strip %}
+              {% if color_image_trimmed != '' %}
+                {% if color_images == '' %}
+                  {% assign color_images = color_image_trimmed %}
+                {% else %}
+                  {% assign color_images = color_images | append: '|' | append: color_image_trimmed %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+            {% if color_images != '' %}
+              {% assign color_images = color_images | split: '|' %}
+            {% endif %}
+          {% endif %}
+
+          {% assign color_option = '' %}
+          {% assign color_option_index = -1 %}
+          {% for option in product.options_with_values %}
+            {% assign option_name_lower = option.name | downcase %}
+            {% if option_name_lower contains 'color' or option_name_lower contains 'couleur' %}
+              {% assign color_option = option %}
+              {% assign color_option_index = forloop.index0 %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+
+          {% assign show_thumbnails = false %}
+          {% if color_images and color_images.size > 0 %}
+            {% assign show_thumbnails = true %}
+          {% elsif product.images.size > 1 %}
+            {% assign show_thumbnails = true %}
+          {% elsif use_default_images and default_images.size > 1 %}
+            {% assign show_thumbnails = true %}
+          {% endif %}
+
+          {% assign animation_class = section.settings.image_hover_animation | default: 'shift' %}
+          <div class="product-showcase-card{% if show_thumbnails %} has-thumbnails{% endif %} image-animation-{{ animation_class }}" {{ block.shopify_attributes }} data-block-id="{{ block.id }}">
             {% if show_thumbnails %}
               <div class="product-thumbs">
                 <ul>
-                  {% comment %} Image principale {% endcomment %}
-                  <li class="thumb-item active" onclick="changeProductImage('{{ product.featured_image | img_url: '500x500' }}', '{{ block.id }}', this)">
-                    <img src="{{ product.featured_image | img_url: '200x200' }}" alt="{{ product.title }}">
+                  <li class="thumb-item active" onclick="changeProductImage('{{ main_image_large }}', '{{ block.id }}', this)">
+                    <img src="{{ main_image_small }}" alt="{{ main_image_alt }}">
                   </li>
-                  
-                  {% comment %} Images des variantes de couleur {% endcomment %}
-                  {% if block.settings.color_metafield and product.metafields[block.settings.color_metafield] %}
-                    {% assign color_images = product.metafields[block.settings.color_metafield] | split: ',' %}
-                    {% for color_image in color_images limit: 2 %}
-                      {% assign clean_url = color_image | strip %}
-                      <li class="thumb-item" onclick="changeProductImage('{{ clean_url }}', '{{ block.id }}', this)">
-                        <img src="{{ clean_url }}" alt="Couleur variante">
+
+                  {% if color_images and color_images.size > 0 %}
+                    {% for color_image in color_images limit: 3 %}
+                      <li class="thumb-item" onclick="changeProductImage('{{ color_image }}', '{{ block.id }}', this)">
+                        <img src="{{ color_image }}" alt="{{ product.title }}">
                       </li>
                     {% endfor %}
-                  {% elsif product.metafields.custom.color_variants %}
-                    {% assign color_images = product.metafields.custom.color_variants | split: ',' %}
-                    {% for color_image in color_images limit: 2 %}
-                      {% assign clean_url = color_image | strip %}
-                      <li class="thumb-item" onclick="changeProductImage('{{ clean_url }}', '{{ block.id }}', this)">
-                        <img src="{{ clean_url }}" alt="Couleur variante">
-                      </li>
-                    {% endfor %}
-                  {% else %}
-                    {% comment %} Si pas de metafield, utiliser les images du produit {% endcomment %}
-                    {% for image in product.images limit: 3 offset: 1 %}
+                  {% elsif product.images.size > 1 %}
+                    {% for image in product.images offset: 1 limit: 3 %}
                       <li class="thumb-item" onclick="changeProductImage('{{ image | img_url: '500x500' }}', '{{ block.id }}', this)">
                         <img src="{{ image | img_url: '200x200' }}" alt="{{ product.title }}">
                       </li>
+                    {% endfor %}
+                  {% elsif use_default_images %}
+                    {% assign default_thumb_count = 0 %}
+                    {% for image_url in default_images %}
+                      {% assign trimmed_url = image_url | strip %}
+                      {% if trimmed_url != main_image_large and default_thumb_count < 2 %}
+                        <li class="thumb-item" onclick="changeProductImage('{{ trimmed_url }}', '{{ block.id }}', this)">
+                          <img src="{{ trimmed_url }}" alt="{{ product.title | default: 'Image par défaut' }}">
+                        </li>
+                        {% assign default_thumb_count = default_thumb_count | plus: 1 %}
+                      {% endif %}
                     {% endfor %}
                   {% endif %}
                 </ul>
               </div>
             {% endif %}
 
-            <!-- Boîte principale du produit -->
             <div class="product-main-box">
               <div class="product-content-wrapper">
-                
-                <!-- En-tête du produit -->
                 <div class="product-header">
                   <h3 class="product-title">
                     {% if block.settings.custom_title != blank %}
@@ -484,19 +617,60 @@ Section: Product Showcase avec couleurs et tailles - Design Amélioré et Cohér
                   </h3>
                 </div>
 
-                <!-- Image du produit -->
                 <div class="product-image-container">
-                  <img src="{{ product.featured_image | img_url: '500x500' }}" 
-                       alt="{{ product.title }}" 
-                       class="product-main-image" 
-                       id="main-image-{{ block.id }}">
+                  <img src="{{ main_image_large }}" alt="{{ main_image_alt }}" class="product-main-image" id="main-image-{{ block.id }}">
                 </div>
 
-                <!-- Informations produit -->
                 <div class="product-info-section">
                   <div class="product-price">
-                    {{ product.price | money }}
+                    {% assign selected_variant = product.selected_or_first_available_variant %}
+                    {% assign price_with_symbol = selected_variant.price | money | strip %}
+                    {% assign price_value_raw = selected_variant.price | money_without_currency | strip %}
+                    {% assign currency_symbol = price_with_symbol | replace: price_value_raw, '' | strip | replace: '&nbsp;', '' | replace: ' ', '' %}
+                    {% assign price_value = price_value_raw | replace: '.00', '' | replace: ',00', '' | strip %}
+                    {{ price_value }}{% if currency_symbol != '' %}{{ currency_symbol }}{% endif %}
                   </div>
+
+                  {% if color_option and color_option.values.size > 1 and color_option_index != -1 %}
+                    <div class="product-colors">
+                      <span class="product-colors-label">{{ block.settings.color_label | default: 'Couleur :' }}</span>
+                      <ul class="color-swatch-list">
+                        {% for color_value in color_option.values %}
+                          {% assign color_value_clean = color_value | strip %}
+                          {% assign matching_variant = '' %}
+                          {% for variant in product.variants %}
+                            {% if variant.options[color_option_index] == color_value %}
+                              {% assign matching_variant = variant %}
+                              {% break %}
+                            {% endif %}
+                          {% endfor %}
+                          {% assign swatch_image_url = '' %}
+                          {% if matching_variant and matching_variant.featured_image %}
+                            {% assign swatch_image_url = matching_variant.featured_image | img_url: '500x500' %}
+                          {% elsif color_images and color_images.size > forloop.index0 %}
+                            {% assign swatch_image_url = color_images[forloop.index0] %}
+                          {% elsif use_default_images %}
+                            {% assign default_image_index = forloop.index0 | modulo: default_images.size %}
+                            {% assign swatch_image_url = default_images[default_image_index] %}
+                          {% else %}
+                            {% assign swatch_image_url = main_image_large %}
+                          {% endif %}
+                          {% assign swatch_variant_id = product.selected_or_first_available_variant.id %}
+                          {% if matching_variant %}
+                            {% assign swatch_variant_id = matching_variant.id %}
+                          {% endif %}
+                          <li class="color-swatch{% if forloop.first %} selected{% endif %}"
+                              data-block-id="{{ block.id }}"
+                              data-color="{{ color_value_clean }}"
+                              data-variant-id="{{ swatch_variant_id }}"
+                              data-image="{{ swatch_image_url }}">
+                            <span class="color-swatch-bullet" style="{% if color_value_clean contains '#' %}background: {{ color_value_clean }};{% elsif color_value_clean contains 'rgb' %}background: {{ color_value_clean }};{% else %}background: {{ color_value_clean | downcase | replace: ' ', '' }};{% endif %}"></span>
+                            <span class="color-swatch-label">{{ color_value_clean }}</span>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  {% endif %}
 
                   <!-- Tailles disponibles intégrées dans l'encadré -->
                   {% assign has_sizes = false %}
@@ -566,11 +740,62 @@ function changeProductImage(imageUrl, blockId, thumbElement) {
     }, 150);
   }
   
-  // Gérer l'état actif des thumbnails
-  const card = thumbElement.closest('.product-showcase-card');
-  const thumbItems = card.querySelectorAll('.thumb-item');
-  thumbItems.forEach(item => item.classList.remove('active'));
-  thumbElement.classList.add('active');
+  const card = thumbElement ? thumbElement.closest('.product-showcase-card') : null;
+  if (card && thumbElement) {
+    const thumbItems = card.querySelectorAll('.thumb-item');
+    thumbItems.forEach(item => item.classList.remove('active'));
+    thumbElement.classList.add('active');
+  }
+}
+
+function selectColor(colorValue, blockId, swatchElement, updateImage) {
+  const shouldUpdateImage = updateImage !== false;
+  const card = swatchElement.closest('.product-showcase-card');
+  if (!card) return;
+
+  const swatches = card.querySelectorAll('.color-swatch');
+  swatches.forEach(item => item.classList.remove('selected'));
+  swatchElement.classList.add('selected');
+
+  const form = card.querySelector('form');
+  if (form) {
+    const variantId = swatchElement.getAttribute('data-variant-id');
+    const variantInput = form.querySelector('input[name="id"]');
+    if (variantInput && variantId) {
+      variantInput.value = variantId;
+    }
+    let colorInput = form.querySelector('input[name="properties[Couleur]"]');
+    if (!colorInput) {
+      colorInput = document.createElement('input');
+      colorInput.type = 'hidden';
+      colorInput.name = 'properties[Couleur]';
+      form.appendChild(colorInput);
+    }
+    colorInput.value = colorValue;
+  }
+
+  const imageUrl = swatchElement.getAttribute('data-image');
+  if (shouldUpdateImage && imageUrl) {
+    changeProductImage(imageUrl, blockId, null);
+  }
+}
+
+function initColorSwatches() {
+  const swatches = document.querySelectorAll('.color-swatch');
+  swatches.forEach(swatch => {
+    swatch.addEventListener('click', function() {
+      const blockId = this.getAttribute('data-block-id');
+      const colorValue = this.getAttribute('data-color');
+      selectColor(colorValue, blockId, this, true);
+    });
+  });
+
+  const defaultSwatches = document.querySelectorAll('.color-swatch.selected');
+  defaultSwatches.forEach(defaultSwatch => {
+    const blockId = defaultSwatch.getAttribute('data-block-id');
+    const colorValue = defaultSwatch.getAttribute('data-color');
+    selectColor(colorValue, blockId, defaultSwatch, false);
+  });
 }
 
 function selectSize(size, blockId, sizeElement) {
@@ -604,6 +829,7 @@ function selectSize(size, blockId, sizeElement) {
 
 // Animation au scroll améliorée
 document.addEventListener('DOMContentLoaded', function() {
+  initColorSwatches();
   const cards = document.querySelectorAll('.product-showcase-card');
   
   const observer = new IntersectionObserver((entries) => {
@@ -672,6 +898,50 @@ document.addEventListener('DOMContentLoaded', function() {
       "id": "section_title",
       "label": "Titre de la section (optionnel)",
       "default": "Nos Produits Vedettes"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Couleur du fond du bouton",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background_color",
+      "label": "Couleur de fond du bouton au survol",
+      "default": "#1e6b7b"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Couleur du texte du bouton",
+      "default": "#1e6b7b"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Couleur du texte des cartes",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Arrondi des images (px)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "image_hover_animation",
+      "label": "Animation au survol de l'image",
+      "options": [
+        { "value": "shift", "label": "Décalage léger" },
+        { "value": "lift", "label": "Surlèvement" },
+        { "value": "none", "label": "Aucune" }
+      ],
+      "default": "shift"
     }
   ],
   "blocks": [
@@ -733,6 +1003,13 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
           "type": "text",
+          "id": "color_label",
+          "label": "Libellé des couleurs",
+          "default": "Couleur :",
+          "info": "Le texte affiché avant la liste des couleurs"
+        },
+        {
+          "type": "text",
           "id": "color_metafield",
           "label": "Champ Meta Couleurs (optionnel)",
           "info": "Format: namespace.key (ex: custom.color_variants). Laissez vide pour utiliser custom.color_variants par défaut",
@@ -745,15 +1022,9 @@ document.addEventListener('DOMContentLoaded', function() {
     {
       "name": "Vitrine Produits",
       "blocks": [
-        {
-          "type": "product"
-        },
-        {
-          "type": "product"
-        },
-        {
-          "type": "product"
-        }
+        { "type": "product" },
+        { "type": "product" },
+        { "type": "product" }
       ]
     }
   ]

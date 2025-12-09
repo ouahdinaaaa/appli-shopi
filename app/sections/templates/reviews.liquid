@@ -1,0 +1,1000 @@
+<section class="reviews-section">
+  <style>
+  .reviews-section {
+    --avatar-size: {{ section.settings.avatar_size_desktop | append: 'px' }};
+  }
+
+  @media (max-width: 768px) {
+    .reviews-section {
+      --avatar-size: {{ section.settings.avatar_size_mobile | append: 'px' }};
+    }
+  }
+</style>
+
+  <h2 class="reviews-title">{{ section.settings.section_title }}</h2>
+
+  <div class="reviews-content">
+    <div class="reviews-summary">
+      <div class="customer-reviews-block">
+        <h3>{{ section.settings.customer_reviews_title }}</h3>
+
+        <div class="average-rating-row" aria-label="Note moyenne">
+          <div class="average-rating-number">{{ section.settings.average_rating }}</div>
+          <div class="average-rating-stars">
+            {% assign full_stars = section.settings.average_rating | floor %}
+            {% for i in (1..5) %}
+              {% if i <= full_stars %}
+                <span class="star full">&#9733;</span>
+              {% else %}
+                <span class="star empty">&#9733;</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="reviews-count">
+          Basé sur {{ section.settings.total_reviews }} avis
+        </div>
+
+        <div class="ratings-list">
+          {% assign total_reviews = section.settings.total_reviews | plus: 0 %}
+
+          {% assign rating_data = 
+            "5:rating_count_5,4:rating_count_4,3:rating_count_3,2:rating_count_2,1:rating_count_1" | split: "," 
+          %}
+
+          {% for pair in rating_data %}
+            {% assign parts = pair | split: ":" %}
+            {% assign star = parts[0] %}
+            {% assign setting_key = parts[1] %}
+            {% assign count = section.settings[setting_key] | plus: 0 %}
+            <div class="rating-row">
+              <div class="stars-row" aria-label="{{ star }} étoiles">
+                {% assign star_int = star | plus: 0 %}
+                {% assign empty_stars = 5 | minus: star_int %}
+                {% for i in (1..star_int) %}<span class="star full">&#9733;</span>{% endfor %}
+                {% for i in (1..empty_stars) %}<span class="star empty">&#9733;</span>{% endfor %}
+              </div>
+              <div class="bar-container" role="progressbar">
+                {% assign key = "jauge_" | append: star | append: "_etoiles" %}
+                {% assign jauge_image = section.settings[key] %}
+                {% if jauge_image %}
+                  <img 
+                    src="{{ jauge_image | image_url: width: 200 }}" 
+                    alt="Jauge {{ star }} étoiles" 
+                    class="jauge-image"
+                  >
+                {% else %}
+                  <div class="jauge-placeholder">
+                    + Ajouter image
+                  </div>
+                {% endif %}
+              </div>
+              <div class="rating-count">{{ count }}</div>
+            </div>
+          {% endfor %}
+
+        </div>
+      </div>
+    </div>
+  
+    <!-- Liste des avis clients dynamiques 2nd bloc-->
+    <div class="reviews-list">
+      {% for block in section.blocks %}
+        <div class="review-item">
+          <div class="review-header">
+            <div class="avatar">
+              {% if block.settings.avatar_image %}
+                <img src="{{ block.settings.avatar_image | image_url: width: 100, height: 100 }}" alt="Avatar de {{ block.settings.name }}">
+              {% elsif section.settings.default_avatar %}
+                <img src="{{ section.settings.default_avatar | image_url: width: 100, height: 100 }}" alt="Avatar par défaut">
+              {% else %}
+                <div class="avatar-placeholder">&#128100;</div>
+              {% endif %}
+            </div>
+
+            <div class="reviewer-info">
+              <div class="name-verified">
+                <span class="reviewer-name">{{ block.settings.name }}</span>
+                <span class="verified">Vérifié</span>
+              </div>
+              <div class="review-stars" aria-label="Note donnée">
+                {% assign review_stars = block.settings.review_stars | plus: 0 %}
+                {% for i in (1..5) %}
+                  {% if i <= review_stars %}
+                    <span class="star full">&#9733;</span>
+                  {% else %}
+                    <span class="star empty">&#9733;</span>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+            <div class="review-date">{{ block.settings.date }}</div>
+          </div>
+          <div class="review-content">
+            <h4 class="review-title">{{ block.settings.title }}</h4>
+            <p class="review-text">{{ block.settings.text }}</p>
+          </div>
+          <div class="review-footer">
+            <div class="review-likes">
+              <span class="thumb-up" aria-label="Pouces j'aime">&#128077;</span> <span class="likes-count">{{ block.settings.likes }}</span>
+              <span class="thumb-down" aria-label="Pouces pas j'aime">&#128078;</span> <span class="dislikes-count">{{ block.settings.dislikes }}</span>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="buttons-container">
+    <button class="view-more-btn">{{ section.settings.view_more_text }}</button>
+    <button class="view-less-btn" style="display: none;">{{ section.settings.view_less_text }}</button>
+  </div>
+</section>
+
+<style>
+.reviews-section {
+  max-width: 900px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+  color: #222;
+  --star-color: {{ section.settings.star_color | default: '#ffc107' }};
+  --star-empty-color: {{ section.settings.star_empty_color | default: '#ddd' }};
+}
+
+.reviews-title {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 4rem;
+  text-align: center;
+}
+
+.reviews-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.reviews-summary {
+  flex: 0 0 25%;
+  border-right: 1px solid #ddd;
+  padding-right: 1rem;
+  box-sizing: border-box;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  width: auto !important;
+}
+
+.customer-reviews-block h3 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+  font-size: 2.7rem;
+}
+
+.average-rating-row {
+  display: flex;
+  gap: 10px;
+}
+
+.average-rating-number {
+  font-weight: 700;
+  font-size: 3rem;
+  color: #222;
+  margin-top: 10px;
+  min-width: 60px;
+}
+
+.average-rating-stars {
+  font-size: 2.5rem;
+  display: flex;
+  margin-top: -10px;
+  line-height: 1;
+}
+
+.star.full {
+  color: var(--star-color, #ffc107);
+}
+
+.star.empty {
+  color: var(--star-empty-color, #ddd);
+}
+
+.reviews-count {
+  font-size: 0.9rem;
+  color: black;
+  margin-bottom: 15px;
+}
+
+.ratings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: -9px;
+}
+
+.stars-row {
+  min-width: 70px;
+  font-size: 1.85rem;
+  display: flex;
+  gap: 1px;
+  line-height: 1;
+}
+
+.bar-container {
+  position: relative;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex: 1;
+  min-width: 100px;
+  max-width: 200px;
+  background-color: #f0f0f0;
+}
+
+.jauge-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.jauge-placeholder {
+  background-color: #eee;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rating-count {
+  min-width: 35px;
+  text-align: right;
+  font-weight: 500;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.reviews-list {
+  flex: 1;
+  max-width: 70%;
+  margin-top: 0;
+}
+
+.review-item {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  width: 100% !important;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.review-hidden {
+  display: none;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.avatar {
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f0f0f0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.avatar img {
+  width: 80%;
+  height: 80%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  font-size: 24px;
+  color: #999;
+}
+
+.reviewer-info {
+  flex-grow: 1;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.name-verified {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reviewer-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.review-stars {
+  font-size: 1rem;
+  color: var(--star-color);
+  display: flex;
+  margin-top: -15px;
+}
+
+.verified {
+  background: black;
+  border-radius: 4px;
+  font-size: 1rem;
+  padding: 4px 8px;
+  color: white;
+  text-transform: uppercase;
+  -webkit-text-stroke: 1px white;
+  margin-top: 0;
+}
+
+
+.review-content {
+  margin-bottom: 0.8rem;
+}
+
+.review-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: var(--review-title-size, 1.3rem);
+}
+
+.review-text {
+  line-height: 1.5;
+  color: #555;
+  font-size: var(--review-text-size, 1.2rem);
+}
+
+.review-date {
+  color: #999;
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: var(--review-date-size, 1rem);
+}
+
+/* Desktop */
+@media(min-width: 1025px) {
+  .reviews-section {
+    --review-title-size: {{ section.settings.review_title_size_desktop | append: 'px' }};
+    --review-text-size: {{ section.settings.review_text_size_desktop | append: 'px' }};
+    --review-date-size: {{ section.settings.review_date_size_desktop | append: 'px' }};
+  }
+}
+
+/* Tablette */
+@media(min-width: 769px) and (max-width: 1024px) {
+  .reviews-section {
+    --review-title-size: {{ section.settings.review_title_size_tablet | append: 'px' }};
+    --review-text-size: {{ section.settings.review_text_size_tablet | append: 'px' }};
+    --review-date-size: {{ section.settings.review_date_size_tablet | append: 'px' }};
+  }
+}
+
+/* Mobile */
+@media(max-width: 768px) {
+  .reviews-section {
+    --review-title-size: {{ section.settings.review_title_size_mobile | append: 'px' }};
+    --review-text-size: {{ section.settings.review_text_size_mobile | append: 'px' }};
+    --review-date-size: {{ section.settings.review_date_size_mobile | append: 'px' }};
+  }
+}
+
+
+.review-footer {
+  text-align: right;
+}
+
+.review-likes {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.review-likes span {
+  color: #666;
+}
+
+.thumb-up, .thumb-down {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.thumb-up:hover, .thumb-down:hover {
+  transform: scale(1.1);
+}
+
+.buttons-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem auto;
+}
+
+.view-more-btn, .view-less-btn {
+  background-color: #f5c518;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  max-width: fit-content;
+  transition: background-color 0.2s;
+  font-size: 1rem;
+  color: black;
+  font-weight : bold;
+}
+
+.view-more-btn:hover, .view-less-btn:hover {
+  background-color: #e0b000;
+  font-weight : bold;
+
+}
+
+.view-less-btn {
+  background-color: ##f5c518;
+  font-weight : bold;
+
+}
+
+.view-less-btn:hover {
+  background-color: #e0b000;
+  font-weight : bold;
+
+}
+
+/* Responsive */
+@media(max-width: 768px) {
+  .reviews-content {
+    flex-direction: column;
+    padding: 0 20px;
+  }
+  
+  .reviews-summary {
+    flex: none;
+    width: 100%;
+    border-right: none;
+    padding-right: 0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .reviews-list {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .review-item {
+    width: 100% !important;
+  }
+  
+  .buttons-container {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .view-more-btn, .view-less-btn {
+    width: 200px;
+    color:black;
+    font-weight: bold;
+  }
+}
+.view-more-btn, .view-less-btn {
+  background-color: #f5c518;
+  border: none;
+  padding: var(--btn-size, 12px) calc(var(--btn-size, 12px) * 2);
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+  font-size: var(--btn-text-size, 1rem);
+  color:black;
+  font-weight : bold;
+}
+
+.view-more-btn:hover, .view-less-btn:hover {
+  background-color: #e0b000;
+}
+
+/* Desktop */
+@media(min-width: 1025px) {
+  .view-more-btn, .view-less-btn {
+    color: black;
+    --btn-size: {{ section.settings.button_size_desktop | append: 'px' }};
+    --btn-text-size: {{ section.settings.button_text_size_desktop | append: 'px' }};
+    font-weight : bold;
+  }
+}
+
+/* Tablette */
+@media(min-width: 769px) and (max-width: 1024px) {
+  .view-more-btn, .view-less-btn {
+    color:black;
+    --btn-size: {{ section.settings.button_size_tablet | append: 'px' }};
+    --btn-text-size: {{ section.settings.button_text_size_tablet | append: 'px' }};
+    font-weight : bold;
+  }
+}
+
+/* Mobile */
+@media(max-width: 768px) {
+  .view-more-btn, .view-less-btn {
+    color:black;
+    --btn-size: {{ section.settings.button_size_mobile | append: 'px' }};
+    --btn-text-size: {{ section.settings.button_text_size_mobile | append: 'px' }};
+    font-weight : bold;
+  }
+}
+
+</style>
+
+<script>document.addEventListener('DOMContentLoaded', function() {
+  const moreBtn = document.querySelector('.view-more-btn');
+  const lessBtn = document.querySelector('.view-less-btn');
+  if (!moreBtn || !lessBtn) return;
+
+  const reviews = document.querySelectorAll('.review-item');
+  const increment = 5;
+  let visibleCount = increment;
+
+  // Cacher les avis sauf les 5 premiers
+  reviews.forEach((review, index) => {
+    if (index >= increment) {
+      review.classList.add('review-hidden');
+    }
+  });
+
+  // Bouton "Voir plus"
+  moreBtn.addEventListener('click', function() {
+    const nextCount = visibleCount + increment;
+    for (let i = visibleCount; i < nextCount && i < reviews.length; i++) {
+      reviews[i].classList.remove('review-hidden');
+    }
+    visibleCount = nextCount;
+
+    // Si plus de 5 avis visibles → afficher "Voir moins"
+    if (visibleCount > increment) {
+      lessBtn.style.display = 'inline-block';
+    }
+
+    // Si on a tout affiché, on garde quand même "Voir moins"
+    if (visibleCount >= reviews.length) {
+      moreBtn.style.display = 'inline-block';
+    }
+  });
+
+  // Bouton "Voir moins"
+  lessBtn.addEventListener('click', function() {
+    reviews.forEach((review, index) => {
+      if (index >= increment) {
+        review.classList.add('review-hidden');
+      }
+    });
+    visibleCount = increment;
+
+    // Revenir à l’état initial
+    lessBtn.style.display = 'none';
+    moreBtn.style.display = 'inline-block';
+  });
+});
+
+</script>
+
+{% schema %}
+{
+  "name": "Section Avis Clients",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "jauge_5_etoiles",
+      "label": "Image jauge 5 étoiles"
+    },
+    {
+      "type": "image_picker",
+      "id": "jauge_4_etoiles",
+      "label": "Image jauge 4 étoiles"
+    },
+    {
+      "type": "image_picker",
+      "id": "jauge_3_etoiles",
+      "label": "Image jauge 3 étoiles"
+    },
+    {
+      "type": "image_picker",
+      "id": "jauge_2_etoiles",
+      "label": "Image jauge 2 étoiles"
+    },
+    {
+      "type": "image_picker",
+      "id": "jauge_1_etoiles",
+      "label": "Image jauge 1 étoile"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Couleur des étoiles pleines",
+      "default": "#ffc107"
+    },
+    {
+      "type": "color",
+      "id": "star_empty_color",
+      "label": "Couleur des étoiles vides",
+      "default": "#ddd"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Titre section",
+      "default": "Avis Clients"
+    },
+    {
+      "type": "text",
+      "id": "customer_reviews_title",
+      "label": "Titre bloc Customer Reviews",
+      "default": "Customer Reviews"
+    },
+    {
+      "type": "text",
+      "id": "average_rating",
+      "label": "Note moyenne (ex: 4.8)",
+      "default": "4.80"
+    },
+    {
+      "type": "number",
+      "id": "total_reviews",
+      "label": "Nombre total d'avis",
+      "default": 34
+    },
+    {
+    "type": "image_picker",
+    "id": "default_avatar",
+    "label": "Icône avatar par défaut"
+    },
+    {
+      "type": "text",
+      "id": "verified_text",
+      "label": "Texte à afficher pour 'verified'",
+      "default": "Achat vérifié"
+    },
+    {
+      "type": "number",
+      "id": "rating_count_5",
+      "label": "Nombre avis 5 étoiles",
+      "default": 31
+    },
+    {
+      "type": "number",
+      "id": "rating_count_4",
+      "label": "Nombre avis 4 étoiles",
+      "default": 3
+    },
+    {
+      "type": "number",
+      "id": "rating_count_3",
+      "label": "Nombre avis 3 étoiles",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "rating_count_2",
+      "label": "Nombre avis 2 étoiles",
+      "default": 0
+    },
+    {
+      "type": "number",
+      "id": "rating_count_1",
+      "label": "Nombre avis 1 étoile",
+      "default": 0
+    },
+    {
+      "type": "text",
+      "id": "view_more_text",
+      "label": "Texte bouton View More",
+      "default": "View More"
+    },
+    {
+      "type": "text",
+      "id": "view_less_text",
+      "label": "Texte bouton View Less",
+      "default": "View Less"
+    },
+    {
+      "type": "range",
+      "id": "avatar_size_desktop",
+      "label": "Taille de l’avatar (Desktop)",
+      "min": 30,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "avatar_size_mobile",
+      "label": "Taille de l’avatar (Mobile)",
+      "min": 30,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+  "type": "range",
+  "id": "button_size_desktop",
+  "label": "Taille du bouton (Desktop)",
+  "min": 8,
+  "max": 30,
+  "step": 1,
+  "unit": "px",
+  "default": 14
+},
+{
+  "type": "range",
+  "id": "button_size_tablet",
+  "label": "Taille du bouton (Tablette)",
+  "min": 8,
+  "max": 30,
+  "step": 1,
+  "unit": "px",
+  "default": 14
+},
+{
+  "type": "range",
+  "id": "button_size_mobile",
+  "label": "Taille du bouton (Mobile)",
+  "min": 8,
+  "max": 30,
+  "step": 1,
+  "unit": "px",
+  "default": 14
+},
+{
+  "type": "range",
+  "id": "button_text_size_desktop",
+  "label": "Taille du texte bouton (Desktop)",
+  "min": 8,
+  "max": 30,
+  "step": 1,
+  "unit": "px",
+  "default": 14
+},
+{
+  "type": "range",
+  "id": "button_text_size_tablet",
+  "label": "Taille du texte bouton (Tablette)",
+  "min": 8,
+  "max": 30,
+  "step": 1,
+  "unit": "px",
+  "default": 13
+},
+{
+  "type": "range",
+  "id": "button_text_size_mobile",
+  "label": "Taille du texte bouton (Mobile)",
+  "min": 8,
+  "max": 30,
+  "step": 1,
+  "unit": "px",
+  "default": 12
+},
+{
+  "type": "range",
+  "id": "review_title_size_desktop",
+  "label": "Taille du titre d'avis (Desktop)",
+  "min": 10,
+  "max": 40,
+  "step": 1,
+  "unit": "px",
+  "default": 20
+},
+{
+  "type": "range",
+  "id": "review_title_size_tablet",
+  "label": "Taille du titre d'avis (Tablette)",
+  "min": 10,
+  "max": 40,
+  "step": 1,
+  "unit": "px",
+  "default": 18
+},
+{
+  "type": "range",
+  "id": "review_title_size_mobile",
+  "label": "Taille du titre d'avis (Mobile)",
+  "min": 10,
+  "max": 40,
+  "step": 1,
+  "unit": "px",
+  "default": 16
+},
+{
+  "type": "range",
+  "id": "review_text_size_desktop",
+  "label": "Taille du texte d'avis (Desktop)",
+  "min": 10,
+  "max": 30,
+  "step": 1,
+  "unit": "px",
+  "default": 16
+},
+{
+  "type": "range",
+  "id": "review_text_size_tablet",
+  "label": "Taille du texte d'avis (Tablette)",
+  "min": 10,
+  "max": 30,
+  "step": 1,
+  "unit": "px",
+  "default": 15
+},
+{
+  "type": "range",
+  "id": "review_text_size_mobile",
+  "label": "Taille du texte d'avis (Mobile)",
+  "min": 10,
+  "max": 30,
+  "step": 1,
+  "unit": "px",
+  "default": 14
+},
+{
+  "type": "range",
+  "id": "review_date_size_desktop",
+  "label": "Taille de la date d'avis (Desktop)",
+  "min": 8,
+  "max": 20,
+  "step": 1,
+  "unit": "px",
+  "default": 14
+},
+{
+  "type": "range",
+  "id": "review_date_size_tablet",
+  "label": "Taille de la date d'avis (Tablette)",
+  "min": 8,
+  "max": 20,
+  "step": 1,
+  "unit": "px",
+  "default": 13
+},
+{
+  "type": "range",
+  "id": "review_date_size_mobile",
+  "label": "Taille de la date d'avis (Mobile)",
+  "min": 8,
+  "max": 20,
+  "step": 1,
+  "unit": "px",
+  "default": 12
+}
+
+
+
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Avis",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "avatar_image",
+          "label": "Image avatar"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nom du client",
+          "default": "John Doe"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Date (xx/xx/xxxx)",
+          "default": "15/12/2024"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titre de l'avis",
+          "default": "Excellent produit!"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texte de l'avis",
+          "default": "Je recommande vivement ce produit. La qualité est au rendez-vous."
+        },
+        {
+          "type": "select",
+          "id": "review_stars",
+          "label": "Nombre d'étoiles données",
+          "default": "5",
+          "options": [
+            { "value": "1", "label": "1 étoile" },
+            { "value": "2", "label": "2 étoiles" },
+            { "value": "3", "label": "3 étoiles" },
+            { "value": "4", "label": "4 étoiles" },
+            { "value": "5", "label": "5 étoiles" }
+          ]
+        },
+        {
+          "type": "number",
+          "id": "likes",
+          "label": "Nombre de pouces j'aime",
+          "default": 0
+        },
+        {
+          "type": "number",
+          "id": "dislikes",
+          "label": "Nombre de pouces pas j'aime",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "max_blocks": 50,
+  "presets": [
+    {
+      "name": "Section Avis Clients",
+      "category": "Commentaires",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "name": "Marie Dupont",
+            "date": "15/12/2024",
+            "title": "Excellent produit!",
+            "text": "Je recommande vivement ce produit. La qualité est au rendez-vous et le service client est parfait.",
+            "review_stars": "5",
+            "likes": 12,
+            "dislikes": 0
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "name": "Pierre Martin",
+            "date": "10/12/2024",
+            "title": "Très satisfait",
+            "text": "Livraison rapide et produit conforme à mes attentes. Je recommande!",
+            "review_stars": "4",
+            "likes": 8,
+            "dislikes": 0
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
